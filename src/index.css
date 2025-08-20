@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import "../node_modules/tailwindcss";
+
+@theme {
+    --font-text: "Poppins", sans-serif;
+    --font-header: "Montserrat", sans-serif;
+
+    --color-bg-primary: #121212;
+    --color-bg-primary-20: #12121233;
+
+    --color-bg-secondary: #1F1F1F;
+
+    --color-accent: #707997;
+    --color-accent-80: #707997cc;
+    --color-accent-60: #70799799;
+    --color-accent-40: #70799766;
+    --color-accent-20: #70799733;
+
+    --color-accent-2: #AFB5C5;
+
+    --color-accent-3: #D9D9D999;
+
+    --color-primary: #ffffff;
+    --color-primary-80: #ffffffcc;
+    --color-primary-60: #ffffff99;
+    --color-primary-40: #ffffff66;
+    --color-primary-20: #ffffff33;
+
+    --color-secondary: #A0A0A0;
+
+    --text-4xl: 70px;
+    --text-3xl: 36px;
+    --text-2xl: 32px;
+    --text-xl: 24px;
+    --text-l: 20px;
+    --text-m: 18px;
+    --text-s: 16px;
+    --text-xs: 14px;
+    --text-2xs: 12px;
+
+    --shadow-primary: 0px 1px 24px -1px rgba(18, 18, 18, 0.5);
+    --shadow-inner: inset 0 0 40px 5px rgba(110, 118, 151, 0.5);
+
+    --radius-5xl: 3.75rem; /* 60px */
+    --radius-4xl: 2.5rem; /* 40px */
+    --radius-3xl: 1.25rem; /* 20px */
+    --radius-2xl: 0.625rem; /* 10px */
+
+}
+
+@layer base {
+    input:-webkit-autofill, input:-webkit-autofill:focus, input:-webkit-autofill:active, input:-webkit-autofill:hover {
+        box-shadow: 0 0 0 1000px var(--color-bg-secondary) inset !important;
+        -webkit-text-fill-color: var(--color-primary) !important;
+        transition: none !important;
+    }
+}
+
+.mask-gradient {
+    mask-image: linear-gradient(155deg, #000 10.41%, rgba(0, 0, 0, 0) 63.07%);
+    mask-repeat: no-repeat;
+    mask-size: cover;
+    -webkit-mask-image: -webkit-linear-gradient(155deg, #000 10.41%, rgba(0, 0, 0, 0) 63.07%);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: cover;
+}
+
+.cover-mask-gradient{
+    mask-image: linear-gradient(-15deg, #000 0%, rgba(0, 0, 0, 0) 85%);
+    mask-repeat: no-repeat;
+    mask-size: cover;
+    -webkit-mask-image: -webkit-linear-gradient(-15deg, #000 0%, rgba(0, 0, 0, 0) 85%);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: cover;
+}
