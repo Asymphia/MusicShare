@@ -1,6 +1,6 @@
 const Playlists = () => {
     return (
-        <></>
+        <>PLaylists</>
     )
 }
 

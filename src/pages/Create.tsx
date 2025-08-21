@@ -1,6 +1,6 @@
 const Create = () => {
     return (
-        <></>
+        <>Create</>
     )
 }
 

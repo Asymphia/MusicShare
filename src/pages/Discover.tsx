@@ -1,6 +1,6 @@
 const Discover = () => {
     return (
-        <></>
+        <>Discover</>
     )
 }
 
