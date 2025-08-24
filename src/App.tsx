@@ -1,12 +1,14 @@
 import { Route, Routes } from "react-router-dom"
-import Auth from "./pages/Auth.jsx"
 
+/* Layouts */
 import MainLayout from "./layouts/MainLayout.jsx"
 
+/* Pages */
 import Dashboard from "./pages/Dashboard.jsx"
 import Playlists from "./pages/Playlists.jsx"
 import Discover from "./pages/Discover.jsx"
 import Create from "./pages/Create.jsx"
+import Auth from "./pages/Auth.jsx"
 
 const App = () => {
     return (

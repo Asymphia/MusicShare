@@ -76,7 +76,7 @@ const icons = {
     )
 } as const
 
-type IconName = keyof typeof icons
+export type IconName = keyof typeof icons
 
 interface IconProps {
     name: IconName
