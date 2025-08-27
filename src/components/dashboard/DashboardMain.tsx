@@ -31,7 +31,7 @@ const artists = [
 
 const DashboardMain = () => {
     return (
-        <div className="min-w-[960px] w-[960px] space-y-14">
+        <div className=" space-y-14">
             {/* Featured */}
             <section>
                 <SectionHeader title="Featured" as="h1" right={<FeaturedSliderButtons/>}/>

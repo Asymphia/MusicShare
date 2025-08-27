@@ -3,7 +3,7 @@ import DashboardAside from "../components/dashboard/DashboardAside.tsx"
 
 const Dashboard = () => {
     return (
-        <div className="flex flex-nowrap space-x-14">
+        <div className="grid grid-cols-2 gap-14">
             <DashboardMain/>
             <DashboardAside />
         </div>

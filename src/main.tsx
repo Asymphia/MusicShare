@@ -6,6 +6,10 @@ import App from "./App"
 /* style */
 import './styles/index.css'
 
+/* Redux */
+import { store } from "./app/store.ts"
+import { Provider } from "react-redux"
+
 const rootElement = document.getElementById('root')
 
 if (!rootElement) {
@@ -16,8 +20,10 @@ const root = createRoot(rootElement)
 
 root.render(
     <StrictMode>
-        <BrowserRouter>
-            <App />
-        </BrowserRouter>
+        <Provider store={store}>
+            <BrowserRouter>
+                <App />
+            </BrowserRouter>
+        </Provider>
     </StrictMode>
 )

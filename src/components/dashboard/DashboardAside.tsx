@@ -110,7 +110,7 @@ const DashboardAside = () => {
 
                 <div className="space-y-3">
                     {
-                        songs.map(song => (
+                        songs.slice(0, 3).map(song => (
                             <RecentlyPlayed title={song.title} artist={song.artist} album={song.album} cover={song.image} length={song.length} />
                         ))
                     }

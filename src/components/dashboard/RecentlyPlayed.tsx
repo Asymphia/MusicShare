@@ -13,7 +13,8 @@ const RecentlyPlayed = ({title, artist, album, cover, length}: RecentlyPlayedPro
     return (
         <div className="p-[1px] h-[62px] relative rounded-2xl gradient-border">
             <img src={cover} className="h-[60px] w-[80px] absolute top-[1px] left-[1px] object-cover cover-mask-gradient rounded-[9px] z-20" />
-            <Overlay offset={1} radius={9} isTransparent={false} />
+            <Overlay offset={1} radius={9} isTransparent={false} className="!bg-[linear-gradient(127deg,#242424_0%,#353535_60%)]" />
+            <Overlay offset={1} radius={9} isTransparent={true} className="!h-[60px] !w-[80px] !bg-[linear-gradient(110deg,#ffffff_0%,#ffffff00_60%)]" />
 
             <div className="relative z-30 ml-[90px] mr-6 h-full flex justify-between items-center">
                 <div className="w-fit">
