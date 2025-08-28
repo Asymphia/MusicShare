@@ -1,6 +1,6 @@
-import {useAppSelector} from "../app/hooks.ts"
+import { useAppSelector } from "../app/hooks.ts"
 import Loader from "../components/ui/Loader.tsx"
-import {Navigate, Outlet} from "react-router-dom"
+import { Navigate, Outlet } from "react-router-dom"
 
 interface RedirectedRouteProps {
     redirectTo: string

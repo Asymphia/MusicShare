@@ -2,13 +2,13 @@ import AuthButton from "../components/auth/AuthButton.tsx"
 import AuthHeader from "../components/auth/AuthHeader.tsx"
 import spotify from "../assets/icons/spotify.svg"
 import { useRef, useLayoutEffect } from 'react'
-
 import { gsap } from 'gsap'
 import { SplitText } from "gsap/SplitText"
-import {buildAuthUrl, createCodeChallenge, createCodeVerifier} from "../lib/oath.ts"
+import { buildAuthUrl, createCodeChallenge, createCodeVerifier } from "../lib/oauth.ts"
+import { useAppSelector } from "../app/hooks.ts"
 
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID
-const REDIRECT_URI = (import.meta.env.VITE_SPOTIFY_REDIRECT_URI as string) || `${window.location.origin}/auth/callback`
+const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI as string
 
 const Auth = () => {
     const headerRef = useRef<HTMLSpanElement>(null)
@@ -66,6 +66,7 @@ const Auth = () => {
         const codeChallenge = await createCodeChallenge(codeVerifier)
 
         sessionStorage.setItem("pkce_code_verifier", codeVerifier)
+        sessionStorage.setItem("pkce_code_challenge", codeChallenge)
 
         const authUrl = buildAuthUrl({
             clientId: CLIENT_ID,
@@ -76,6 +77,8 @@ const Auth = () => {
 
         window.location.assign(authUrl)
     }
+
+    const { status } = useAppSelector(s => s.auth)
 
     return (
         <div className="w-screen h-screen bg-bg-primary flex justify-center items-center flex-col space-y-8 md:space-y-10 xl:space-y-16">

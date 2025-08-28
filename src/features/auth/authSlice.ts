@@ -1,5 +1,5 @@
-import {createAsyncThunk, createSlice, type PayloadAction} from "@reduxjs/toolkit"
-import {type TokenResponse} from "./types.ts"
+import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit"
+import { type TokenResponse } from "./types.ts"
 import * as tokenApi from "../../api/tokenApi.ts"
 
 interface AuthState {
@@ -16,7 +16,7 @@ const loadTokenFromStorage = (): TokenResponse | null => {
 
         if(parsed.expiresAt) return parsed
 
-        if(parsed.expiresAt && parsed.savedAt) {
+        if(parsed.savedAt && parsed.expiresIn) {
             const savedAt = new Date(parsed.savedAt).getTime()
             const expiresAt = new Date(savedAt + parsed.expiresIn * 1000).toISOString()
             return { ...parsed, expiresAt }
@@ -52,7 +52,8 @@ const initialState: AuthState = {
 }
 
 export const saveTokenToApi = createAsyncThunk("auth/saveTokenToApi", async (token: TokenResponse) => {
-    return await tokenApi.postToken(token)
+    await tokenApi.postToken(token)
+    return token
 })
 
 export const loginWithSpotify = createAsyncThunk("auth/loginWithSpotify", async () =>{
@@ -63,7 +64,7 @@ export const checkTokenValid = createAsyncThunk("auth/checkTokenValid", async ()
     return await tokenApi.isTokenValid()
 })
 
-export const logout = createAsyncThunk("auth/login", async (_, { dispatch }) => {
+export const logout = createAsyncThunk("auth/logout", async (_, { dispatch }) => {
     await tokenApi.deleteToken()
     dispatch(authSlice.actions.setUnauthenticated())
 })
@@ -97,6 +98,11 @@ const authSlice = createSlice({
             .addCase(checkTokenValid.fulfilled, (state, action) => {
                 state.status = action.payload ? "authenticated" : "unauthenticated"
                 if(!action.payload) state.token = null
+            })
+            .addCase(saveTokenToApi.fulfilled, (state, action: PayloadAction<TokenResponse>) => {
+                state.token = action.payload
+                state.status = "authenticated"
+                localStorage.setItem("auth_token", JSON.stringify(action.payload))
             })
     }
 })

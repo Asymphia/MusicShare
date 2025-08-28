@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAppDispatch } from "../app/hooks"
 import { saveTokenToApi } from "../features/auth/authSlice"
-import * as tokenApi from "../api/tokenApi"
 import type { TokenResponse } from "../features/auth/types"
+import {createCodeChallenge} from "../lib/oauth.ts"
 
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID
-const REDIRECT_URI =
-    (import.meta.env.VITE_SPOTIFY_REDIRECT_URI as string) ||
-    `${window.location.origin}/auth/callback`
+const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI as string
 
 const SpotifyCallback: React.FC = () => {
     const [error, setError] = useState<string | null>(null)
@@ -16,9 +14,11 @@ const SpotifyCallback: React.FC = () => {
 
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
+    const didRunRef = useRef(false)
 
     useEffect(() => {
-        let mounted = true
+        if(didRunRef.current) return
+        didRunRef.current = true
 
         ;(async () => {
             try {
@@ -31,6 +31,15 @@ const SpotifyCallback: React.FC = () => {
 
                 const codeVerifier = sessionStorage.getItem("pkce_code_verifier")
                 if (!codeVerifier) throw new Error("PKCE code verifier missing from sessionStorage")
+
+                const savedChallenge = sessionStorage.getItem("pkce_code_challenge")
+                if (!savedChallenge) throw new Error("PKCE code challenge missing from sessionStorage")
+
+                const recomputed = await createCodeChallenge(codeVerifier)
+
+                if(savedChallenge && recomputed !== savedChallenge) {
+                    throw new Error("PKCE mismatch.")
+                }
 
                 const body = new URLSearchParams({
                     grant_type: "authorization_code",
@@ -64,27 +73,23 @@ const SpotifyCallback: React.FC = () => {
                     hasRefreshToken: Boolean(data.refresh_token)
                 }
 
-                await tokenApi.postToken(token)
-
                 await dispatch(saveTokenToApi(token))
 
                 sessionStorage.removeItem("pkce_code_verifier")
+                sessionStorage.removeItem("pkce_code_challenge")
 
-                if (!mounted) return
+                console.log("SpotifyCallback: navigation to /")
                 setLoading(false)
 
                 navigate("/", { replace: true })
             } catch (e: any) {
                 console.error("SpotifyCallback error:", e)
-                if (!mounted) return
+                sessionStorage.removeItem("pkce_code_verifier")
+                sessionStorage.removeItem("pkce_code_challenge")
                 setError(e?.message || String(e))
                 setLoading(false)
             }
         })()
-
-        return () => {
-            mounted = false
-        }
     }, [dispatch, navigate])
 
     if (loading) {
