@@ -44,11 +44,19 @@ const isExpired = (token: TokenResponse | null) => {
     return true
 }
 
+const normalizeToken = (token: TokenResponse): TokenResponse => {
+    if(token.expiresAt) return token
+    if(token.expiresIn) {
+        return { ...token, expiresAt: new Date(Date.now() + token.expiresIn * 1000).toISOString() }
+    }
+    return token
+}
+
 const tokenFromStorage = loadTokenFromStorage()
 
 const initialState: AuthState = {
     token: tokenFromStorage && !isExpired(tokenFromStorage) ? tokenFromStorage : null,
-    status: tokenFromStorage && !isExpired(tokenFromStorage) ? "authenticated" : "unauthenticated"
+    status: tokenFromStorage && !isExpired(tokenFromStorage) ? "authenticated" : "idle" // tu było unauthincated
 }
 
 export const saveTokenToApi = createAsyncThunk("auth/saveTokenToApi", async (token: TokenResponse) => {
@@ -69,6 +77,51 @@ export const logout = createAsyncThunk("auth/logout", async (_, { dispatch }) =>
     dispatch(authSlice.actions.setUnauthenticated())
 })
 
+export const initAuth = createAsyncThunk("auth/initAuth", async () => {
+    try {
+        const token = await tokenApi.getToken()
+        return token as TokenResponse
+    } catch (err) {
+        return null as unknown as TokenResponse
+    }
+})
+
+export const refreshToken = createAsyncThunk("auth/refreshToken", async (_, { getState, rejectWithValue }) => {
+    const state = getState() as any
+    const current: TokenResponse | null = state.auth?.token ?? null
+
+    if(!current || !current.refreshToken) {
+        return rejectWithValue("No refresh token available")
+    }
+
+    try {
+        const resp = await tokenApi.refreshAccessToken(current.refreshToken)
+
+        const newToken: TokenResponse = {
+            accessToken: resp.access_token,
+            refreshToken: resp.refresh_token ?? current.refreshToken,
+            expiresIn: resp.expires_in,
+            tokenType: resp.token_type,
+            scope: resp.scope,
+            hasRefreshToken: Boolean(resp.refresh_token ?? current.refreshToken)
+        }
+
+        const normalized = normalizeToken(newToken)
+
+        await tokenApi.putToken({
+            accessToken: normalized.accessToken,
+            expiresIn: normalized.expiresIn,
+            state: normalized.state ?? "",
+            scope: normalized.scope ?? "",
+            refreshToken: normalized.refreshToken ?? ""
+        })
+
+        return normalized
+    } catch (err: any) {
+        return rejectWithValue(err?.message ?? String(err))
+    }
+})
+
 const authSlice = createSlice({
     name: "auth",
     initialState,
@@ -85,7 +138,8 @@ const authSlice = createSlice({
                 state.status = "loading"
             })
             .addCase(loginWithSpotify.fulfilled, (state, action: PayloadAction<TokenResponse>) => {
-                state.token = action.payload
+                const normalized = normalizeToken(action.payload)
+                state.token = normalized
                 state.status = "authenticated"
                 localStorage.setItem("auth_token", JSON.stringify(action.payload))
             })
@@ -100,9 +154,46 @@ const authSlice = createSlice({
                 if(!action.payload) state.token = null
             })
             .addCase(saveTokenToApi.fulfilled, (state, action: PayloadAction<TokenResponse>) => {
-                state.token = action.payload
+                const normalized = normalizeToken(action.payload)
+                state.token = normalized
                 state.status = "authenticated"
                 localStorage.setItem("auth_token", JSON.stringify(action.payload))
+            })
+            .addCase(initAuth.pending, state => {
+                state.status = "loading"
+            })
+            .addCase(initAuth.fulfilled, (state, action: PayloadAction<TokenResponse | null>) => {
+                const token = action.payload as TokenResponse | null
+                if(token && !isExpired(token)) {
+                    const normalized = normalizeToken(token)
+                    state.token = normalized
+                    state.status = "authenticated"
+                    localStorage.setItem("auth_token", JSON.stringify(normalized))
+                } else {
+                    state.token = null
+                    state.status = "unauthenticated"
+                    localStorage.removeItem("auth_token")
+                }
+            })
+            .addCase(initAuth.rejected, state => {
+                state.token = null
+                state.status = "unauthenticated"
+                localStorage.removeItem("auth_token")
+            })
+            .addCase(refreshToken.pending, state => {
+                state.status = "loading"
+            })
+            .addCase(refreshToken.fulfilled, (state, action: PayloadAction<TokenResponse>) => {
+                const normalized = normalizeToken(action.payload)
+                state.token = normalized
+                state.status = "authenticated"
+                localStorage.setItem("auth_token", JSON.stringify(normalized))
+            })
+            .addCase(refreshToken.rejected, (state, action) => {
+                console.error("RefreshToken failed: ", action.payload ?? action.payload)
+                state.token = null
+                state.status = "unauthenticated"
+                localStorage.removeItem("auth_token")
             })
     }
 })

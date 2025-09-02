@@ -1,4 +1,7 @@
 import { Route, Routes } from "react-router-dom"
+import {useAppDispatch, useAppSelector} from "./app/hooks.ts"
+import {useEffect, useRef} from "react"
+import {initAuth, refreshToken} from "./features/auth/authSlice.ts"
 
 /* Layouts */
 import MainLayout from "./layouts/MainLayout.jsx"
@@ -13,6 +16,44 @@ import ProtectedRoute from "./routes/ProtectedRoute.tsx"
 import SpotifyCallback from "./pages/SpotifyCallback.tsx"
 
 const App = () => {
+    const dispatch = useAppDispatch()
+    const token = useAppSelector(s => s.auth.token)
+    const status = useAppSelector(s => s.auth.status)
+    const timerRef = useRef<number | null>(null)
+
+    useEffect(() => {
+        dispatch(initAuth())
+    }, [])
+
+    useEffect(() => {
+        if(timerRef.current) {
+            clearTimeout(timerRef.current)
+            timerRef.current = null
+        }
+
+        if(!token || status !== "authenticated" || !token.expiresAt) return
+
+        const bufferSeconds = 60
+        const expiresAtMs = new Date(token.expiresAt).getTime()
+        let msUntilRefresh = expiresAtMs - Date.now() - bufferSeconds * 1000
+
+        if(msUntilRefresh <= 0) {
+            dispatch(refreshToken())
+            return
+        }
+
+        timerRef.current = window.setTimeout(() => {
+            dispatch(refreshToken())
+        }, msUntilRefresh)
+
+        return () => {
+            if(timerRef.current) {
+                clearTimeout(timerRef.current)
+                timerRef.current = null
+            }
+        }
+    }, [token, status, dispatch])
+
     return (
         <Routes>
             <Route path="/auth/callback" element={<SpotifyCallback />} />

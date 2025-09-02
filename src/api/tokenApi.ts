@@ -1,6 +1,8 @@
 import { type TokenResponse } from "../features/auth/types.ts"
 
 const API_BASE = "/api/Token"
+const SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
+const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID
 
 export async function postToken(token: TokenResponse): Promise<TokenResponse> {
     const res = await fetch(API_BASE, {
@@ -28,6 +30,21 @@ export async function getToken(): Promise<TokenResponse> {
     return res.json()
 }
 
+export async function putToken(token: Partial<TokenResponse>): Promise<TokenResponse> {
+    const res = await fetch(API_BASE, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+        },
+        body: JSON.stringify(token)
+    })
+
+    if(!res.ok) throw new Error("Failed to update token in database")
+
+    return res.json()
+}
+
 export async function isTokenValid(): Promise<boolean> {
     const res = await fetch(`${API_BASE}/isTokenValid`)
 
@@ -42,4 +59,25 @@ export async function deleteToken(): Promise<void> {
     const res = await fetch(API_BASE, { method: "DELETE" })
 
     if(!res.ok) throw new Error("Failed to delete token")
+}
+
+export async function refreshAccessToken(refreshToken: string): Promise<any>{
+    const body = new URLSearchParams({
+        grant_type: "refresh_token",
+        refresh_token: refreshToken,
+        client_id: CLIENT_ID || ""
+    })
+
+    const res = await fetch(SPOTIFY_TOKEN_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: body.toString()
+    })
+
+    if(!res.ok) {
+        const text = await res.text().catch(() => "")
+        throw new Error(`Failed to refresh Spotify token: ${res.status} ${text}`)
+    }
+
+    return res.json()
 }
