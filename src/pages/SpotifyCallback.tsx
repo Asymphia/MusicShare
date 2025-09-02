@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom"
 import { useAppDispatch } from "../app/hooks"
 import { saveTokenToApi } from "../features/auth/authSlice"
 import type { TokenResponse } from "../features/auth/types"
-import {createCodeChallenge} from "../lib/oauth.ts"
+import { createCodeChallenge } from "../lib/oauth.ts"
+import Loader from "../components/ui/Loader.tsx"
+import bug from "../assets/icons/bug.svg"
+import FeaturedButton from "../components/ui/FeaturedButton.tsx";
 
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID
 const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI as string
@@ -92,40 +95,41 @@ const SpotifyCallback: React.FC = () => {
         })()
     }, [dispatch, navigate])
 
+    const [dots, setDots] = useState(1)
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setDots((prev) => (prev === 3 ? 1 : prev + 1))
+        }, 500)
+
+        return () => clearInterval(interval)
+    }, [])
+
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center p-6">
-                <div>
-                    <p className="text-center">Completing sign-in with Spotify…</p>
-                </div>
+            <div className="min-h-screen flex flex-col items-center justify-center bg-bg-primary">
+                <Loader />
+                <p className="text-center font-text text-primary text-s mt-3">
+                    Completing sign-in with Spotify{".".repeat(dots)}
+                </p>
             </div>
         )
     }
 
     if (error) {
         return (
-            <div className="min-h-screen flex items-center justify-center p-6">
-                <div className="max-w-lg w-full bg-white/5 p-6 rounded-md shadow-sm">
-                    <h2 className="text-lg font-semibold mb-2">Authentication error</h2>
-                    <p className="mb-4 break-words">{error}</p>
-                    <div className="flex gap-2">
-                        <button
-                            className="px-4 py-2 rounded bg-primary text-white"
-                            onClick={() => {
-                                navigate("/login")
-                            }}
-                        >
-                            Try again
-                        </button>
-                        <button
-                            className="px-4 py-2 rounded border"
-                            onClick={() => {
-                                sessionStorage.removeItem("pkce_code_verifier")
-                                navigate("/", { replace: true })
-                            }}
-                        >
-                            Cancel
-                        </button>
+            <div className="min-h-screen flex flex-col items-center justify-center bg-bg-primary">
+                <div className="w-fit max-w-1/3 bg-bg-secondary rounded-2xl p-8">
+                    <img src={ bug } className="w-22 mx-auto mb-8" />
+                    <h2 className="mb-4 text-center">
+                        An error ocured during auth proccess
+                    </h2>
+                    <p className="text-primary-60 font-text text-s">
+                        { error }
+                    </p>
+                    <div className="grid grid-cols-2 gap-6 mt-8">
+                        <FeaturedButton text="Try again" className="!block text-center" onClick={() => navigate("/login")} />
+                        <FeaturedButton text="Cancel" className="!block text-center" onClick={() => { sessionStorage.removeItem("pkce_code_verifier"); navigate("/", { replace: true }) }} />
                     </div>
                 </div>
             </div>

@@ -1,13 +1,16 @@
 import { type MouseEventHandler, useRef } from "react"
 import { gsap } from "gsap"
 import Icon, { type IconName } from "./Icon.tsx"
+import clsx from "clsx"
 
 interface FeaturedButtonProps {
     text: string,
-    icon: IconName
+    icon?: IconName
+    onClick?: () => void
+    className?: string
 }
 
-const FeaturedButton = ({ text, icon }: FeaturedButtonProps) => {
+const FeaturedButton = ({ text, icon, onClick, className }: FeaturedButtonProps) => {
     const btnRef = useRef<HTMLButtonElement | null>(null)
 
     const handleMouseEnter = () => {
@@ -67,10 +70,13 @@ const FeaturedButton = ({ text, icon }: FeaturedButtonProps) => {
             onMouseMove={handleMouseMove}
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
-            className="px-12 py-3 text-primary rounded-full font-text text-s flex items-center gap-3 cursor-pointer"
+            onClick={onClick}
+            className={clsx("px-12 py-3 text-primary rounded-full font-text text-s flex items-center gap-3 cursor-pointer", className)}
             style={{ background: "radial-gradient(circle at 0% 0%, #D9D9D999, #D9D9D999)" }}
         >
-            <Icon name={icon} className="fill-primary w-3 h-3" />
+            {
+                icon && <Icon name={icon} className="fill-primary w-3 h-3" />
+            }
             { text }
         </button>
     )
