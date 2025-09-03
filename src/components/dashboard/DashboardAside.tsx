@@ -5,11 +5,13 @@ import GenresBlock from "../ui/GenresBlock.tsx"
 import EntityBlock from "../ui/EntityBlock.tsx"
 import RecentlyPlayed from "./RecentlyPlayed.tsx"
 import SeeAllButton from "../ui/SeeAllButton.tsx"
-import {useAppSelector} from "../../app/hooks.ts";
-import {selectPlaylists, selectPlaylistsStatus} from "../../features/playlists/playlistsSlice.ts";
-import Loader from "../ui/Loader.tsx";
+import { useAppDispatch, useAppSelector } from "../../app/hooks.ts"
+import { fetchPlaylists, selectPlaylists, selectPlaylistsStatus } from "../../features/playlists/playlistsSlice.ts"
+import Loader from "../ui/Loader.tsx"
 import bug from "../../assets/icons/bug.svg"
 import albumCoverPlaceholder from "../../assets/placeholders/album-cover-placeholder.png"
+import FeaturedButton from "../ui/FeaturedButton.tsx"
+import { useCallback } from "react"
 
 const albums = [
     { id: 1, image: photo, title: "Skeleta", artist: "Ghost", duration: 15, songAmount: 10 },
@@ -40,8 +42,13 @@ const genres = [
 ]
 
 const DashboardAside = () => {
+    const dispatch = useAppDispatch()
     const playlists = useAppSelector(selectPlaylists)
     const playlistsStatus = useAppSelector(selectPlaylistsStatus)
+
+    const handleRetry = useCallback(() => {
+        dispatch(fetchPlaylists())
+    }, [dispatch])
 
     return (
         <div className="space-y-14">
@@ -137,9 +144,13 @@ const DashboardAside = () => {
 
                     {
                         playlistsStatus === "failed" && (
-                            <div className="col-span-2 font-text text-primary-60 text-xs flex flex-nowrap items-center gap-3">
-                                <img src={bug} className="w-6 " />
-                                Failed to load playlists :(
+                            <div className="col-span-2 font-text text-primary-60 text-xs ">
+                                <div className="flex flex-nowrap items-center gap-3 mb-3">
+                                    <img src={bug} className="w-6 " />
+                                    Failed to load playlists :(
+                                </div>
+
+                                <FeaturedButton text="Retry" className="!py-2" onClick={handleRetry} />
                             </div>
                         )
                     }
