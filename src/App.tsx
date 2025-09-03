@@ -16,6 +16,7 @@ import Create from "./pages/Create.jsx"
 import Auth from "./pages/Auth.jsx"
 import ProtectedRoute from "./routes/ProtectedRoute.tsx"
 import SpotifyCallback from "./pages/SpotifyCallback.tsx"
+import {fetchListeningHistory} from "./features/listeningHistory/listeningHistorySlice.ts";
 
 const App = () => {
     const dispatch = useAppDispatch()
@@ -60,6 +61,7 @@ const App = () => {
         if(status === "authenticated") {
             dispatch(fetchPlaylists())
             dispatch(fetchUser())
+            dispatch(fetchListeningHistory(3))
         }
     }, [status, dispatch])
 

@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit"
 import authReducer from "../features/auth/authSlice.ts"
 import playlistsReducer from "../features/playlists/playlistsSlice.ts"
 import userReducer from "../features/user/userSlice.ts"
+import listeningHistoryReducer from "../features/listeningHistory/listeningHistorySlice.ts"
 
 export const store = configureStore({
     reducer: {
         auth: authReducer,
         playlists: playlistsReducer,
-        user: userReducer
+        user: userReducer,
+        listeningHistory: listeningHistoryReducer
     }
 })
 

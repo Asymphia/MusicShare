@@ -12,6 +12,10 @@ import bug from "../../assets/icons/bug.svg"
 import albumCoverPlaceholder from "../../assets/placeholders/album-cover-placeholder.png"
 import FeaturedButton from "../ui/FeaturedButton.tsx"
 import { useCallback } from "react"
+import {
+    fetchListeningHistory, selectListeningHistoryItems,
+    selectListeningHistoryStatus
+} from "../../features/listeningHistory/listeningHistorySlice.ts"
 
 const albums = [
     { id: 1, image: photo, title: "Skeleta", artist: "Ghost", duration: 15, songAmount: 10 },
@@ -43,11 +47,19 @@ const genres = [
 
 const DashboardAside = () => {
     const dispatch = useAppDispatch()
+
     const playlists = useAppSelector(selectPlaylists)
     const playlistsStatus = useAppSelector(selectPlaylistsStatus)
 
-    const handleRetry = useCallback(() => {
+    const historyItems = useAppSelector(selectListeningHistoryItems)
+    const historyStatus = useAppSelector(selectListeningHistoryStatus)
+
+    const handleRetryPlaylists = useCallback(() => {
         dispatch(fetchPlaylists())
+    }, [dispatch])
+
+    const handleRetryHistory = useCallback(() => {
+        dispatch(fetchListeningHistory(3))
     }, [dispatch])
 
     return (
@@ -115,9 +127,39 @@ const DashboardAside = () => {
                 <SectionHeader title="Recently played" as="h3" />
 
                 <div className="space-y-3">
+
                     {
-                        songs.slice(0, 3).map(song => (
-                            <RecentlyPlayed title={song.title} artist={song.artist} album={song.album} cover={song.image} length={song.length} />
+                        historyStatus === "loading" && (
+                            <div className="col-span-2 flex items-center justify-center">
+                                <Loader size={48} stroke={4} />
+                            </div>
+                        )
+                    }
+
+                    {
+                        historyStatus === "failed" && (
+                            <div className="font-text text-primary-60 text-xs ">
+                                <div className="flex flex-nowrap items-center gap-3 mb-3">
+                                    <img src={bug} className="w-6" alt="error" />
+                                    Failed to load history :(
+                                </div>
+
+                                <FeaturedButton text="Retry" className="!py-2" onClick={handleRetryHistory}/>
+                            </div>
+                        )
+                    }
+
+                    {
+                        historyStatus === "succeeded" && historyItems.length === 0 && (
+                            <div className="font-text text-primary-60 text-xs">
+                                No recently played tracks.
+                            </div>
+                        )
+                    }
+
+                    {
+                        historyStatus === "succeeded" && historyItems.map(item => (
+                            <RecentlyPlayed key={item.id} title={item.songShort?.title ?? "Unknown"} artist={item.playlistShort?.name ?? "—"} album={item.playlistShort?.name ?? "—"} cover={item.songShort?.coverImageUrl ?? photo} length={ item.songShort?.songLengthInSeconds ? `${Math.floor((item.songShort.songLengthInSeconds ?? 0) / 60)}:${String((item.songShort.songLengthInSeconds ?? 0) % 60).padStart(2, "0")}` : ""} />
                         ))
                     }
                 </div>
@@ -150,7 +192,7 @@ const DashboardAside = () => {
                                     Failed to load playlists :(
                                 </div>
 
-                                <FeaturedButton text="Retry" className="!py-2" onClick={handleRetry} />
+                                <FeaturedButton text="Retry" className="!py-2" onClick={handleRetryPlaylists} />
                             </div>
                         )
                     }
