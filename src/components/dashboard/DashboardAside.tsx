@@ -5,6 +5,11 @@ import GenresBlock from "../ui/GenresBlock.tsx"
 import EntityBlock from "../ui/EntityBlock.tsx"
 import RecentlyPlayed from "./RecentlyPlayed.tsx"
 import SeeAllButton from "../ui/SeeAllButton.tsx"
+import {useAppSelector} from "../../app/hooks.ts";
+import {selectPlaylists, selectPlaylistsStatus} from "../../features/playlists/playlistsSlice.ts";
+import Loader from "../ui/Loader.tsx";
+import bug from "../../assets/icons/bug.svg"
+import albumCoverPlaceholder from "../../assets/placeholders/album-cover-placeholder.png"
 
 const albums = [
     { id: 1, image: photo, title: "Skeleta", artist: "Ghost", duration: 15, songAmount: 10 },
@@ -34,16 +39,10 @@ const genres = [
     "Black metal", "K-pop", "Hypercore", "Post punk", "R&B", "Country", "New Wave", "J-rock", "Lo-Fi"
 ]
 
-const playlists = [
-    { id: "1", cover: photo, authors: ["Julka", "Kornel"], songsNum: 21, duration: 120, title: "abcd" },
-    { id: "2", cover: photo, authors: ["Julka", "Kornel"], songsNum: 21, duration: 120, title: "abcd" },
-    { id: "3", cover: photo, authors: ["Julka", "Kornel"], songsNum: 21, duration: 120, title: "abcd" },
-    { id: "4", cover: photo, authors: ["Julka", "Kornel"], songsNum: 21, duration: 120, title: "abcd" },
-    { id: "5", cover: photo, authors: ["Julka", "Kornel"], songsNum: 21, duration: 120, title: "abcd" },
-    { id: "6", cover: photo, authors: ["Julka", "Kornel"], songsNum: 21, duration: 120, title: "abcd" },
-]
-
 const DashboardAside = () => {
+    const playlists = useAppSelector(selectPlaylists)
+    const playlistsStatus = useAppSelector(selectPlaylistsStatus)
+
     return (
         <div className="space-y-14">
 
@@ -119,13 +118,30 @@ const DashboardAside = () => {
 
             {/* Playlists */}
             <section>
-                <SectionHeader title="Come back to us" as="h3" right={<SeeAllButton />} />
+                <SectionHeader title="Come back to us" as="h3" right={<SeeAllButton/>}/>
 
                 <div className="grid grid-cols-2 gap-3">
                     {
-                        playlists.map(playlist => (
-                            <ExtendedEntityBlock key={playlist.id} isTop={false} image={playlist.cover} type="playlist" playlist={playlist.title} duration={playlist.duration} creators={playlist.authors} songAmount={playlist.songsNum} />
+                        playlistsStatus === "loading" && (
+                            <div className="col-span-2 flex items-center justify-center">
+                                <Loader size={48} stroke={4} />
+                            </div>
+                        )
+                    }
+
+                    {
+                        playlistsStatus === "succeeded" && playlists.slice(0, 6).map(playlist => (
+                            <ExtendedEntityBlock key={playlist.id} isTop={false} image={playlist.coverImageUrl ?? albumCoverPlaceholder} type="playlist" playlist={playlist.name} duration={0} creators={["Kornel dodaj plz"]} songAmount={0} />
                         ))
+                    }
+
+                    {
+                        playlistsStatus === "failed" && (
+                            <div className="col-span-2 font-text text-primary-60 text-xs flex flex-nowrap items-center gap-3">
+                                <img src={bug} className="w-6 " />
+                                Failed to load playlists :(
+                            </div>
+                        )
                     }
                 </div>
             </section>

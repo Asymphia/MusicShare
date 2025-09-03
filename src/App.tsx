@@ -1,7 +1,8 @@
 import { Route, Routes } from "react-router-dom"
-import {useAppDispatch, useAppSelector} from "./app/hooks.ts"
-import {useEffect, useRef} from "react"
-import {initAuth, refreshToken} from "./features/auth/authSlice.ts"
+import { useAppDispatch, useAppSelector } from "./app/hooks.ts"
+import { useEffect, useRef } from "react"
+import { initAuth, refreshToken } from "./features/auth/authSlice.ts"
+import { fetchPlaylists } from "./features/playlists/playlistsSlice.ts"
 
 /* Layouts */
 import MainLayout from "./layouts/MainLayout.jsx"
@@ -53,6 +54,12 @@ const App = () => {
             }
         }
     }, [token, status, dispatch])
+
+    useEffect(() => {
+        if(status === "authenticated") {
+            dispatch(fetchPlaylists())
+        }
+    }, [status, dispatch])
 
     return (
         <Routes>
