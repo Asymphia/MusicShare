@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "./app/hooks.ts"
 import { useEffect, useRef } from "react"
 import { initAuth, refreshToken } from "./features/auth/authSlice.ts"
 import { fetchPlaylists } from "./features/playlists/playlistsSlice.ts"
+import { fetchUser } from "./features/user/userSlice.ts"
 
 /* Layouts */
 import MainLayout from "./layouts/MainLayout.jsx"
@@ -58,6 +59,7 @@ const App = () => {
     useEffect(() => {
         if(status === "authenticated") {
             dispatch(fetchPlaylists())
+            dispatch(fetchUser())
         }
     }, [status, dispatch])
 
