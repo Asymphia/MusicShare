@@ -42,7 +42,7 @@ const Discover = () => {
                 <SectionHeader title="Discover" as="h1" />
 
                 <p className="font-text text-xs text-primary-60 w-1/2">
-                    Based on your most listened genres, we curate personalized album recommendations that resonate with your unique musical taste. Our algorithm selects songs that complement your favorite styles while introducing you to new artists within your preferred genres. This tailored approach ensures you discover music that truly connects with your listening habits and preferences.
+                    See what we prepared for you &hearts;
                 </p>
             </div>
 

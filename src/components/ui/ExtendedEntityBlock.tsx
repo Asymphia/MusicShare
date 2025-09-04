@@ -16,17 +16,20 @@ interface ExtendedEntityBlockProps {
 
 
 const ExtendedEntityBlock = ({isTop, image, type, song, album, artist, playlist, songAmount, duration, creators}: ExtendedEntityBlockProps) => {
+
+    const displayName = type === "song" ? song : type === "album" ? album : playlist
+
     return (
-        <div className="w-fit flex flex-nowrap space-x-4 items-center">
+        <div className="flex flex-nowrap space-x-4 items-center">
             <div className="w-20 h-20 aspect-square relative p-[1px] bg-[linear-gradient(127deg,rgba(255,255,255,0.5)_1.98%,rgba(255,255,255,0)_38%,rgba(112,121,151,0)_58%,rgba(112,121,151,0.5)_100%)] rounded-2xl">
-                <img src={ image } alt={ type === "song" ? song : type === "album" ? album : playlist } className="rounded-[9px] aspect-square w-full"/>
+                <img src={ image } alt={ displayName } className="rounded-[9px] aspect-square w-full h-full object-cover"/>
                 <Overlay offset={1} radius={9} />
             </div>
 
-            <div>
-                <p className="font-text text-xs text-primary mb-2 whitespace-nowrap overflow-hidden text-ellipsis">
+            <div className="min-w-0 flex-1">
+                <p className="font-text text-xs text-primary mb-2 truncate">
                     { isTop && <Icon name="throne" className="stroke-primary fill-none w-[19px] h-[19px] inline-block mr-2" /> }
-                    { type === "song" ? song : type === "album" ? album : playlist }
+                    { displayName }
                     { song && <Icon name="plus" className="fill-primary-60 w-[19px] h-[19px] inline-block ml-2 hover:fill-primary-80 active:fill-primary cursor-pointer" /> }
                 </p>
 

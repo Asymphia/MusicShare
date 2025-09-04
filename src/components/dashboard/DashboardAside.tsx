@@ -159,7 +159,7 @@ const DashboardAside = () => {
 
                     {
                         historyStatus === "succeeded" && historyItems.map(item => (
-                            <RecentlyPlayed key={item.id} title={item.songShort?.title ?? "Unknown"} artist={item.playlistShort?.name ?? "—"} album={item.playlistShort?.name ?? "—"} cover={item.songShort?.coverImageUrl ?? photo} length={ item.songShort?.songLengthInSeconds ? `${Math.floor((item.songShort.songLengthInSeconds ?? 0) / 60)}:${String((item.songShort.songLengthInSeconds ?? 0) % 60).padStart(2, "0")}` : ""} />
+                            <RecentlyPlayed key={item.id} title={item.songShort?.title ?? "Unknown"} artist={item.playlistShort?.name ?? "—"} album={item.genreShortModelDTO?.map(g => g.name).join(", ") || "unknown"} cover={item.songShort?.coverImageUrl ?? photo} length={ item.songShort?.songLengthInSeconds ? `${Math.floor((item.songShort.songLengthInSeconds ?? 0) / 60)}:${String((item.songShort.songLengthInSeconds ?? 0) % 60).padStart(2, "0")}` : ""} />
                         ))
                     }
                 </div>
