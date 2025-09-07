@@ -76,7 +76,7 @@ const DashboardAside = () => {
                         <div className="space-y-3">
                             {
                                 songs.slice(0, 3).map(song => (
-                                    <ExtendedEntityBlock key={song.id} isTop={true} image={song.image} type="song"
+                                    <ExtendedEntityBlock id={song.id} key={song.id} isTop={true} image={song.image} type="song"
                                                          song={song.title} artist={song.artist} album={song.album} />
                                 ))
                             }
@@ -89,7 +89,7 @@ const DashboardAside = () => {
                         <div className="space-y-3">
                             {
                                 albums.slice(0, 3).map(album => (
-                                    <ExtendedEntityBlock key={album.id} isTop={true} image={album.image} type="album"
+                                    <ExtendedEntityBlock id={album.id} key={album.id} isTop={true} image={album.image} type="album"
                                                          artist={album.artist} album={album.title}  duration={album.duration} songAmount={album.songAmount} />
                                 ))
                             }
@@ -180,7 +180,7 @@ const DashboardAside = () => {
 
                     {
                         playlistsStatus === "succeeded" && playlists.slice(0, 6).map(playlist => (
-                            <ExtendedEntityBlock key={playlist.id} isTop={false} image={playlist.coverImageUrl ?? albumCoverPlaceholder} type="playlist" playlist={playlist.name} duration={0} creators={["Kornel dodaj plz"]} songAmount={0} />
+                            <ExtendedEntityBlock id={playlist.id} key={playlist.id} isTop={false} image={playlist.coverImageUrl ?? albumCoverPlaceholder} type="playlist" playlist={playlist.name} duration={0} creators={["Kornel dodaj plz"]} songAmount={playlist.songs ? playlist.songs.length : 0} />
                         ))
                     }
 

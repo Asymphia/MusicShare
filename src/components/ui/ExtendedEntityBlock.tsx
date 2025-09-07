@@ -1,5 +1,6 @@
 import Overlay from "./Overlay.tsx";
 import Icon from "./Icon.tsx";
+import {Link} from "react-router-dom";
 
 interface ExtendedEntityBlockProps {
     isTop: boolean
@@ -12,15 +13,16 @@ interface ExtendedEntityBlockProps {
     songAmount?: number
     duration?: number
     creators?: string[]
+    id: number
 }
 
 
-const ExtendedEntityBlock = ({isTop, image, type, song, album, artist, playlist, songAmount, duration, creators}: ExtendedEntityBlockProps) => {
+const ExtendedEntityBlock = ({isTop, image, type, song, album, artist, playlist, songAmount, duration, creators, id}: ExtendedEntityBlockProps) => {
 
     const displayName = type === "song" ? song : type === "album" ? album : playlist
 
     return (
-        <div className="flex flex-nowrap space-x-4 items-center">
+        <Link to={type === "playlist" ? `/playlists/${id}` : "/"} className="flex flex-nowrap space-x-4 items-center">
             <div className="w-20 h-20 aspect-square relative p-[1px] bg-[linear-gradient(127deg,rgba(255,255,255,0.5)_1.98%,rgba(255,255,255,0)_38%,rgba(112,121,151,0)_58%,rgba(112,121,151,0.5)_100%)] rounded-2xl">
                 <img src={ image } alt={ displayName } className="rounded-[9px] aspect-square w-full h-full object-cover"/>
                 <Overlay offset={1} radius={9} />
@@ -58,7 +60,7 @@ const ExtendedEntityBlock = ({isTop, image, type, song, album, artist, playlist,
 
                 </p>
             </div>
-        </div>
+        </Link>
     )
 }
 

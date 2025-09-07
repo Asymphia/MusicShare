@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react"
 import { initAuth, refreshToken } from "./features/auth/authSlice.ts"
 import { fetchPlaylists } from "./features/playlists/playlistsSlice.ts"
 import { fetchUser } from "./features/user/userSlice.ts"
+import { fetchListeningHistory } from "./features/listeningHistory/listeningHistorySlice.ts"
 
 /* Layouts */
 import MainLayout from "./layouts/MainLayout.jsx"
@@ -16,7 +17,7 @@ import Create from "./pages/Create.jsx"
 import Auth from "./pages/Auth.jsx"
 import ProtectedRoute from "./routes/ProtectedRoute.tsx"
 import SpotifyCallback from "./pages/SpotifyCallback.tsx"
-import {fetchListeningHistory} from "./features/listeningHistory/listeningHistorySlice.ts";
+import SinglePlaylist from "./pages/SinglePlaylist.tsx"
 
 const App = () => {
     const dispatch = useAppDispatch()
@@ -77,8 +78,13 @@ const App = () => {
                 <Route path="/" element={<MainLayout />} >
                     <Route index element={<Dashboard />} />
                     <Route path="discover" element={<Discover />} />
-                    <Route path="my-playlists" element={<Playlists />} />
+                    <Route path="playlists" element={<Playlists />} />
                     <Route path="create-new" element={<Create />} />
+
+                    <Route path="playlists">
+                        <Route index element={<Playlists />} />
+                        <Route path=":slug" element={<SinglePlaylist />} />
+                    </Route>
                 </Route>
             </Route>
         </Routes>

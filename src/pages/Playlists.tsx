@@ -42,10 +42,10 @@ const Playlists = () => {
                         <ExtendedEntityBlock key={playlist.id} isTop={false}
                                              image={playlist.coverImageUrl ?? albumCoverPlaceholder} type="playlist"
                                              playlist={playlist.name} duration={0} creators={["Kornel dodaj plz"]}
-                                             songAmount={0}/>
+                                             songAmount={playlist.songs ? playlist.songs.length : 0} id={playlist.id} />
                     ))
                 }
-                
+
                 {
                     playlistsStatus === "failed" && (
                         <div className="col-span-2 font-text text-primary-60 text-xs ">
