@@ -18,6 +18,7 @@ import Auth from "./pages/Auth.jsx"
 import ProtectedRoute from "./routes/ProtectedRoute.tsx"
 import SpotifyCallback from "./pages/SpotifyCallback.tsx"
 import SinglePlaylist from "./pages/SinglePlaylist.tsx"
+import SearchResults from "./pages/SearchResults.tsx"
 
 const App = () => {
     const dispatch = useAppDispatch()
@@ -85,6 +86,8 @@ const App = () => {
                         <Route index element={<Playlists />} />
                         <Route path=":slug" element={<SinglePlaylist />} />
                     </Route>
+
+                    <Route path="/search/:query" element={<SearchResults />} />
                 </Route>
             </Route>
         </Routes>
