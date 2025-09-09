@@ -3,13 +3,15 @@ import authReducer from "../features/auth/authSlice.ts"
 import playlistsReducer from "../features/playlists/playlistsSlice.ts"
 import userReducer from "../features/user/userSlice.ts"
 import listeningHistoryReducer from "../features/listeningHistory/listeningHistorySlice.ts"
+import songsReducer from "../features/songs/songsSlice.ts"
 
 export const store = configureStore({
     reducer: {
         auth: authReducer,
         playlists: playlistsReducer,
         user: userReducer,
-        listeningHistory: listeningHistoryReducer
+        listeningHistory: listeningHistoryReducer,
+        songs: songsReducer
     }
 })
 

@@ -13,7 +13,7 @@ interface ExtendedEntityBlockProps {
     songAmount?: number
     duration?: number
     creator?: string
-    id: number
+    id?: number
 }
 
 

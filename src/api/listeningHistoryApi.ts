@@ -41,5 +41,5 @@ export async function getListeningHistory(take: number): Promise<ListeningHistor
         throw new Error(`Failed to fetch listening history: ${res.status} ${res.statusText} - ${text}`)
     }
 
-    return res.json() as Promise<ListeningHistoryItemDto[]>
+    return await res.json() as Promise<ListeningHistoryItemDto[]>
 }

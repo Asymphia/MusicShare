@@ -16,6 +16,7 @@ import {
     fetchListeningHistory, selectListeningHistoryItems,
     selectListeningHistoryStatus
 } from "../../features/listeningHistory/listeningHistorySlice.ts"
+import {fetchTopSongs, selectTopSongs, selectTopSongsStatus} from "../../features/songs/songsSlice.ts";
 
 const albums = [
     { id: 1, image: photo, title: "Skeleta", artist: "Ghost", duration: 15, songAmount: 10 },
@@ -23,14 +24,6 @@ const albums = [
     { id: 3, image: photo, title: "Lo-files", artist: "Bring me the horizon", duration: 15, songAmount: 10 },
     { id: 4, image: photo, title: "Life is killing me", artist: "Type o negative", duration: 15, songAmount: 10 },
     { id: 5, image: photo, title: "Ju Ju", artist: "Siouxsie and the Banshees", duration: 15, songAmount: 10 },
-]
-
-const songs = [
-    { id: 1, image: photo, title: "Satanized", artist: "Ghost", album: "Skeleta", length: "3:14" },
-    { id: 2, image: photo, title: "The Summoning", artist: "Sleep token", album: "Take me back to Eden", length: "3:14" },
-    { id: 3, image: photo, title: "koolaid.xxo", artist: "Bring me the horizon", album: "Lo-files", length: "3:14" },
-    { id: 4, image: photo, title: "I don't wanna be", artist: "Type o negative", album: "Life is killing me", length: "3:14" },
-    { id: 5, image: photo, title: "Arabian Knights", artist: "Siouxsie and the Banshees", album: "Ju Ju", length: "3:14" },
 ]
 
 const artists = [
@@ -54,12 +47,19 @@ const DashboardAside = () => {
     const historyItems = useAppSelector(selectListeningHistoryItems)
     const historyStatus = useAppSelector(selectListeningHistoryStatus)
 
+    const topSongs = useAppSelector(selectTopSongs)
+    const topSongsStatus = useAppSelector(selectTopSongsStatus)
+
     const handleRetryPlaylists = useCallback(() => {
         dispatch(fetchPlaylists())
     }, [dispatch])
 
     const handleRetryHistory = useCallback(() => {
         dispatch(fetchListeningHistory(3))
+    }, [dispatch])
+
+    const handleRetryTopSongs = useCallback(() => {
+        dispatch(fetchTopSongs())
     }, [dispatch])
 
     return (
@@ -75,10 +75,31 @@ const DashboardAside = () => {
 
                         <div className="space-y-3">
                             {
-                                songs.slice(0, 3).map(song => (
-                                    <ExtendedEntityBlock id={song.id} key={song.id} isTop={true} image={song.image} type="song"
-                                                         song={song.title} artist={song.artist} album={song.album} />
+                                topSongsStatus === "succeeded" && topSongs?.songs.map(song => (
+                                    <ExtendedEntityBlock key={song.spotifyId} isTop={true} image={song.coverImageUrl} type="song"
+                                                        song={song.title} artist={song.artist} album={song.album} />
                                 ))
+                            }
+
+                            {
+                                topSongsStatus === "loading" && (
+                                    <div className="col-span-2 flex items-center justify-center">
+                                        <Loader size={48} stroke={4} />
+                                    </div>
+                                )
+                            }
+
+                            {
+                                topSongsStatus === "failed" && (
+                                    <div className="font-text text-primary-60 text-xs ">
+                                        <div className="flex flex-nowrap items-center gap-3 mb-3">
+                                            <img src={bug} className="w-6" alt="error" />
+                                            Failed to load top songs :(
+                                        </div>
+
+                                        <FeaturedButton text="Retry" className="!py-2" onClick={handleRetryTopSongs}/>
+                                    </div>
+                                )
                             }
                         </div>
                     </div>

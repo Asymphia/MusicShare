@@ -18,6 +18,7 @@ import ProtectedRoute from "./routes/ProtectedRoute.tsx"
 import SpotifyCallback from "./pages/SpotifyCallback.tsx"
 import SinglePlaylist from "./pages/SinglePlaylist.tsx"
 import SearchResults from "./pages/SearchResults.tsx"
+import {fetchTopSongs} from "./features/songs/songsSlice.ts";
 
 const App = () => {
     const dispatch = useAppDispatch()
@@ -63,6 +64,7 @@ const App = () => {
             dispatch(fetchPlaylists())
             dispatch(fetchUser())
             dispatch(fetchListeningHistory(3))
+            dispatch(fetchTopSongs())
         }
     }, [status, dispatch])
 
