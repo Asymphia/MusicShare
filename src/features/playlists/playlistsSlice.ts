@@ -34,20 +34,37 @@ export const fetchPlaylists = createAsyncThunk<Playlist[], void, { rejectValue: 
     }
 })
 
-export const fetchPlaylistById = createAsyncThunk<{id: number; detail: playlistApi.PlaylistDto }, number, { rejectValue: {id: number; message: string} }>("playlists/fetchById", async(id, thunkAPI) => {
+export const fetchPlaylistById = createAsyncThunk<{ id: number; detail: playlistApi.PlaylistDto }, number, { state: RootState; rejectValue: { id: number; message: string } }>("playlists/fetchById", async (id, thunkAPI) => {
     try {
-        const state = thunkAPI.getState()
-        const existing = state.playlists.items.find(p => p.id === id)
-        const spotifyId = existing?.spotifyId
+        const details = await playlistApi.getPlaylistById(id)
 
-        if(!spotifyId) {
+        if (!details) {
+            return thunkAPI.rejectWithValue({ id, message: "Playlist not found" })
+        }
+
+        const hasSongs = (details.songs?.length ?? 0) > 0
+        if (hasSongs) {
+            return { id, detail: details }
+        }
+
+        const state = thunkAPI.getState()
+        const existing = state.playlists.items.find((p) => p.id === id)
+        const spotifyId = details.spotifyId ?? existing?.spotifyId
+
+        if (!spotifyId) {
             return thunkAPI.rejectWithValue({ id, message: "Missing spotifyId for playlist" })
         }
 
-        await playlistApi.triggerFetchSongsForSpotifyPlaylist(spotifyId)
+        const triggeredDetail = await playlistApi.triggerFetchSongsForSpotifyPlaylist(spotifyId)
+        console.log(triggeredDetail)
 
-        const detail = await playlistApi.getPlaylistById(id)
-        return { id, detail }
+        const refreshed = await playlistApi.getPlaylistById(triggeredDetail.id)
+
+        if (!refreshed) {
+            return thunkAPI.rejectWithValue({ id, message: "Playlist not found after triggering song fetch" })
+        }
+
+        return { id, detail: refreshed }
     } catch (err: any) {
         return thunkAPI.rejectWithValue({ id, message: err?.message ?? String(err) })
     }
@@ -95,7 +112,7 @@ const playlistsSlice = createSlice({
                     state.items[idx].songStatus = "loading"
                     state.items[idx].songsError = null
                 } else {
-                    state.items.push({ id, spotifyId: "", name: "", songs: undefined, songStatus: "loading", songsError: null })
+                    state.items.push({ id, spotifyId: "", name: "", ownerName: "", songs: undefined, songStatus: "loading", songsError: null })
                 }
             })
             .addCase(fetchPlaylistById.fulfilled, (state, action) => {
@@ -105,6 +122,7 @@ const playlistsSlice = createSlice({
                     id: detail.id,
                     spotifyId: detail.spotifyId,
                     name: detail.name,
+                    ownerName: detail.ownerName,
                     description: detail.description ?? null,
                     coverUrl: detail.coverImageUrl ?? null,
                     songs: detail.songs ?? [],
@@ -128,7 +146,7 @@ const playlistsSlice = createSlice({
                     state.items[idx].songStatus = "failed"
                     state.items[idx].songsError = msg
                 } else {
-                    state.items.push({ id, spotifyId: "", name: "", songs: undefined, songStatus: "failed", songsError: msg })
+                    state.items.push({ id, spotifyId: "", name: "", ownerName: "", songs: undefined, songStatus: "failed", songsError: msg })
                 }
             })
     }

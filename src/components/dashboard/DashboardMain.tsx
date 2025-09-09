@@ -2,7 +2,6 @@ import SectionHeader from "../ui/SectionHeader.tsx"
 import FeaturedSliderButtons from "./FeaturedSliderButtons.tsx"
 import Featured from "./Featured.tsx"
 import photo from "../../assets/placeholders/placeholder-image.jpg"
-import SeeAllButton from "../ui/SeeAllButton.tsx"
 import EntityBlock from "../ui/EntityBlock.tsx"
 
 const albums = [
@@ -40,7 +39,7 @@ const DashboardMain = () => {
 
             {/* Albums Recommendations */}
             <section>
-                <SectionHeader title="You might also like..." as="h2" right={<SeeAllButton/>}/>
+                <SectionHeader title="You might also like..." as="h2" />
                 <div className="w-full grid grid-cols-5 gap-3">
                     {
                         albums.map(album => (
@@ -53,7 +52,7 @@ const DashboardMain = () => {
 
             {/* Songs Recommendations */}
             <section>
-                <SectionHeader title="Song selected for you..." as="h2" right={<SeeAllButton/>}/>
+                <SectionHeader title="Song selected for you..." as="h2" />
                 <div className="w-full grid grid-cols-5 gap-3">
                     {
                         songs.map(song => (
@@ -66,7 +65,7 @@ const DashboardMain = () => {
 
             {/* Artists Recommendations */}
             <section>
-                <SectionHeader title="Artists similar to your favs..." as="h2" right={<SeeAllButton/>}/>
+                <SectionHeader title="Artists similar to your favs..." as="h2" />
                 <div className="w-full grid grid-cols-5 gap-3">
                     {
                         artists.map(artist => (

@@ -5,7 +5,6 @@ import User from "./User.tsx"
 const Nav = () => {
     const navItems = [
         { name: "Main", link: "/" },
-        { name: "Discover", link: "/discover" },
         { name: "Playlists", link: "/playlists" },
         { name: "Create new", link: "/create-new" },
     ]

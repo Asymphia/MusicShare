@@ -10,11 +10,10 @@ import { fetchListeningHistory } from "./features/listeningHistory/listeningHist
 import MainLayout from "./layouts/MainLayout.jsx"
 
 /* Pages */
-import Dashboard from "./pages/Dashboard.jsx"
-import Playlists from "./pages/Playlists.jsx"
-import Discover from "./pages/Discover.jsx"
-import Create from "./pages/Create.jsx"
-import Auth from "./pages/Auth.jsx"
+import Dashboard from "./pages/Dashboard.tsx"
+import Playlists from "./pages/Playlists.tsx"
+import Create from "./pages/Create.tsx"
+import Auth from "./pages/Auth.tsx"
 import ProtectedRoute from "./routes/ProtectedRoute.tsx"
 import SpotifyCallback from "./pages/SpotifyCallback.tsx"
 import SinglePlaylist from "./pages/SinglePlaylist.tsx"
@@ -78,7 +77,6 @@ const App = () => {
             <Route element={<ProtectedRoute redirectTo="/login" /> } >
                 <Route path="/" element={<MainLayout />} >
                     <Route index element={<Dashboard />} />
-                    <Route path="discover" element={<Discover />} />
                     <Route path="playlists" element={<Playlists />} />
                     <Route path="create-new" element={<Create />} />
 
