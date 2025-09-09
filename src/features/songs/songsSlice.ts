@@ -1,6 +1,6 @@
 import * as songsApi from "../../api/songsApi"
-import {createAsyncThunk, createSlice, type PayloadAction} from "@reduxjs/toolkit";
-import type {RootState} from "../../app/store.ts";
+import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit"
+import type { RootState } from "../../app/store.ts"
 
 export type TopSongs = songsApi.topSongsDto
 

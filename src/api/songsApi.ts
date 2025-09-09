@@ -1,7 +1,7 @@
 export interface SongDto {
     spotifyId: string
     title: string
-    coverImageUrl: string
+    coverImageUrl?: string
     songLengthInSeconds?: number
     releaseDate?: string
     artist?: string

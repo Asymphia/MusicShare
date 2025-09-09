@@ -5,6 +5,8 @@ import { initAuth, refreshToken } from "./features/auth/authSlice.ts"
 import { fetchPlaylists } from "./features/playlists/playlistsSlice.ts"
 import { fetchUser } from "./features/user/userSlice.ts"
 import { fetchListeningHistory } from "./features/listeningHistory/listeningHistorySlice.ts"
+import { fetchTopSongs } from "./features/songs/songsSlice.ts"
+import { fetchTopArtists } from "./features/artists/artistsSlice.ts"
 
 /* Layouts */
 import MainLayout from "./layouts/MainLayout.jsx"
@@ -18,7 +20,6 @@ import ProtectedRoute from "./routes/ProtectedRoute.tsx"
 import SpotifyCallback from "./pages/SpotifyCallback.tsx"
 import SinglePlaylist from "./pages/SinglePlaylist.tsx"
 import SearchResults from "./pages/SearchResults.tsx"
-import {fetchTopSongs} from "./features/songs/songsSlice.ts";
 
 const App = () => {
     const dispatch = useAppDispatch()
@@ -65,6 +66,7 @@ const App = () => {
             dispatch(fetchUser())
             dispatch(fetchListeningHistory(3))
             dispatch(fetchTopSongs())
+            dispatch(fetchTopArtists())
         }
     }, [status, dispatch])
 

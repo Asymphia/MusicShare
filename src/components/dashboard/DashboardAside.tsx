@@ -16,7 +16,10 @@ import {
     fetchListeningHistory, selectListeningHistoryItems,
     selectListeningHistoryStatus
 } from "../../features/listeningHistory/listeningHistorySlice.ts"
-import {fetchTopSongs, selectTopSongs, selectTopSongsStatus} from "../../features/songs/songsSlice.ts";
+import { fetchTopSongs, selectTopSongs, selectTopSongsStatus } from "../../features/songs/songsSlice.ts"
+import { fetchTopArtists, selectTopArtists, selectTopArtistsStatus } from "../../features/artists/artistsSlice.ts"
+import artistPlaceholder from "../../assets/placeholders/artist-placeholder.png"
+import songPlaceholder from "../../assets/placeholders/song-placeholder.png"
 
 const albums = [
     { id: 1, image: photo, title: "Skeleta", artist: "Ghost", duration: 15, songAmount: 10 },
@@ -24,14 +27,6 @@ const albums = [
     { id: 3, image: photo, title: "Lo-files", artist: "Bring me the horizon", duration: 15, songAmount: 10 },
     { id: 4, image: photo, title: "Life is killing me", artist: "Type o negative", duration: 15, songAmount: 10 },
     { id: 5, image: photo, title: "Ju Ju", artist: "Siouxsie and the Banshees", duration: 15, songAmount: 10 },
-]
-
-const artists = [
-    { id: 1, image: photo, name: "System of Down" },
-    { id: 2, image: photo, name: "Slipknot" },
-    { id: 3, image: photo, name: "Joy Division" },
-    { id: 4, image: photo, name: "Radiohead" },
-    { id: 5, image: photo, name: "Depeche Mode" }
 ]
 
 const genres = [
@@ -50,6 +45,9 @@ const DashboardAside = () => {
     const topSongs = useAppSelector(selectTopSongs)
     const topSongsStatus = useAppSelector(selectTopSongsStatus)
 
+    const topArtists = useAppSelector(selectTopArtists)
+    const topArtistsStatus = useAppSelector(selectTopArtistsStatus)
+
     const handleRetryPlaylists = useCallback(() => {
         dispatch(fetchPlaylists())
     }, [dispatch])
@@ -60,6 +58,10 @@ const DashboardAside = () => {
 
     const handleRetryTopSongs = useCallback(() => {
         dispatch(fetchTopSongs())
+    }, [dispatch])
+
+    const handleRetryTopArtists = useCallback(() => {
+        dispatch(fetchTopArtists())
     }, [dispatch])
 
     return (
@@ -76,7 +78,7 @@ const DashboardAside = () => {
                         <div className="space-y-3">
                             {
                                 topSongsStatus === "succeeded" && topSongs?.songs.map(song => (
-                                    <ExtendedEntityBlock key={song.spotifyId} isTop={true} image={song.coverImageUrl} type="song"
+                                    <ExtendedEntityBlock key={song.spotifyId} isTop={true} image={song.coverImageUrl ?? songPlaceholder} type="song"
                                                         song={song.title} artist={song.artist} album={song.album} />
                                 ))
                             }
@@ -133,11 +135,32 @@ const DashboardAside = () => {
                 <div>
                     <SectionHeader title="Artists" as="h4" className="!mb-2" />
 
-                    <div className="grid grid-cols-5 gap-3">
+                    <div className="grid grid-cols-7 gap-3">
                         {
-                            artists.map(artist => (
-                                <EntityBlock image={artist.image} type="artist" artist={artist.name} key={artist.id} headerAs="h5" />
+                            topArtistsStatus === "succeeded" && topArtists?.map(artist => (
+                                <EntityBlock key={artist.spotifyId} artist={artist.name} image={artist.imageUrl ?? artistPlaceholder} type="artist" headerAs="h5" />
                             ))
+                        }
+
+                        {
+                            topArtistsStatus === "loading" && (
+                                <div className="col-span-2 flex items-center justify-center">
+                                    <Loader size={48} stroke={4} />
+                                </div>
+                            )
+                        }
+
+                        {
+                            topArtistsStatus === "failed" && (
+                                <div className="font-text text-primary-60 text-xs ">
+                                    <div className="flex flex-nowrap items-center gap-3 mb-3">
+                                        <img src={bug} className="w-6" alt="error" />
+                                        Failed to load top artists :(
+                                    </div>
+
+                                    <FeaturedButton text="Retry" className="!py-2" onClick={handleRetryTopArtists}/>
+                                </div>
+                            )
                         }
                     </div>
                 </div>
