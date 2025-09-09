@@ -19,5 +19,5 @@ export async function getTopArtists(take: number): Promise<topArtistsDto[]> {
         throw new Error(`Failed to fetch top artists: ${res.status} ${text}`)
     }
 
-    return res.json() as Promise<topArtistsDto[]>
+    return await res.json() as Promise<topArtistsDto[]>
 }

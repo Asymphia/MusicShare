@@ -20,6 +20,7 @@ import { fetchTopSongs, selectTopSongs, selectTopSongsStatus } from "../../featu
 import { fetchTopArtists, selectTopArtists, selectTopArtistsStatus } from "../../features/artists/artistsSlice.ts"
 import artistPlaceholder from "../../assets/placeholders/artist-placeholder.png"
 import songPlaceholder from "../../assets/placeholders/song-placeholder.png"
+import { fetchTopGenres, selectTopGenres, selectTopGenresStatus } from "../../features/genres/genresSlice.ts"
 
 const albums = [
     { id: 1, image: photo, title: "Skeleta", artist: "Ghost", duration: 15, songAmount: 10 },
@@ -27,10 +28,6 @@ const albums = [
     { id: 3, image: photo, title: "Lo-files", artist: "Bring me the horizon", duration: 15, songAmount: 10 },
     { id: 4, image: photo, title: "Life is killing me", artist: "Type o negative", duration: 15, songAmount: 10 },
     { id: 5, image: photo, title: "Ju Ju", artist: "Siouxsie and the Banshees", duration: 15, songAmount: 10 },
-]
-
-const genres = [
-    "Black metal", "K-pop", "Hypercore", "Post punk", "R&B", "Country", "New Wave", "J-rock", "Lo-Fi"
 ]
 
 const DashboardAside = () => {
@@ -48,6 +45,9 @@ const DashboardAside = () => {
     const topArtists = useAppSelector(selectTopArtists)
     const topArtistsStatus = useAppSelector(selectTopArtistsStatus)
 
+    const topGenres = useAppSelector(selectTopGenres)
+    const topGenresStatus = useAppSelector(selectTopGenresStatus)
+
     const handleRetryPlaylists = useCallback(() => {
         dispatch(fetchPlaylists())
     }, [dispatch])
@@ -62,6 +62,10 @@ const DashboardAside = () => {
 
     const handleRetryTopArtists = useCallback(() => {
         dispatch(fetchTopArtists())
+    }, [dispatch])
+
+    const handleRetryTopGenres = useCallback(() => {
+        dispatch(fetchTopGenres())
     }, [dispatch])
 
     return (
@@ -125,9 +129,30 @@ const DashboardAside = () => {
 
                     <div className="flex flex-wrap gap-3">
                         {
-                            genres.map((genre, index) => (
-                                <GenresBlock key={index} name={genre} isTop={index < 3} />
+                            topGenresStatus === "succeeded" && topGenres?.map((genre, index) => (
+                                <GenresBlock key={genre.id} isTop={index < 3} name={genre.name} />
                             ))
+                        }
+
+                        {
+                            topGenresStatus === "loading" && (
+                                <div className="w-full flex items-center justify-center">
+                                    <Loader size={48} stroke={4} />
+                                </div>
+                            )
+                        }
+
+                        {
+                            topGenresStatus === "failed" && (
+                                <div className="font-text text-primary-60 text-xs ">
+                                    <div className="flex flex-nowrap items-center gap-3 mb-3">
+                                        <img src={bug} className="w-6" alt="error" />
+                                        Failed to load top genres :(
+                                    </div>
+
+                                    <FeaturedButton text="Retry" className="!py-2" onClick={handleRetryTopGenres}/>
+                                </div>
+                            )
                         }
                     </div>
                 </div>

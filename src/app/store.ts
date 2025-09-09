@@ -5,6 +5,7 @@ import userReducer from "../features/user/userSlice.ts"
 import listeningHistoryReducer from "../features/listeningHistory/listeningHistorySlice.ts"
 import songsReducer from "../features/songs/songsSlice.ts"
 import artistsReducer from "../features/artists/artistsSlice.ts"
+import genresReducer from "../features/genres/genresSlice.ts"
 
 export const store = configureStore({
     reducer: {
@@ -13,7 +14,8 @@ export const store = configureStore({
         user: userReducer,
         listeningHistory: listeningHistoryReducer,
         songs: songsReducer,
-        artists: artistsReducer
+        artists: artistsReducer,
+        genres: genresReducer
     }
 })
 

@@ -7,6 +7,7 @@ import { fetchUser } from "./features/user/userSlice.ts"
 import { fetchListeningHistory } from "./features/listeningHistory/listeningHistorySlice.ts"
 import { fetchTopSongs } from "./features/songs/songsSlice.ts"
 import { fetchTopArtists } from "./features/artists/artistsSlice.ts"
+import { fetchTopGenres } from "./features/genres/genresSlice.ts"
 
 /* Layouts */
 import MainLayout from "./layouts/MainLayout.jsx"
@@ -67,6 +68,7 @@ const App = () => {
             dispatch(fetchListeningHistory(3))
             dispatch(fetchTopSongs())
             dispatch(fetchTopArtists())
+            dispatch(fetchTopGenres())
         }
     }, [status, dispatch])
 
