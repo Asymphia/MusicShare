@@ -1,15 +1,17 @@
 import Overlay from "../ui/Overlay.tsx";
 import Icon from "../ui/Icon.tsx";
+import {Link} from "react-router-dom";
 
 interface RecentlyPlayedProps {
     title: string
-    artist: string
-    album: string
+    playlist: string
+    genre: string
     cover: string
     length: string
+    playlistId: number | null
 }
 
-const RecentlyPlayed = ({title, artist, album, cover, length}: RecentlyPlayedProps) => {
+const RecentlyPlayed = ({title, playlist, genre, cover, length, playlistId}: RecentlyPlayedProps) => {
     return (
         <div className="p-[1px] h-[62px] relative rounded-2xl gradient-border">
             <img src={cover} className="h-[60px] w-[80px] absolute top-[1px] left-[1px] object-cover cover-mask-gradient rounded-[9px] z-20" />
@@ -22,7 +24,12 @@ const RecentlyPlayed = ({title, artist, album, cover, length}: RecentlyPlayedPro
                         { title }
                     </p>
                     <p className="text-primary-60 font-text text-xs">
-                        { artist } &#x2022; { album }
+                        {
+                            playlistId ?
+                                <Link className="transition hover:text-primary-80 active:text-primary" to={`/playlists/${playlistId}`}>{ playlist }</Link>
+                                : ( <> { playlist } </> )
+                        }
+                        &nbsp;&#x2022; { genre }
                     </p>
                 </div>
 

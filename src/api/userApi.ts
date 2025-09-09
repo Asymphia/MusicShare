@@ -7,7 +7,7 @@ export interface UserDto {
 const API_BASE = import.meta.env.VITE_API_BASE
 
 export async function getCurrentUser(): Promise<UserDto> {
-    const res = await fetch(`${API_BASE}/api/User`, {
+    const res = await fetch(`${API_BASE}/api/Spotify/userData`, {
         method: "GET",
         headers: {
             Accept: "application/json"
@@ -19,5 +19,5 @@ export async function getCurrentUser(): Promise<UserDto> {
         throw new Error(`Failed to fetch current user: ${res.status} ${res.statusText} - ${text}`)
     }
 
-    return res.json() as Promise<UserDto>
+    return await res.json() as Promise<UserDto>
 }

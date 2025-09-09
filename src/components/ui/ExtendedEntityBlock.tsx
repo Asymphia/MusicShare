@@ -12,12 +12,12 @@ interface ExtendedEntityBlockProps {
     playlist?: string
     songAmount?: number
     duration?: number
-    creators?: string[]
+    creator?: string
     id: number
 }
 
 
-const ExtendedEntityBlock = ({isTop, image, type, song, album, artist, playlist, songAmount, duration, creators, id}: ExtendedEntityBlockProps) => {
+const ExtendedEntityBlock = ({isTop, image, type, song, album, artist, playlist, songAmount, duration, creator, id}: ExtendedEntityBlockProps) => {
 
     const displayName = type === "song" ? song : type === "album" ? album : playlist
 
@@ -36,7 +36,7 @@ const ExtendedEntityBlock = ({isTop, image, type, song, album, artist, playlist,
                 </p>
 
                 <p className="font-text text-xs text-primary-60 mb-1 whitespace-nowrap overflow-hidden text-ellipsis">
-                    by { type === "playlist" ? creators?.join(", ") : artist }
+                    by { type === "playlist" ? creator : artist }
                 </p>
 
                 <p className="font-text text-xs text-primary-60 whitespace-nowrap overflow-hidden text-ellipsis flex flex-nowrap gap-3">

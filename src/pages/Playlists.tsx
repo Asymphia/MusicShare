@@ -41,7 +41,7 @@ const Playlists = () => {
                     playlistsStatus === "succeeded" && playlists.map(playlist => (
                         <ExtendedEntityBlock key={playlist.id} isTop={false}
                                              image={playlist.coverImageUrl ?? albumCoverPlaceholder} type="playlist"
-                                             playlist={playlist.name} duration={0} creators={["Kornel dodaj plz"]}
+                                             playlist={playlist.name} duration={0} creator={playlist.ownerName ?? "Unknown"}
                                              songAmount={playlist.songs ? playlist.songs.length : 0} id={playlist.id} />
                     ))
                 }

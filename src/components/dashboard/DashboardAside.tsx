@@ -159,7 +159,7 @@ const DashboardAside = () => {
 
                     {
                         historyStatus === "succeeded" && historyItems.map(item => (
-                            <RecentlyPlayed key={item.id} title={item.songShort?.title ?? "Unknown"} artist={item.playlistShort?.name ?? "—"} album={item.genreShortModelDTO?.map(g => g.name).join(", ") || "unknown"} cover={item.songShort?.coverImageUrl ?? photo} length={ item.songShort?.songLengthInSeconds ? `${Math.floor((item.songShort.songLengthInSeconds ?? 0) / 60)}:${String((item.songShort.songLengthInSeconds ?? 0) % 60).padStart(2, "0")}` : ""} />
+                            <RecentlyPlayed key={item.id} title={item.songShort?.title ?? "Unknown"} playlistId={item.playlistShort?.id ?? null} playlist={item.playlistShort?.name ?? "—"} genre={item.genreShortModelDTO?.map(g => g.name).join(", ") || "unknown"} cover={item.songShort?.coverImageUrl ?? photo} length={ item.songShort?.songLengthInSeconds ? `${Math.floor((item.songShort.songLengthInSeconds ?? 0) / 60)}:${String((item.songShort.songLengthInSeconds ?? 0) % 60).padStart(2, "0")}` : ""} />
                         ))
                     }
                 </div>
@@ -167,7 +167,7 @@ const DashboardAside = () => {
 
             {/* Playlists */}
             <section>
-                <SectionHeader title="Come back to us" as="h3" right={<SeeAllButton/>}/>
+                <SectionHeader title="Come back to us" as="h3" right={<SeeAllButton link="/playlists" />}/>
 
                 <div className="grid grid-cols-2 gap-3">
                     {
@@ -180,7 +180,7 @@ const DashboardAside = () => {
 
                     {
                         playlistsStatus === "succeeded" && playlists.slice(0, 6).map(playlist => (
-                            <ExtendedEntityBlock id={playlist.id} key={playlist.id} isTop={false} image={playlist.coverImageUrl ?? albumCoverPlaceholder} type="playlist" playlist={playlist.name} duration={0} creators={["Kornel dodaj plz"]} songAmount={playlist.songs ? playlist.songs.length : 0} />
+                            <ExtendedEntityBlock id={playlist.id} key={playlist.id} isTop={false} image={playlist.coverImageUrl ?? albumCoverPlaceholder} type="playlist" playlist={playlist.name} duration={0} creator={playlist.ownerName ?? "Unknown"} songAmount={playlist.songs ? playlist.songs.length : 0} />
                         ))
                     }
 
@@ -188,7 +188,7 @@ const DashboardAside = () => {
                         playlistsStatus === "failed" && (
                             <div className="col-span-2 font-text text-primary-60 text-xs ">
                                 <div className="flex flex-nowrap items-center gap-3 mb-3">
-                                    <img src={bug} className="w-6 " />
+                                    <img src={bug} className="w-6" alt="error" />
                                     Failed to load playlists :(
                                 </div>
 
