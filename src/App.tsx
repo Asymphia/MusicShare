@@ -21,6 +21,7 @@ import ProtectedRoute from "./routes/ProtectedRoute.tsx"
 import SpotifyCallback from "./pages/SpotifyCallback.tsx"
 import SinglePlaylist from "./pages/SinglePlaylist.tsx"
 import SearchResults from "./pages/SearchResults.tsx"
+import NotFound from "./pages/NotFound.tsx"
 
 const App = () => {
     const dispatch = useAppDispatch()
@@ -65,7 +66,7 @@ const App = () => {
         if(status === "authenticated") {
             dispatch(fetchPlaylists())
             dispatch(fetchUser())
-            dispatch(fetchListeningHistory(3))
+            dispatch(fetchListeningHistory(4))
             dispatch(fetchTopSongs())
             dispatch(fetchTopArtists())
             dispatch(fetchTopGenres())
@@ -94,6 +95,8 @@ const App = () => {
                     <Route path="/search/:query" element={<SearchResults />} />
                 </Route>
             </Route>
+
+            <Route path="*" element={<NotFound />} />
         </Routes>
     )
 }

@@ -4,10 +4,9 @@ import { useAppDispatch, useAppSelector } from "../app/hooks.ts"
 import { fetchPlaylistById, selectPlaylistById, selectPlaylistSongsStatus } from "../features/playlists/playlistsSlice.ts"
 import { useEffect } from "react"
 import Loader from "../components/ui/Loader.tsx"
-import bug from "../assets/icons/bug.svg"
-import FeaturedButton from "../components/ui/FeaturedButton.tsx"
 import SongListItem from "../components/playlist/SongListItem.tsx"
 import placeholder from "../assets/placeholders/album-cover-placeholder.png"
+import Error from "../components/ui/Error.tsx"
 
 const formatDate = (iso?: string | null) => {
     if (!iso) return ""
@@ -41,6 +40,10 @@ const SinglePlaylist = () => {
         dispatch(fetchPlaylistById(id))
     }
 
+    if(!playlist) {
+        return <Navigate to="/404" replace />
+    }
+
     if (!playlist || songsStatus === "loading") {
         return (
             <div className="h-[70vh] flex items-center justify-center">
@@ -49,18 +52,7 @@ const SinglePlaylist = () => {
         )
     }
 
-    if (songsStatus === "failed") {
-        return (
-            <div className="font-text text-primary-60 text-xs ">
-                <div className="flex flex-nowrap items-center gap-3 mb-3">
-                    <img src={bug} className="w-6" alt="error"/>
-                    Failed to load playlist :(
-                </div>
-
-                <FeaturedButton text="Retry" className="!py-2" onClick={handleRetryPlaylist}/>
-            </div>
-        )
-    }
+    if (songsStatus === "failed") return <Error text="playlist" handleRetry={ handleRetryPlaylist } buttonClassName="!py-2" />
 
     const songs = playlist.songs ?? []
 
