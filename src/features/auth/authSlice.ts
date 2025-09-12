@@ -10,6 +10,7 @@ interface AuthState {
 const loadTokenFromStorage = (): TokenResponse | null => {
     try {
         const raw = localStorage.getItem("auth_token")
+
         if(!raw) return null
 
         const parsed = JSON.parse(raw) as TokenResponse & { savedAt?: string; expiresAt?: string }
@@ -28,10 +29,9 @@ const loadTokenFromStorage = (): TokenResponse | null => {
         }
 
         return parsed
-    } catch (e) {
-        console.warn("Failed to parse auth token from local storage", e)
-        return null
-    }
+    } catch (err) {
+        console.warn("Failed to parse auth token from local storage", err)
+        return null }
 }
 
 const isExpired = (token: TokenResponse | null) => {
@@ -40,15 +40,16 @@ const isExpired = (token: TokenResponse | null) => {
     if(token.expiresAt) {
         return new Date(token.expiresAt).getTime() <= Date.now()
     }
-
     return true
 }
 
 const normalizeToken = (token: TokenResponse): TokenResponse => {
     if(token.expiresAt) return token
+
     if(token.expiresIn) {
         return { ...token, expiresAt: new Date(Date.now() + token.expiresIn * 1000).toISOString() }
     }
+
     return token
 }
 
@@ -56,7 +57,7 @@ const tokenFromStorage = loadTokenFromStorage()
 
 const initialState: AuthState = {
     token: tokenFromStorage && !isExpired(tokenFromStorage) ? tokenFromStorage : null,
-    status: tokenFromStorage && !isExpired(tokenFromStorage) ? "authenticated" : "idle" // tu było unauthincated
+    status: tokenFromStorage && !isExpired(tokenFromStorage) ? "authenticated" : "unauthenticated"
 }
 
 export const saveTokenToApi = createAsyncThunk("auth/saveTokenToApi", async (token: TokenResponse) => {
@@ -96,7 +97,6 @@ export const refreshToken = createAsyncThunk("auth/refreshToken", async (_, { ge
 
     try {
         const resp = await tokenApi.refreshAccessToken(current.refreshToken)
-
         const newToken: TokenResponse = {
             accessToken: resp.access_token,
             refreshToken: resp.refresh_token ?? current.refreshToken,

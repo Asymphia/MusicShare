@@ -1,47 +1,61 @@
-import Overlay from "../ui/Overlay.tsx";
-import Icon from "../ui/Icon.tsx";
-import {Link} from "react-router-dom";
+import SectionHeader from "../ui/SectionHeader.tsx"
+import Loader from "../ui/Loader.tsx"
+import RecentlyPlayedItem from "./RecentlyPlayedItem.tsx"
+import photo from "../../assets/placeholders/placeholder-image.jpg"
+import { useCallback } from "react"
+import {
+    fetchListeningHistory,
+    selectListeningHistoryItems, selectListeningHistoryStatus
+} from "../../features/listeningHistory/listeningHistorySlice.ts"
+import { useAppDispatch, useAppSelector } from "../../app/hooks.ts"
+import Error from "../ui/Error.tsx"
 
-interface RecentlyPlayedProps {
-    title: string
-    playlist: string
-    genre: string
-    cover: string
-    length: string
-    playlistId: number | null
-}
+const RecentlyPlayed = () => {
+    const dispatch = useAppDispatch()
 
-const RecentlyPlayed = ({title, playlist, genre, cover, length, playlistId}: RecentlyPlayedProps) => {
+    const historyItems = useAppSelector(selectListeningHistoryItems)
+    const historyStatus = useAppSelector(selectListeningHistoryStatus)
+
+    const handleRetryHistory = useCallback(() => {
+        dispatch(fetchListeningHistory(4))
+    }, [dispatch])
+
     return (
-        <div className="p-[1px] h-[62px] relative rounded-2xl gradient-border">
-            <img src={cover} className="h-[60px] w-[80px] absolute top-[1px] left-[1px] object-cover cover-mask-gradient rounded-[9px] z-20" />
-            <Overlay offset={1} radius={9} isTransparent={false} className="!bg-[linear-gradient(127deg,#242424_0%,#353535_60%)]" />
-            <Overlay offset={1} radius={9} isTransparent={true} className="!h-[60px] !w-[80px] !bg-[linear-gradient(110deg,#ffffff_0%,#ffffff00_60%)]" />
+        <section>
+            <SectionHeader title="Recently played" as="h3"/>
 
-            <div className="relative z-30 ml-[90px] mr-6 h-full flex justify-between items-center">
-                <div className="w-fit">
-                    <p className="text-primary font-text font-medium text-xs">
-                        { title }
-                    </p>
-                    <p className="text-primary-60 font-text text-xs">
-                        {
-                            playlistId ?
-                                <Link className="transition hover:text-primary-80 active:text-primary" to={`/playlists/${playlistId}`}>{ playlist }</Link>
-                                : ( <> { playlist } </> )
-                        }
-                        &nbsp;&#x2022; { genre }
-                    </p>
-                </div>
+            <div className="space-y-3">
 
-                <div className="w-fit flex items-center space-x-6">
-                    <p className="text-primary-60 font-text text-xs" >
-                        { length }
-                    </p>
-                    <Icon name="play" className="fill-primary-60 hover:fill-primary w-[11px] h-4" />
-                    <Icon name="threeDots" className="fill-primary-60 hover:fill-primary w-[10px] h-4" />
-                </div>
+                {
+                    historyStatus === "loading" && (
+                        <div className="col-span-2 flex items-center justify-center">
+                            <Loader size={48} stroke={4}/>
+                        </div>
+                    )
+                }
+
+                { historyStatus === "failed" && <Error text="history" handleRetry={ handleRetryHistory } buttonClassName="!py-2" /> }
+
+                {
+                    historyStatus === "succeeded" && historyItems.length === 0 && (
+                        <div className="font-text text-primary-60 text-xs">
+                            No recently played tracks.
+                        </div>
+                    )
+                }
+
+                {
+                    historyStatus === "succeeded" && historyItems.map(item => (
+                        <RecentlyPlayedItem key={item.id} title={item.songShort?.title ?? "Unknown"}
+                                            playlistId={item.playlistShort?.id ?? null}
+                                            playlist={item.playlistShort?.name ?? "—"}
+                                            genre={item.genreShortModelDTO?.map(g => g.name).join(", ") || "unknown"}
+                                            cover={item.songShort?.coverImageUrl ?? photo}
+                                            length={item.songShort?.songLengthInSeconds ? `${Math.floor((item.songShort.songLengthInSeconds ?? 0) / 60)}:${String((item.songShort.songLengthInSeconds ?? 0) % 60).padStart(2, "0")}` : ""}/>
+                    ))
+                }
             </div>
-        </div>
+        </section>
     )
 }
 

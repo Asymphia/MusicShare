@@ -1,14 +1,13 @@
 import { useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
-import Loader from "../components/ui/Loader.tsx";
-import bug from "../assets/icons/bug.svg";
-import FeaturedButton from "../components/ui/FeaturedButton.tsx";
-import SectionHeader from "../components/ui/SectionHeader.tsx";
-import EntityBlock from "../components/ui/EntityBlock.tsx";
-import ExtendedEntityBlock from "../components/ui/ExtendedEntityBlock.tsx";
+import Loader from "../components/ui/Loader.tsx"
+import SectionHeader from "../components/ui/SectionHeader.tsx"
+import EntityBlock from "../components/ui/EntityBlock.tsx"
+import ExtendedEntityBlock from "../components/ui/ExtendedEntityBlock.tsx"
 import playlistPlaceholder from "../assets/placeholders/album-cover-placeholder.png"
 import artistPlaceholder from "../assets/placeholders/artist-placeholder.png"
 import songPlaceholder from "../assets/placeholders/song-placeholder.png"
+import ErrorComponent from "../components/ui/Error.tsx"
 
 export interface SearchArtist {
     spotifyId: string
@@ -21,6 +20,7 @@ export interface SearchPlaylist {
     spotifyId: string
     name: string
     coverImageUrl: string | null
+    ownerName?: string
 }
 
 export interface SearchSong {
@@ -68,7 +68,7 @@ const SearchResults = () => {
         fetchResults()
     }, [query])
 
-    const handleRetryPlaylist = () => {
+    const handleRetry = () => {
         window.location.reload()
     }
 
@@ -81,16 +81,7 @@ const SearchResults = () => {
     }
 
     if(status === "failed") {
-        return (
-            <div className="font-text text-primary-60 text-xs ">
-                <div className="flex flex-nowrap items-center gap-3 mb-3">
-                    <img src={bug} className="w-6" alt="error"/>
-                    Failed to load playlist :(
-                </div>
-
-                <FeaturedButton text="Retry" className="!py-2" onClick={handleRetryPlaylist}/>
-            </div>
-        )
+        return <ErrorComponent text="search results" handleRetry={ handleRetry } buttonClassName="!py-2" />
     }
 
     if(!results || (results.songs.length === 0 && results.artist.length === 0 && results.playlists.length === 0)) {
@@ -153,7 +144,7 @@ const SearchResults = () => {
                                         image={playlist.coverImageUrl ? playlist.coverImageUrl : playlistPlaceholder}
                                         key={playlist.id} id={playlist.id} isTop={false} type="playlist"
                                         playlist={playlist.name}
-                                        songAmount={0} duration={0} creators={["dzieki dziala"]}/>
+                                        songAmount={0} duration={0} creator={playlist.ownerName}/>
                                 ))
                             }
                         </div>

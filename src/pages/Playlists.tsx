@@ -1,12 +1,11 @@
-import SectionHeader from "../components/ui/SectionHeader.tsx";
-import ExtendedEntityBlock from "../components/ui/ExtendedEntityBlock.tsx";
-import albumCoverPlaceholder from "../assets/placeholders/album-cover-placeholder.png";
-import {useAppDispatch, useAppSelector} from "../app/hooks.ts";
-import {fetchPlaylists, selectPlaylists, selectPlaylistsStatus} from "../features/playlists/playlistsSlice.ts";
-import {useCallback} from "react";
-import Loader from "../components/ui/Loader.tsx";
-import bug from "../assets/icons/bug.svg";
-import FeaturedButton from "../components/ui/FeaturedButton.tsx";
+import SectionHeader from "../components/ui/SectionHeader.tsx"
+import ExtendedEntityBlock from "../components/ui/ExtendedEntityBlock.tsx"
+import albumCoverPlaceholder from "../assets/placeholders/album-cover-placeholder.png"
+import { useAppDispatch, useAppSelector } from "../app/hooks.ts"
+import { fetchPlaylists, selectPlaylists, selectPlaylistsStatus } from "../features/playlists/playlistsSlice.ts"
+import { useCallback } from "react"
+import Loader from "../components/ui/Loader.tsx"
+import Error from "../components/ui/Error.tsx"
 
 const Playlists = () => {
     const dispatch = useAppDispatch()
@@ -46,18 +45,7 @@ const Playlists = () => {
                     ))
                 }
 
-                {
-                    playlistsStatus === "failed" && (
-                        <div className="col-span-2 font-text text-primary-60 text-xs ">
-                            <div className="flex flex-nowrap items-center gap-3 mb-3">
-                                <img src={bug} className="w-6 " />
-                                Failed to load playlists :(
-                            </div>
-
-                            <FeaturedButton text="Retry" className="!py-2" onClick={handleRetryPlaylists} />
-                        </div>
-                    )
-                }
+                { playlistsStatus === "failed" && <Error text="playlists" handleRetry={ handleRetryPlaylists } mainClassName="!col-span-5" /> }
             </div>
         </div>
     )

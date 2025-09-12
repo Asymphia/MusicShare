@@ -2,9 +2,8 @@ import userPfpPlaceholder from "../../assets/placeholders/user-pfp-placeholder.p
 import { useAppDispatch, useAppSelector } from "../../app/hooks.ts"
 import { fetchUser, selectUser, selectUserStatus } from "../../features/user/userSlice.ts"
 import Loader from "../ui/Loader.tsx"
-import bug from "../../assets/icons/bug.svg"
-import FeaturedButton from "../ui/FeaturedButton.tsx";
 import { useCallback } from "react"
+import Error from "../ui/Error.tsx"
 
 const User = () => {
     const dispatch = useAppDispatch()
@@ -22,16 +21,7 @@ const User = () => {
     }
 
     if(status === "failed") {
-        return (
-            <div className="font-text text-primary-60 text-xs">
-                <div className="flex flex-nowrap items-center gap-3 mb-3">
-                    <img src={bug} className="w-6" alt="Error" />
-                    Failed to load user :(
-                </div>
-
-                <FeaturedButton text="Retry" className="!py-2 !w-full" onClick={handleRetry} />
-            </div>
-        )
+        return <Error text="user" handleRetry={ handleRetry } buttonClassName="!w-full !py-2" />
     }
 
     const imgSrc = user?.imageUrl ?? userPfpPlaceholder

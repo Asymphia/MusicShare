@@ -6,7 +6,7 @@ import type { TokenResponse } from "../features/auth/types"
 import { createCodeChallenge } from "../lib/oauth.ts"
 import Loader from "../components/ui/Loader.tsx"
 import bug from "../assets/icons/bug.svg"
-import FeaturedButton from "../components/ui/FeaturedButton.tsx";
+import FeaturedButton from "../components/ui/FeaturedButton.tsx"
 
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID
 const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI as string

@@ -7,7 +7,6 @@ function randomVerifier(length = 128) {
     crypto.getRandomValues(array)
     let s = ""
     for (let i = 0; i < finalLen; i++) {
-        // map byte -> index in VERIFIER_CHARS
         s += VERIFIER_CHARS.charAt(array[i] % VERIFIER_CHARS.length)
     }
     return s
@@ -49,7 +48,7 @@ export function buildAuthUrl(options: {
     url.searchParams.set("client_id", clientId)
     url.searchParams.set("response_type", "code")
     url.searchParams.set("redirect_uri", redirectUri)
-    url.searchParams.set("code_challenge_method", "S256") // MUST be exactly S256
+    url.searchParams.set("code_challenge_method", "S256")
     url.searchParams.set("code_challenge", codeChallenge)
     if (scope) url.searchParams.set("scope", scope)
     if (state) url.searchParams.set("state", state)
