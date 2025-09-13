@@ -34,33 +34,48 @@ const App = () => {
     }, [])
 
     useEffect(() => {
-        if(timerRef.current) {
+        if (timerRef.current) {
             clearTimeout(timerRef.current)
             timerRef.current = null
         }
 
-        if(!token || status !== "authenticated" || !token.expiresAt) return
+        if (!token || status !== "authenticated" || !token.expiresAt) return
 
         const bufferSeconds = 60
-        const expiresAtMs = new Date(token.expiresAt).getTime()
-        let msUntilRefresh = expiresAtMs - Date.now() - bufferSeconds * 1000
 
-        if(msUntilRefresh <= 0) {
-            dispatch(refreshToken())
-            return
+        const scheduleRefresh = () => {
+            const expiresAtMs = new Date(token.expiresAt!).getTime()
+            const now = Date.now()
+
+            const msUntilRefresh = expiresAtMs - now - bufferSeconds * 1000
+
+            if (msUntilRefresh <= 0) {
+                if (status !== "loading") dispatch(refreshToken())
+                return
+            }
+
+            timerRef.current = window.setTimeout(() => {
+                dispatch(refreshToken())
+            }, msUntilRefresh)
         }
 
-        timerRef.current = window.setTimeout(() => {
-            dispatch(refreshToken())
-        }, msUntilRefresh)
+        const onVisibilityOrFocus = () => {
+            scheduleRefresh()
+        }
+
+        scheduleRefresh()
+        window.addEventListener("visibilitychange", onVisibilityOrFocus)
+        window.addEventListener("focus", onVisibilityOrFocus)
 
         return () => {
-            if(timerRef.current) {
+            if (timerRef.current) {
                 clearTimeout(timerRef.current)
                 timerRef.current = null
             }
+            window.removeEventListener("visibilitychange", onVisibilityOrFocus)
+            window.removeEventListener("focus", onVisibilityOrFocus)
         }
-    }, [token, status, dispatch])
+    }, [token?.expiresAt, status, dispatch])
 
     useEffect(() => {
         if(status === "authenticated") {

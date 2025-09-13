@@ -2,7 +2,7 @@ export interface TokenResponse {
     id?: number
     accessToken: string
     refreshToken: string
-    expiresIn: number
+    expiresIn?: number
     expiresAt?: string
     tokenType?: string
     scope?: string

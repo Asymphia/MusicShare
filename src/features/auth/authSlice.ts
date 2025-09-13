@@ -13,20 +13,17 @@ const loadTokenFromStorage = (): TokenResponse | null => {
 
         if(!raw) return null
 
-        const parsed = JSON.parse(raw) as TokenResponse & { savedAt?: string; expiresAt?: string }
+        const parsed = JSON.parse(raw) as TokenResponse
 
-        if(parsed.expiresAt) return parsed
-
-        if(parsed.savedAt && parsed.expiresIn) {
-            const savedAt = new Date(parsed.savedAt).getTime()
-            const expiresAt = new Date(savedAt + parsed.expiresIn * 1000).toISOString()
-            return { ...parsed, expiresAt }
+        if (!parsed.expiresAt && parsed.expiresIn) {
+            parsed.expiresAt = new Date(Date.now() + parsed.expiresIn * 1000).toISOString()
         }
 
-        if(parsed.expiresIn) {
-            const expiresAt = new Date(Date.now() + parsed.expiresIn * 1000).toISOString()
-            return { ...parsed, expiresAt }
-        }
+        if (!parsed.expiresAt) return null
+
+        const t = Date.parse(parsed.expiresAt)
+        if (Number.isNaN(t)) return null
+        if (t <= Date.now()) return null
 
         return parsed
     } catch (err) {
@@ -36,11 +33,12 @@ const loadTokenFromStorage = (): TokenResponse | null => {
 
 const isExpired = (token: TokenResponse | null) => {
     if(!token) return true
+    if (!token.expiresAt) return true
 
-    if(token.expiresAt) {
-        return new Date(token.expiresAt).getTime() <= Date.now()
-    }
-    return true
+    const t = Date.parse(token.expiresAt)
+    if (Number.isNaN(t)) return true
+
+    return t <= Date.now()
 }
 
 const normalizeToken = (token: TokenResponse): TokenResponse => {
@@ -61,12 +59,57 @@ const initialState: AuthState = {
 }
 
 export const saveTokenToApi = createAsyncThunk("auth/saveTokenToApi", async (token: TokenResponse) => {
-    await tokenApi.postToken(token)
-    return token
+    const normalized = normalizeToken(token)
+    await tokenApi.postToken(normalized)
+    return normalized
 })
 
-export const loginWithSpotify = createAsyncThunk("auth/loginWithSpotify", async () =>{
-    return await tokenApi.getToken()
+export const loginWithSpotify = createAsyncThunk("auth/loginWithSpotify", async (_, { rejectWithValue }) =>{
+    try {
+        const token = await tokenApi.getToken()
+
+        if (!token) {
+            return rejectWithValue("No token returned from API")
+        }
+
+        const normalized = normalizeToken(token as TokenResponse)
+
+        if (isExpired(normalized)) {
+            if (!normalized.refreshToken) {
+                return rejectWithValue("Token expired and no refresh token available")
+            }
+
+            try {
+                const resp = await tokenApi.refreshAccessToken(normalized.refreshToken)
+                const newToken: TokenResponse = {
+                    accessToken: resp.access_token,
+                    refreshToken: resp.refresh_token ?? normalized.refreshToken,
+                    expiresIn: resp.expires_in,
+                    tokenType: resp.token_type,
+                    scope: resp.scope,
+                    hasRefreshToken: Boolean(resp.refresh_token ?? normalized.refreshToken)
+                }
+
+                const normalized2 = normalizeToken(newToken)
+
+                await tokenApi.putToken({
+                    accessToken: normalized2.accessToken,
+                    refreshToken: normalized2.refreshToken,
+                    expiresAt: normalized2.expiresAt,
+                    tokenType: normalized2.tokenType,
+                    scope: normalized2.scope
+                })
+
+                return normalized2
+            } catch (err: any) {
+                return rejectWithValue(`Failed to refresh token: ${err?.message ?? String(err)}`)
+            }
+        }
+
+        return normalized
+    } catch(err: any) {
+        return rejectWithValue(err?.message ?? String(err))
+    }
 })
 
 export const checkTokenValid = createAsyncThunk("auth/checkTokenValid", async () => {
@@ -81,7 +124,44 @@ export const logout = createAsyncThunk("auth/logout", async (_, { dispatch }) =>
 export const initAuth = createAsyncThunk("auth/initAuth", async () => {
     try {
         const token = await tokenApi.getToken()
-        return token as TokenResponse
+        if(!token) return null as unknown as TokenResponse
+
+        const normalized = normalizeToken(token as TokenResponse)
+
+        if(isExpired(normalized)) {
+            if(!normalized.refreshToken) {
+                return null as unknown as TokenResponse
+            }
+
+            try {
+                const resp = await tokenApi.refreshAccessToken(normalized.refreshToken)
+
+                const newToken: TokenResponse = {
+                    accessToken: resp.access_token,
+                    refreshToken: resp.refresh_token ?? normalized.refreshToken,
+                    expiresIn: resp.expires_in,
+                    tokenType: resp.token_type,
+                    scope: resp.scope,
+                    hasRefreshToken: Boolean(resp.refresh_token ?? normalized.refreshToken)
+                }
+
+                const normalized2 = normalizeToken(newToken)
+
+                await tokenApi.putToken({
+                    accessToken: normalized2.accessToken,
+                    refreshToken: normalized2.refreshToken,
+                    expiresAt: normalized2.expiresAt,
+                    tokenType: normalized2.tokenType,
+                    scope: normalized2.scope
+                })
+
+                return normalized2
+            } catch (err) {
+                return null as unknown as TokenResponse
+            }
+        }
+
+        return normalized
     } catch (err) {
         return null as unknown as TokenResponse
     }
@@ -90,6 +170,11 @@ export const initAuth = createAsyncThunk("auth/initAuth", async () => {
 export const refreshToken = createAsyncThunk("auth/refreshToken", async (_, { getState, rejectWithValue }) => {
     const state = getState() as any
     const current: TokenResponse | null = state.auth?.token ?? null
+    const status = state.auth?.status
+
+    if(status === "loading") {
+        return rejectWithValue("Already refreshing")
+    }
 
     if(!current || !current.refreshToken) {
         return rejectWithValue("No refresh token available")
@@ -113,7 +198,8 @@ export const refreshToken = createAsyncThunk("auth/refreshToken", async (_, { ge
             expiresIn: normalized.expiresIn,
             state: normalized.state ?? "",
             scope: normalized.scope ?? "",
-            refreshToken: normalized.refreshToken ?? ""
+            refreshToken: normalized.refreshToken ?? "",
+            expiresAt: normalized.expiresAt
         })
 
         return normalized
@@ -141,7 +227,7 @@ const authSlice = createSlice({
                 const normalized = normalizeToken(action.payload)
                 state.token = normalized
                 state.status = "authenticated"
-                localStorage.setItem("auth_token", JSON.stringify(action.payload))
+                localStorage.setItem("auth_token", JSON.stringify(normalized))
             })
             .addCase(loginWithSpotify.rejected, (state) => {
                 state.status = "unauthenticated"
@@ -157,7 +243,7 @@ const authSlice = createSlice({
                 const normalized = normalizeToken(action.payload)
                 state.token = normalized
                 state.status = "authenticated"
-                localStorage.setItem("auth_token", JSON.stringify(action.payload))
+                localStorage.setItem("auth_token", JSON.stringify(normalized))
             })
             .addCase(initAuth.pending, state => {
                 state.status = "loading"
