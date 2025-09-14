@@ -7,6 +7,16 @@ interface AuthState {
     status: "idle" | "loading" | "authenticated" | "unauthenticated"
 }
 
+const isExpired = (token: TokenResponse | null) => {
+    if(!token) return true
+    if (!token.expiresAt) return true
+
+    const t = Date.parse(token.expiresAt)
+    if (Number.isNaN(t)) return true
+
+    return t <= Date.now()
+}
+
 const loadTokenFromStorage = (): TokenResponse | null => {
     try {
         const raw = localStorage.getItem("auth_token")
@@ -14,6 +24,10 @@ const loadTokenFromStorage = (): TokenResponse | null => {
         if(!raw) return null
 
         const parsed = JSON.parse(raw) as TokenResponse
+
+        const isExpiredParsed = isExpired(parsed)
+
+        if(isExpiredParsed) return null
 
         if (!parsed.expiresAt && parsed.expiresIn) {
             parsed.expiresAt = new Date(Date.now() + parsed.expiresIn * 1000).toISOString()
@@ -29,16 +43,6 @@ const loadTokenFromStorage = (): TokenResponse | null => {
     } catch (err) {
         console.warn("Failed to parse auth token from local storage", err)
         return null }
-}
-
-const isExpired = (token: TokenResponse | null) => {
-    if(!token) return true
-    if (!token.expiresAt) return true
-
-    const t = Date.parse(token.expiresAt)
-    if (Number.isNaN(t)) return true
-
-    return t <= Date.now()
 }
 
 const normalizeToken = (token: TokenResponse): TokenResponse => {

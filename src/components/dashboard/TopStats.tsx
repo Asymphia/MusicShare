@@ -61,6 +61,14 @@ const TopStats = () => {
 
                     <div className="space-y-3">
                         {
+                            topSongsStatus === "succeeded" && topSongs?.songs.length === 0 && (
+                                <p className="font-text text-xs text-primary-60">
+                                    No top songs found. Listen to more songs in order to display your top list.
+                                </p>
+                            )
+                        }
+
+                        {
                             topSongsStatus === "succeeded" && topSongs?.songs.map(song => (
                                 <ExtendedEntityBlock key={song.spotifyId} isTop={true}
                                                      image={song.coverImageUrl ?? songPlaceholder} type="song"
@@ -95,6 +103,14 @@ const TopStats = () => {
 
                 <div className="flex flex-wrap gap-3">
                     {
+                        topGenresStatus === "succeeded" && topGenres?.length === 0 && (
+                            <p className="font-text text-xs text-primary-60">
+                                No top genres found. Listen to more songs in order to display your top list.
+                            </p>
+                        )
+                    }
+
+                    {
                         topGenresStatus === "succeeded" && topGenres?.map((genre, index) => (
                             <GenresBlock key={genre.id} isTop={index < 3} name={genre.name}/>
                         ))
@@ -110,6 +126,14 @@ const TopStats = () => {
                 <SectionHeader title="Artists" as="h4" className="!mb-2"/>
 
                 <div className="grid grid-cols-7 gap-3">
+                    {
+                        topArtistsStatus === "succeeded" && topArtists?.length === 0 && (
+                            <p className="font-text text-xs text-primary-60 col-span-7">
+                                No top artists found. Listen to more songs in order to display your top list.
+                            </p>
+                        )
+                    }
+
                     {
                         topArtistsStatus === "succeeded" && topArtists?.map(artist => (
                             <EntityBlock key={artist.spotifyId} artist={artist.name}
