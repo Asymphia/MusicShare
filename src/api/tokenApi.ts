@@ -3,6 +3,7 @@ import { type TokenResponse } from "../features/auth/types.ts"
 const API_BASE = "/api/Token"
 const SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID
+const CLIENT_SECRET = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET
 
 export async function postToken(token: TokenResponse): Promise<TokenResponse> {
     const res = await fetch(API_BASE, {
@@ -65,7 +66,8 @@ export async function refreshAccessToken(refreshToken: string): Promise<any>{
     const body = new URLSearchParams({
         grant_type: "refresh_token",
         refresh_token: refreshToken,
-        client_id: CLIENT_ID || ""
+        client_id: CLIENT_ID || "",
+        ...(CLIENT_SECRET ? { client_secret: CLIENT_SECRET } : {})
     })
 
     const res = await fetch(SPOTIFY_TOKEN_URL, {
@@ -74,10 +76,19 @@ export async function refreshAccessToken(refreshToken: string): Promise<any>{
         body: body.toString()
     })
 
+    const text = await res.text()
     if(!res.ok) {
         const text = await res.text().catch(() => "")
         throw new Error(`Failed to refresh Spotify token: ${res.status} ${text}`)
     }
 
-    return res.json()
+    const data = JSON.parse(text)
+    return {
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token ?? refreshToken,
+        expiresIn: data.expires_in,
+        tokenType: data.token_type,
+        scope: data.scope,
+        hasRefreshToken: Boolean(data.refresh_token ?? refreshToken)
+    }
 }

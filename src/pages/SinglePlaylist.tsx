@@ -40,7 +40,7 @@ const SinglePlaylist = () => {
         dispatch(fetchPlaylistById(id))
     }
 
-    if(!playlist) {
+    if (!playlist && songsStatus !== "loading" && songsStatus !== "idle") {
         return <Navigate to="/404" replace />
     }
 

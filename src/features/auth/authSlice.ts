@@ -20,29 +20,13 @@ const isExpired = (token: TokenResponse | null) => {
 const loadTokenFromStorage = (): TokenResponse | null => {
     try {
         const raw = localStorage.getItem("auth_token")
-
-        if(!raw) return null
-
-        const parsed = JSON.parse(raw) as TokenResponse
-
-        const isExpiredParsed = isExpired(parsed)
-
-        if(isExpiredParsed) return null
-
-        if (!parsed.expiresAt && parsed.expiresIn) {
-            parsed.expiresAt = new Date(Date.now() + parsed.expiresIn * 1000).toISOString()
-        }
-
-        if (!parsed.expiresAt) return null
-
-        const t = Date.parse(parsed.expiresAt)
-        if (Number.isNaN(t)) return null
-        if (t <= Date.now()) return null
-
-        return parsed
-    } catch (err) {
-        console.warn("Failed to parse auth token from local storage", err)
-        return null }
+        if (!raw) return null
+        const token = JSON.parse(raw) as TokenResponse
+        if (isExpired(token)) return null
+        return normalizeToken(token)
+    } catch {
+        return null
+    }
 }
 
 const normalizeToken = (token: TokenResponse): TokenResponse => {
@@ -58,13 +42,14 @@ const normalizeToken = (token: TokenResponse): TokenResponse => {
 const tokenFromStorage = loadTokenFromStorage()
 
 const initialState: AuthState = {
-    token: tokenFromStorage && !isExpired(tokenFromStorage) ? tokenFromStorage : null,
-    status: tokenFromStorage && !isExpired(tokenFromStorage) ? "authenticated" : "unauthenticated"
+    token: tokenFromStorage,
+    status: tokenFromStorage ? "authenticated" : "unauthenticated"
 }
 
 export const saveTokenToApi = createAsyncThunk("auth/saveTokenToApi", async (token: TokenResponse) => {
     const normalized = normalizeToken(token)
     await tokenApi.postToken(normalized)
+    localStorage.setItem("auth_token", JSON.stringify(normalized))
     return normalized
 })
 
@@ -76,7 +61,7 @@ export const loginWithSpotify = createAsyncThunk("auth/loginWithSpotify", async 
             return rejectWithValue("No token returned from API")
         }
 
-        const normalized = normalizeToken(token as TokenResponse)
+        const normalized = normalizeToken(token)
 
         if (isExpired(normalized)) {
             if (!normalized.refreshToken) {
@@ -84,29 +69,14 @@ export const loginWithSpotify = createAsyncThunk("auth/loginWithSpotify", async 
             }
 
             try {
-                const resp = await tokenApi.refreshAccessToken(normalized.refreshToken)
-                const newToken: TokenResponse = {
-                    accessToken: resp.access_token,
-                    refreshToken: resp.refresh_token ?? normalized.refreshToken,
-                    expiresIn: resp.expires_in,
-                    tokenType: resp.token_type,
-                    scope: resp.scope,
-                    hasRefreshToken: Boolean(resp.refresh_token ?? normalized.refreshToken)
-                }
-
-                const normalized2 = normalizeToken(newToken)
-
-                await tokenApi.putToken({
-                    accessToken: normalized2.accessToken,
-                    refreshToken: normalized2.refreshToken,
-                    expiresAt: normalized2.expiresAt,
-                    tokenType: normalized2.tokenType,
-                    scope: normalized2.scope
-                })
-
-                return normalized2
+                const refreshed = await tokenApi.refreshAccessToken(normalized.refreshToken)
+                const finalToken = normalizeToken(refreshed)
+                await tokenApi.putToken(finalToken)
+                localStorage.setItem("auth_token", JSON.stringify(finalToken))
+                return finalToken
             } catch (err: any) {
-                return rejectWithValue(`Failed to refresh token: ${err?.message ?? String(err)}`)
+                await tokenApi.deleteToken()
+                return rejectWithValue("Failed to refresh token")
             }
         }
 
@@ -128,87 +98,49 @@ export const logout = createAsyncThunk("auth/logout", async (_, { dispatch }) =>
 export const initAuth = createAsyncThunk("auth/initAuth", async () => {
     try {
         const token = await tokenApi.getToken()
-        if(!token) return null as unknown as TokenResponse
+        if(!token) return null
 
-        const normalized = normalizeToken(token as TokenResponse)
+        const normalized = normalizeToken(token)
 
         if(isExpired(normalized)) {
             if(!normalized.refreshToken) {
-                return null as unknown as TokenResponse
+                return null
             }
 
             try {
-                const resp = await tokenApi.refreshAccessToken(normalized.refreshToken)
-
-                const newToken: TokenResponse = {
-                    accessToken: resp.access_token,
-                    refreshToken: resp.refresh_token ?? normalized.refreshToken,
-                    expiresIn: resp.expires_in,
-                    tokenType: resp.token_type,
-                    scope: resp.scope,
-                    hasRefreshToken: Boolean(resp.refresh_token ?? normalized.refreshToken)
-                }
-
-                const normalized2 = normalizeToken(newToken)
-
-                await tokenApi.putToken({
-                    accessToken: normalized2.accessToken,
-                    refreshToken: normalized2.refreshToken,
-                    expiresAt: normalized2.expiresAt,
-                    tokenType: normalized2.tokenType,
-                    scope: normalized2.scope
-                })
-
-                return normalized2
+                const refreshed = await tokenApi.refreshAccessToken(normalized.refreshToken)
+                const finalToken = normalizeToken(refreshed)
+                await tokenApi.putToken(finalToken)
+                localStorage.setItem("auth_token", JSON.stringify(finalToken))
+                return finalToken
             } catch (err) {
-                return null as unknown as TokenResponse
+                await tokenApi.deleteToken()
+                return null
             }
         }
 
+        localStorage.setItem("auth_token", JSON.stringify(normalized))
         return normalized
     } catch (err) {
-        return null as unknown as TokenResponse
+        return null
     }
 })
 
 export const refreshToken = createAsyncThunk("auth/refreshToken", async (_, { getState, rejectWithValue }) => {
     const state = getState() as any
-    const current: TokenResponse | null = state.auth?.token ?? null
-    const status = state.auth?.status
+    const token = state.auth.token
 
-    if(status === "loading") {
-        return rejectWithValue("Already refreshing")
-    }
-
-    if(!current || !current.refreshToken) {
-        return rejectWithValue("No refresh token available")
-    }
+    if (!token?.refreshToken) return rejectWithValue("No refresh token")
 
     try {
-        const resp = await tokenApi.refreshAccessToken(current.refreshToken)
-        const newToken: TokenResponse = {
-            accessToken: resp.access_token,
-            refreshToken: resp.refresh_token ?? current.refreshToken,
-            expiresIn: resp.expires_in,
-            tokenType: resp.token_type,
-            scope: resp.scope,
-            hasRefreshToken: Boolean(resp.refresh_token ?? current.refreshToken)
-        }
-
-        const normalized = normalizeToken(newToken)
-
-        await tokenApi.putToken({
-            accessToken: normalized.accessToken,
-            expiresIn: normalized.expiresIn,
-            state: normalized.state ?? "",
-            scope: normalized.scope ?? "",
-            refreshToken: normalized.refreshToken ?? "",
-            expiresAt: normalized.expiresAt
-        })
-
-        return normalized
+        const refreshed = await tokenApi.refreshAccessToken(token.refreshToken)
+        const finalToken = normalizeToken(refreshed)
+        await tokenApi.putToken(finalToken)
+        localStorage.setItem("auth_token", JSON.stringify(finalToken))
+        return finalToken
     } catch (err: any) {
-        return rejectWithValue(err?.message ?? String(err))
+        await tokenApi.deleteToken()
+        return rejectWithValue("Refresh token invalid or revoked")
     }
 })
 
