@@ -81,7 +81,7 @@ const App = () => {
         if(status === "authenticated") {
             dispatch(fetchPlaylists())
             dispatch(fetchUser())
-            dispatch(fetchListeningHistory(4))
+            dispatch(fetchListeningHistory(8))
             dispatch(fetchTopSongs())
             dispatch(fetchTopArtists())
             dispatch(fetchTopGenres())

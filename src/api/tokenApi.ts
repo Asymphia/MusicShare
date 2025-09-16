@@ -3,7 +3,6 @@ import { type TokenResponse } from "../features/auth/types.ts"
 const API_BASE = "/api/Token"
 const SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID
-const CLIENT_SECRET = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET
 
 export async function postToken(token: TokenResponse): Promise<TokenResponse> {
     const res = await fetch(API_BASE, {
@@ -66,8 +65,7 @@ export async function refreshAccessToken(refreshToken: string): Promise<any>{
     const body = new URLSearchParams({
         grant_type: "refresh_token",
         refresh_token: refreshToken,
-        client_id: CLIENT_ID || "",
-        ...(CLIENT_SECRET ? { client_secret: CLIENT_SECRET } : {})
+        client_id: CLIENT_ID || ""
     })
 
     const res = await fetch(SPOTIFY_TOKEN_URL, {

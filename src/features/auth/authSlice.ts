@@ -129,6 +129,8 @@ export const initAuth = createAsyncThunk("auth/initAuth", async () => {
 export const refreshToken = createAsyncThunk("auth/refreshToken", async (_, { getState, rejectWithValue }) => {
     const state = getState() as any
     const token = state.auth.token
+    console.debug(token)
+    console.debug(token.refreshToken)
 
     if (!token?.refreshToken) return rejectWithValue("No refresh token")
 

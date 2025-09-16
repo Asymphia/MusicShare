@@ -73,6 +73,13 @@ const icons = {
             <path d="M8 6C9.10457 6 10 6.89543 10 8C10 9.10457 9.10457 10 8 10C6.89543 10 6 9.10457 6 8C6 6.89543 6.89543 6 8 6Z" />
             <path d="M10 2C10 0.89543 9.10457 -4.82823e-08 8 0C6.89543 4.82823e-08 6 0.895431 6 2C6 3.10457 6.89543 4 8 4C9.10457 4 10 3.10457 10 2Z" />
         </>
+    ),
+    upload: (
+        <>
+            <path d="M4 16.4V25.7334C4 26.4406 4.28095 27.1189 4.78105 27.619C5.28115 28.1191 5.95942 28.4 6.66667 28.4H25.3333C26.0406 28.4 26.7189 28.1191 27.219 27.619C27.719 27.1189 28 26.4406 28 25.7334V16.4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M10.5333 8.93331L16 3.59998L21.4667 8.93331" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M16 21.7334V6.40002" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </>
     )
 } as const
 

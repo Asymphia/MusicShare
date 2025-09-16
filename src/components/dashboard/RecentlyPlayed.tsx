@@ -17,7 +17,7 @@ const RecentlyPlayed = () => {
     const historyStatus = useAppSelector(selectListeningHistoryStatus)
 
     const handleRetryHistory = useCallback(() => {
-        dispatch(fetchListeningHistory(4))
+        dispatch(fetchListeningHistory(8))
     }, [dispatch])
 
     return (
@@ -45,7 +45,7 @@ const RecentlyPlayed = () => {
                 }
 
                 {
-                    historyStatus === "succeeded" && historyItems.map(item => (
+                    historyStatus === "succeeded" && historyItems.slice(0, 4).map(item => (
                         <RecentlyPlayedItem key={item.id} title={item.songShort?.title ?? "Unknown"}
                                             playlistId={item.playlistShort?.id ?? null}
                                             playlist={item.playlistShort?.name ?? "—"}
