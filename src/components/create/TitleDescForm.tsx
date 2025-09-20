@@ -25,7 +25,7 @@ const TitleDescForm = ({ title, onChangeTitle, description, onChangeDescription,
 
                 <label
                     className="group flex flex-nowrap space-x-3 items-center border-b-solid border-b border-b-primary-60 pb-2 transition hover:border-b-primary-80 w-full">
-                    <Icon name="search" className="w-6 h-6 fill-primary-60 transition group-hover:fill-primary-80"/>
+                    <Icon size={ 24 } name="search" className="w-6 h-6 fill-primary-60 transition group-hover:fill-primary-80"/>
 
                     <input type="text" placeholder="Write title of your playlist..." value={ title } onChange={ onChangeTitle }
                            className="font-text text-xs text-primary-60 focus:outline-none w-full transition placehoder:transition
@@ -45,7 +45,7 @@ const TitleDescForm = ({ title, onChangeTitle, description, onChangeDescription,
 
                 <label
                     className="group flex flex-nowrap space-x-3 border border-solid border-primary-60 transition rounded-3xl hover:border-primary-80 w-full p-4 relative">
-                    <Icon name="search" className="w-6 h-6 fill-primary-60 transition group-hover:fill-primary-80"/>
+                    <Icon size={ 24 } name="search" className="w-6 h-6 fill-primary-60 transition group-hover:fill-primary-80"/>
 
                     <textarea placeholder="Write description of your playlist..." maxLength={ 250 } value={ description } onChange={ onChangeDescription }
                            className="font-text text-xs text-primary-60 focus:outline-none w-full transition placehoder:transition h-[139px] resize-none

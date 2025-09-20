@@ -10,7 +10,7 @@ const Nav = () => {
     ]
 
     return (
-        <aside className="w-46 flex flex-col justify-between px-4 py-8">
+        <aside className="w-47 flex flex-col justify-between px-4 py-8">
             <div>
                 <img src={ hamburger } alt="menu" className="w-7"/>
 

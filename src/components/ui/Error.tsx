@@ -11,8 +11,8 @@ interface ErrorProps {
 
 const Error = ({ text, handleRetry, mainClassName = "", buttonClassName = "" }: ErrorProps) => {
     return (
-        <div className={clsx("font-text text-primary-60 text-xs", mainClassName)}>
-            <div className="flex flex-nowrap items-center gap-3 mb-3">
+        <div className={clsx("font-text text-primary-60 md:text-xs text-2xs", mainClassName)}>
+            <div className="flex flex-nowrap items-center md:gap-3 gap-2 mb-3">
                 <img src={ bug } className="w-6" alt="Error"/>
                 Failed to load { text } :(
             </div>

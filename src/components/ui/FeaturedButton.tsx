@@ -2,6 +2,7 @@ import { type MouseEventHandler, useRef } from "react"
 import { gsap } from "gsap"
 import Icon, { type IconName } from "./Icon.tsx"
 import clsx from "clsx"
+import useWindowWidth from "../../hooks/useWindowWidth.ts"
 
 interface FeaturedButtonProps {
     text: string,
@@ -62,6 +63,8 @@ const FeaturedButton = ({ text, icon, onClick, className }: FeaturedButtonProps)
         })
     }
 
+    const width = useWindowWidth()
+
     return (
         <button
             ref={btnRef}
@@ -71,11 +74,11 @@ const FeaturedButton = ({ text, icon, onClick, className }: FeaturedButtonProps)
             onMouseDown={handleMouseDown}
             onMouseUp={handleMouseUp}
             onClick={onClick}
-            className={clsx("px-12 py-3 text-primary rounded-full font-text text-s flex items-center gap-3 cursor-pointer", className)}
+            className={clsx("xl:px-12 md:px-10 px-8 md:py-3 py-2 text-primary rounded-full font-text xl:text-s md:text-xs text-2xs flex items-center md:gap-3 gap-2 cursor-pointer", className)}
             style={{ background: "radial-gradient(circle at 0% 0%, #D9D9D999, #D9D9D999)" }}
         >
             {
-                icon && <Icon name={icon} className="fill-primary w-3 h-3" />
+                icon && <Icon name={ icon } size={ width >= 768 ? 12 : 8 } className="fill-primary md:w-3 md:h-3 w-2 h-2" />
             }
             { text }
         </button>

@@ -3,6 +3,7 @@ import FeaturedSliderButtons from "./FeaturedSliderButtons.tsx"
 import Featured from "./Featured.tsx"
 import photo from "../../assets/placeholders/placeholder-image.jpg"
 import EntityBlock from "../ui/EntityBlock.tsx"
+import {useEffect, useState} from "react";
 
 const albums = [
     { id: 1, image: photo, title: "Skeleta", artist: "Ghost", duration: 15, songAmount: 10 },
@@ -29,8 +30,16 @@ const artists = [
 ]
 
 const DashboardMain = () => {
+    const [width, setWidth] = useState(window.innerWidth)
+
+    useEffect(() => {
+        const handleResize = () => setWidth(window.innerWidth)
+        window.addEventListener("resize", handleResize)
+        return () => window.removeEventListener("resize", handleResize)
+    }, [])
+
     return (
-        <div className=" space-y-14">
+        <div className="space-y-14 xl:col-span-1 lg:col-span-2">
             {/* Featured */}
             <section>
                 <SectionHeader title="Featured" as="h1" right={<FeaturedSliderButtons/>}/>
@@ -40,9 +49,9 @@ const DashboardMain = () => {
             {/* Albums Recommendations */}
             <section>
                 <SectionHeader title="You might also like..." as="h2" />
-                <div className="w-full grid grid-cols-5 gap-3">
+                <div className="w-full grid sm:grid-cols-5 grid-cols-4 gap-3">
                     {
-                        albums.map(album => (
+                        albums.slice(0, width < 640 ? 4 : 5).map(album => (
                             <EntityBlock key={album.id} image={album.image} type="album" album={album.title}
                                          artist={album.artist}/>
                         ))
@@ -53,9 +62,9 @@ const DashboardMain = () => {
             {/* Songs Recommendations */}
             <section>
                 <SectionHeader title="Song selected for you..." as="h2" />
-                <div className="w-full grid grid-cols-5 gap-3">
+                <div className="w-full grid sm:grid-cols-5 grid-cols-4 gap-3">
                     {
-                        songs.map(song => (
+                        songs.slice(0, width < 640 ? 4 : 5).map(song => (
                             <EntityBlock key={song.id} image={song.image} type="song" song={song.title}
                                          album={song.album} artist={song.artist}/>
                         ))
@@ -66,9 +75,9 @@ const DashboardMain = () => {
             {/* Artists Recommendations */}
             <section>
                 <SectionHeader title="Artists similar to your favs..." as="h2" />
-                <div className="w-full grid grid-cols-5 gap-3">
+                <div className="w-full grid sm:grid-cols-5 grid-cols-4 gap-3">
                     {
-                        artists.map(artist => (
+                        artists.slice(0, width < 640 ? 4 : 5).map(artist => (
                             <EntityBlock key={artist.id} image={artist.image} type="artist" artist={artist.name} />
                         ))
                     }

@@ -41,8 +41,8 @@ const SongListItem = ({image, song, artist, album, length, added}: SongListItemP
                     { length }
                 </p>
 
-                <Icon name="play" className="fill-primary-60 hover:fill-primary w-[11px] h-4"/>
-                <Icon name="threeDots" className="fill-primary-60 hover:fill-primary w-[10px] h-4"/>
+                <Icon size={ 16 } name="play" className="fill-primary-60 hover:fill-primary w-4 h-4"/>
+                <Icon size={ 16 } name="threeDots" className="fill-primary-60 hover:fill-primary w-4 h-4"/>
             </div>
         </div>
     )

@@ -33,14 +33,14 @@ const SinglePlaylistHeader = ({ image, title, description, author, songAmount, d
 
             <p className="font-text text-xs text-primary-60 flex items-center gap-3 mt-2">
                     <span className="flex flex-nowrap items-center gap-2">
-                        <Icon name="musicNote" className="fill-primary-60 w-[12px] h-[12px]"/>
+                        <Icon size={ 12 } name="musicNote" className="fill-primary-60 w-[12px] h-[12px]"/>
                         { songAmount } songs
                     </span>
 
                 &#x2022;
 
                 <span className="flex flex-nowrap items-center gap-2">
-                        <Icon name="clock" className="fill-none stroke-primary-60 stroke-[1.5px] w-[17px] h-[17px]"/>
+                        <Icon name="clock" size={ 17 } className="fill-none stroke-primary-60 stroke-[1.5px] w-[17px] h-[17px]"/>
                     {
                         duration && duration > 60
                             ? `${Number.isInteger(duration / 60) ? (duration / 60) : (duration / 60).toFixed(1)} h`
@@ -50,9 +50,9 @@ const SinglePlaylistHeader = ({ image, title, description, author, songAmount, d
             </p>
 
             <div className="flex gap-3 mt-4">
-                <Icon name="share"
+                <Icon name="share" size={ 19 }
                       className="w-[19px] h-[19px] fill-primary-60 hover:fill-primary-80 active:fill-primary"/>
-                <Icon name="download"
+                <Icon name="download" size={ 19 }
                       className="w-[19px] h-[19px] fill-primary-60 hover:fill-primary-80 active:fill-primary"/>
             </div>
 

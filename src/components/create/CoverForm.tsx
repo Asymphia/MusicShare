@@ -26,7 +26,7 @@ const CoverForm = ({ file, changeFile, fileUrl, changeUrl, onClick }: CoverFormP
                 className="cursor-pointer group flex flex-col items-center border border-solid border-primary-60 p-6 transition hover:border-primary-80 w-full rounded-2xl">
                 <input type="file" className="hidden" accept="image/png,image/jpeg" onChange={ changeFile } />
 
-                <Icon name="upload" className="stroke-primary fill-none w-8 h-8 mb-6"/>
+                <Icon size={ 32 } name="upload" className="stroke-primary fill-none w-8 h-8 mb-6"/>
 
                 <p className="font-text text-xs text-primary mb-2">
                     Choose a file or drag & drop it here
@@ -48,7 +48,7 @@ const CoverForm = ({ file, changeFile, fileUrl, changeUrl, onClick }: CoverFormP
 
                         <label
                             className="group flex flex-nowrap space-x-3 items-center border-b-solid border-b border-b-primary-60 pb-2 transition hover:border-b-primary-80 w-full">
-                            <Icon name="search" className="w-6 h-6 fill-primary-60 transition group-hover:fill-primary-80"/>
+                            <Icon size={ 24 } name="search" className="w-6 h-6 fill-primary-60 transition group-hover:fill-primary-80"/>
 
                             <input type="text" placeholder="Write title of your playlist..." value={fileUrl}
                                    onChange={changeUrl}

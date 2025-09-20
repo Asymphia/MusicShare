@@ -33,7 +33,7 @@ const SongsForm = () => {
 
             <label
                 className="group flex flex-nowrap space-x-3 items-center border-b-solid border-b border-b-primary-60 pb-2 transition hover:border-b-primary-80 w-full">
-                <Icon name="search" className="w-6 h-6 fill-primary-60 transition group-hover:fill-primary-80"/>
+                <Icon size={ 24 } name="search" className="w-6 h-6 fill-primary-60 transition group-hover:fill-primary-80"/>
 
                 <input type="text" placeholder="Search for a song..."
                        className="font-text text-xs text-primary-60 focus:outline-none w-full transition placehoder:transition

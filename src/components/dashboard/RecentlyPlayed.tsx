@@ -21,7 +21,7 @@ const RecentlyPlayed = () => {
     }, [dispatch])
 
     return (
-        <section>
+        <section className="xl:block lg:hidden block">
             <SectionHeader title="Recently played" as="h3"/>
 
             <div className="space-y-3">

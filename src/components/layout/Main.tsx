@@ -13,7 +13,7 @@ const Main = ({ children }: PropsWithChildren) => {
     }, [pathname])
 
     return (
-        <main ref={ ref } className="bg-bg-secondary w-full rounded-l-4xl overflow-y-auto py-8 px-15 min-h-0">
+        <main ref={ ref } className="bg-bg-secondary w-full xl:rounded-l-4xl rounded-b-4xl overflow-y-scroll py-8 xl:px-15 md:px-8 px-4 min-h-0">
             { children }
         </main>
     )

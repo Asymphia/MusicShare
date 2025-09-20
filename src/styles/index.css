@@ -37,6 +37,8 @@
     --text-s: 16px;
     --text-xs: 14px;
     --text-2xs: 12px;
+    --text-3xs: 10px;
+    --text-4xs: 9px;
 
     --shadow-primary: 0px 1px 24px -1px rgba(18, 18, 18, 0.5);
     --shadow-inner: inset 0 0 40px 5px rgba(110, 118, 151, 0.5);
@@ -50,23 +52,23 @@
 
 @layer base {
     h1 {
-        @apply text-primary font-header font-semibold text-3xl;
+        @apply text-primary font-header font-semibold xl:text-3xl md:text-2xl text-xl;
     }
 
     h2 {
-        @apply text-primary font-header font-semibold text-2xl;
+        @apply text-primary font-header font-semibold xl:text-2xl md:text-xl text-l;
     }
 
     h3 {
-        @apply text-primary font-header font-semibold text-xl;
+        @apply text-primary font-header font-semibold xl:text-xl md:text-l text-m;
     }
 
     h4 {
-        @apply text-primary font-header font-semibold text-s;
+        @apply text-primary font-header font-semibold xl:text-s md:text-xs text-2xs;
     }
 
     h5 {
-        @apply text-primary font-header font-semibold text-xs;
+        @apply text-primary font-header font-semibold xl:text-xs md:text-2xs text-3xs;
     }
 }
 

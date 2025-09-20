@@ -5,7 +5,7 @@ import Loader from "../ui/Loader.tsx"
 import GenresBlock from "../ui/GenresBlock.tsx"
 import EntityBlock from "../ui/EntityBlock.tsx"
 import artistPlaceholder from "../../assets/placeholders/artist-placeholder.png"
-import { useCallback } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { fetchTopSongs, selectTopSongs, selectTopSongsStatus } from "../../features/songs/songsSlice.ts"
 import { fetchTopArtists, selectTopArtists, selectTopArtistsStatus } from "../../features/artists/artistsSlice.ts"
 import { fetchTopGenres, selectTopGenres, selectTopGenresStatus } from "../../features/genres/genresSlice.ts"
@@ -22,6 +22,14 @@ const albums = [
 ]
 
 const TopStats = () => {
+    const [width, setWidth] = useState(window.innerWidth)
+
+    useEffect(() => {
+        const handleResize = () => setWidth(window.innerWidth)
+        window.addEventListener("resize", handleResize)
+        return () => window.removeEventListener("resize", handleResize)
+    }, [])
+
     const dispatch = useAppDispatch()
 
     const topSongs = useAppSelector(selectTopSongs)
@@ -51,18 +59,20 @@ const TopStats = () => {
         </div>
     )
 
+    const artistsToShow = width >= 1280 ? topArtists : width >= 1024 ? topArtists?.slice(0, 3) : width < 640 ? topArtists?.slice(0, 4) : topArtists
+
     return (
         <section className="space-y-7">
             <SectionHeader title="Your TOP of the TOP" as="h3"/>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid xl:grid-cols-2 lg:grid-cols-1 sm:grid-cols-2 grid-cols-1 xl:gap-3 gap-7">
                 <div>
                     <SectionHeader title="Songs" as="h4" className="!mb-2"/>
 
                     <div className="space-y-3">
                         {
                             topSongsStatus === "succeeded" && topSongs?.songs.length === 0 && (
-                                <p className="font-text text-xs text-primary-60">
+                                <p className="font-text md:text-xs text-2xs text-primary-60">
                                     No top songs found. Listen to more songs in order to display your top list.
                                 </p>
                             )
@@ -125,7 +135,7 @@ const TopStats = () => {
             <div>
                 <SectionHeader title="Artists" as="h4" className="!mb-2"/>
 
-                <div className="grid grid-cols-7 gap-3">
+                <div className="grid xl:grid-cols-7 lg:grid-cols-3 sm:grid-cols-7 grid-cols-4 gap-3">
                     {
                         topArtistsStatus === "succeeded" && topArtists?.length === 0 && (
                             <p className="font-text text-xs text-primary-60 col-span-7">
@@ -135,7 +145,7 @@ const TopStats = () => {
                     }
 
                     {
-                        topArtistsStatus === "succeeded" && topArtists?.map(artist => (
+                        topArtistsStatus === "succeeded" && artistsToShow?.map(artist => (
                             <EntityBlock key={artist.spotifyId} artist={artist.name}
                                          image={artist.imageUrl ?? artistPlaceholder} type="artist" headerAs="h5"/>
                         ))

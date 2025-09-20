@@ -129,16 +129,27 @@ export const initAuth = createAsyncThunk("auth/initAuth", async () => {
 export const refreshToken = createAsyncThunk("auth/refreshToken", async (_, { getState, rejectWithValue }) => {
     const state = getState() as any
     const token = state.auth.token
-    console.debug(token)
-    console.debug(token.refreshToken)
 
     if (!token?.refreshToken) return rejectWithValue("No refresh token")
 
     try {
         const refreshed = await tokenApi.refreshAccessToken(token.refreshToken)
+
+        if (!refreshed || refreshed.status >= 500) {
+            await tokenApi.deleteToken()
+            return rejectWithValue("Spotify error while refreshing token")
+        }
+
         const finalToken = normalizeToken(refreshed)
-        await tokenApi.putToken(finalToken)
-        localStorage.setItem("auth_token", JSON.stringify(finalToken))
+
+        try {
+            await tokenApi.putToken(finalToken)
+            localStorage.setItem("auth_token", JSON.stringify(finalToken))
+        } catch (err) {
+            console.error("Error saving token:", err)
+            return rejectWithValue("Failed to save token")
+        }
+
         return finalToken
     } catch (err: any) {
         await tokenApi.deleteToken()
