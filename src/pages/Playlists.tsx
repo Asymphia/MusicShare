@@ -18,16 +18,16 @@ const Playlists = () => {
     }, [dispatch])
 
     return (
-        <div className="space-y-14">
+        <div className="md:space-y-14 space-y-8">
             <div>
                 <SectionHeader title="Your playlists" as="h1"/>
 
-                <p className="font-text text-xs text-primary-60 w-1/2">
+                <p className="font-text xl:text-xs md:text-2xs text-3xs text-primary-60 lg:w-1/2 w-full">
                     All your playlists in one place &hearts;
                 </p>
             </div>
 
-            <div className="grid grid-cols-5 gap-4">
+            <div className="grid 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
                 {
                     playlistsStatus === "loading" && (
                         <div className="col-span-5 flex items-center justify-center">

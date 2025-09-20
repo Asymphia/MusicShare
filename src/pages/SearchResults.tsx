@@ -86,7 +86,7 @@ const SearchResults = () => {
 
     if(!results || (results.songs.length === 0 && results.artist.length === 0 && results.playlists.length === 0)) {
         return (
-            <p className="font-text text-xs text-primary-60">
+            <p className="font-text xl:text-xs md:text-2xs text-3xs text-primary-60">
                 There is no results for your query :(
             </p>
         )
@@ -101,7 +101,7 @@ const SearchResults = () => {
                     <section>
                         <SectionHeader title="Songs" as="h2"/>
 
-                        <div className="grid grid-cols-10 gap-4">
+                        <div className="grid 2xl:grid-cols-10 xl:grid-cols-9 lg:grid-cols-8 md:grid-cols-6 sm:grid-cols-4 grid-cols-2 gap-4">
                             {
                                 results?.songs.map(song => (
                                     <EntityBlock key={song.spotifyId}
@@ -119,7 +119,7 @@ const SearchResults = () => {
                     <section>
                         <SectionHeader title="Artists" as="h2"/>
 
-                        <div className="grid grid-cols-10 gap-4">
+                        <div className="grid 2xl:grid-cols-10 xl:grid-cols-9 lg:grid-cols-8 md:grid-cols-6 sm:grid-cols-4 grid-cols-2 gap-4">
                             {
                                 results?.artist.map(artist => (
                                     <EntityBlock key={artist.spotifyId} type="artist"
@@ -137,7 +137,7 @@ const SearchResults = () => {
                     <section>
                         <SectionHeader title="Playlists" as="h2"/>
 
-                        <div className="grid grid-cols-5 gap-4">
+                        <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
                             {
                                 results?.playlists.map(playlist => (
                                     <ExtendedEntityBlock
