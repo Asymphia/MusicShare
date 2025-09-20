@@ -5,8 +5,9 @@ import ExtendedEntityBlock from "../ui/ExtendedEntityBlock.tsx"
 import albumCoverPlaceholder from "../../assets/placeholders/album-cover-placeholder.png"
 import { useAppDispatch, useAppSelector } from "../../app/hooks.ts"
 import { fetchPlaylists, selectPlaylists, selectPlaylistsStatus } from "../../features/playlists/playlistsSlice.ts"
-import {useCallback, useEffect, useState} from "react"
+import { useCallback } from "react"
 import Error from "../ui/Error.tsx"
+import useWindowWidth from "../../hooks/useWindowWidth.ts"
 
 const PlaylistsSection = () => {
     const dispatch = useAppDispatch()
@@ -18,13 +19,7 @@ const PlaylistsSection = () => {
         dispatch(fetchPlaylists())
     }, [dispatch])
 
-    const [width, setWidth] = useState(window.innerWidth)
-
-    useEffect(() => {
-        const handleResize = () => setWidth(window.innerWidth)
-        window.addEventListener("resize", handleResize)
-        return () => window.removeEventListener("resize", handleResize)
-    }, [])
+    const width = useWindowWidth()
 
     return (
         <section>
@@ -40,7 +35,7 @@ const PlaylistsSection = () => {
                 }
 
                 {
-                    playlistsStatus === "succeeded" && playlists.slice(0, width >= 1240 ? 6 : width >= 1024 ? 2 : 6).map(playlist => (
+                    playlistsStatus === "succeeded" && playlists.slice(0, width >= 1280 ? 6 : width >= 1024 ? 2 : 6).map(playlist => (
                         <ExtendedEntityBlock id={playlist.id} key={playlist.id} isTop={false}
                                              image={playlist.coverImageUrl ?? albumCoverPlaceholder} type="playlist"
                                              playlist={playlist.name} duration={0} creator={playlist.ownerName ?? "Unknown"}

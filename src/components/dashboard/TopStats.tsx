@@ -5,13 +5,14 @@ import Loader from "../ui/Loader.tsx"
 import GenresBlock from "../ui/GenresBlock.tsx"
 import EntityBlock from "../ui/EntityBlock.tsx"
 import artistPlaceholder from "../../assets/placeholders/artist-placeholder.png"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback } from "react"
 import { fetchTopSongs, selectTopSongs, selectTopSongsStatus } from "../../features/songs/songsSlice.ts"
 import { fetchTopArtists, selectTopArtists, selectTopArtistsStatus } from "../../features/artists/artistsSlice.ts"
 import { fetchTopGenres, selectTopGenres, selectTopGenresStatus } from "../../features/genres/genresSlice.ts"
 import { useAppDispatch, useAppSelector } from "../../app/hooks.ts"
 import photo from "../../assets/placeholders/placeholder-image.jpg"
 import Error from "../ui/Error.tsx"
+import useWindowWidth from "../../hooks/useWindowWidth.ts";
 
 const albums = [
     { id: 1, image: photo, title: "Skeleta", artist: "Ghost", duration: 15, songAmount: 10 },
@@ -22,13 +23,7 @@ const albums = [
 ]
 
 const TopStats = () => {
-    const [width, setWidth] = useState(window.innerWidth)
-
-    useEffect(() => {
-        const handleResize = () => setWidth(window.innerWidth)
-        window.addEventListener("resize", handleResize)
-        return () => window.removeEventListener("resize", handleResize)
-    }, [])
+    const width = useWindowWidth()
 
     const dispatch = useAppDispatch()
 

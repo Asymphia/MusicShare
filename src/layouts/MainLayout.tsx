@@ -3,21 +3,11 @@ import Nav from "../components/layout/Nav.tsx"
 import Main from "../components/layout/Main.tsx"
 import Player from "../components/layout/Player.tsx"
 import SearchBar from "../components/ui/SearchBar.tsx"
-import { useEffect, useState } from "react"
 import MobileNav from "../components/layout/MobileNav.tsx"
+import useWindowWidth from "../hooks/useWindowWidth.ts"
 
 const MainLayout = () => {
-    const [width, setWidth] = useState(window.innerWidth)
-
-    useEffect(() => {
-        const handleResize = () => {
-            setWidth(window.innerWidth)
-        }
-
-        window.addEventListener("resize", handleResize)
-
-        return () => window.removeEventListener("resize", handleResize)
-    }, [])
+    const width = useWindowWidth()
 
     return (
         <div className="bg-bg-primary w-screen h-screen flex flex-col">

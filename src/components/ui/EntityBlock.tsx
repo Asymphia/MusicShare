@@ -1,5 +1,6 @@
 import Overlay from "./Overlay.tsx"
 import {type JSX, useEffect, useState} from "react"
+import useWindowWidth from "../../hooks/useWindowWidth.ts";
 
 interface EntityBlockProps {
     image: string
@@ -11,13 +12,7 @@ interface EntityBlockProps {
 }
 
 const EntityBlock = ({ image, type, album, artist, song, headerAs = "h4" }: EntityBlockProps) => {
-    const [width, setWidth] = useState(window.innerWidth)
-
-    useEffect(() => {
-        const handleResize = () => setWidth(window.innerWidth)
-        window.addEventListener("resize", handleResize)
-        return () => window.removeEventListener("resize", handleResize)
-    }, [])
+    const width = useWindowWidth()
 
     const HeaderTag = headerAs as keyof JSX.IntrinsicElements
     const headerText = type === "album" ? album : type === "song" ? song : artist

@@ -1,7 +1,7 @@
-import Overlay from "./Overlay.tsx";
-import Icon from "./Icon.tsx";
-import {Link} from "react-router-dom";
-import useWindowWidth from "../../hooks/useWindowWidth.ts";
+import Overlay from "./Overlay.tsx"
+import Icon from "./Icon.tsx"
+import { Link } from "react-router-dom"
+import useWindowWidth from "../../hooks/useWindowWidth.ts"
 
 interface ExtendedEntityBlockProps {
     isTop: boolean
@@ -19,7 +19,6 @@ interface ExtendedEntityBlockProps {
 
 
 const ExtendedEntityBlock = ({isTop, image, type, song, album, artist, playlist, songAmount, duration, creator, id}: ExtendedEntityBlockProps) => {
-
     const displayName = type === "song" ? song : type === "album" ? album : playlist
     const width = useWindowWidth()
 

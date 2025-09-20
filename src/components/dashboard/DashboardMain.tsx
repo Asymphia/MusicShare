@@ -3,7 +3,7 @@ import FeaturedSliderButtons from "./FeaturedSliderButtons.tsx"
 import Featured from "./Featured.tsx"
 import photo from "../../assets/placeholders/placeholder-image.jpg"
 import EntityBlock from "../ui/EntityBlock.tsx"
-import {useEffect, useState} from "react";
+import useWindowWidth from "../../hooks/useWindowWidth.ts"
 
 const albums = [
     { id: 1, image: photo, title: "Skeleta", artist: "Ghost", duration: 15, songAmount: 10 },
@@ -30,13 +30,7 @@ const artists = [
 ]
 
 const DashboardMain = () => {
-    const [width, setWidth] = useState(window.innerWidth)
-
-    useEffect(() => {
-        const handleResize = () => setWidth(window.innerWidth)
-        window.addEventListener("resize", handleResize)
-        return () => window.removeEventListener("resize", handleResize)
-    }, [])
+    const width = useWindowWidth()
 
     return (
         <div className="space-y-14 xl:col-span-1 lg:col-span-2">

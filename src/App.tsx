@@ -50,7 +50,7 @@ const App = () => {
             const msUntilRefresh = expiresAtMs - now - bufferSeconds * 1000
 
             if (msUntilRefresh <= 0) {
-                if (status !== "loading") dispatch(refreshToken())
+                dispatch(refreshToken())
                 return
             }
 
