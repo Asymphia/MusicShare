@@ -5,6 +5,7 @@ import * as tokenApi from "../../api/tokenApi.ts"
 interface AuthState {
     token: TokenResponse | null
     status: "idle" | "loading" | "authenticated" | "unauthenticated"
+    isRefreshing: boolean
 }
 
 const isExpired = (token: TokenResponse | null) => {
@@ -22,7 +23,7 @@ const loadTokenFromStorage = (): TokenResponse | null => {
         const raw = localStorage.getItem("auth_token")
         if (!raw) return null
         const token = JSON.parse(raw) as TokenResponse
-        if (isExpired(token)) return null
+
         return normalizeToken(token)
     } catch {
         return null
@@ -43,7 +44,8 @@ const tokenFromStorage = loadTokenFromStorage()
 
 const initialState: AuthState = {
     token: tokenFromStorage,
-    status: tokenFromStorage ? "authenticated" : "unauthenticated"
+    status: "idle",
+    isRefreshing: false
 }
 
 export const saveTokenToApi = createAsyncThunk("auth/saveTokenToApi", async (token: TokenResponse) => {
@@ -97,6 +99,11 @@ export const logout = createAsyncThunk("auth/logout", async (_, { dispatch }) =>
 
 export const initAuth = createAsyncThunk("auth/initAuth", async () => {
     try {
+        const localToken = loadTokenFromStorage()
+        if (localToken && !isExpired(localToken)) {
+            return localToken
+        }
+
         const token = await tokenApi.getToken()
         if(!token) return null
 
@@ -109,9 +116,16 @@ export const initAuth = createAsyncThunk("auth/initAuth", async () => {
 
             try {
                 const refreshed = await tokenApi.refreshAccessToken(normalized.refreshToken)
+
                 const finalToken = normalizeToken(refreshed)
-                await tokenApi.putToken(finalToken)
-                localStorage.setItem("auth_token", JSON.stringify(finalToken))
+
+                try {
+                    await tokenApi.putToken(finalToken)
+                    localStorage.setItem("auth_token", JSON.stringify(finalToken))
+                } catch (err) {
+                    return null
+                }
+
                 return finalToken
             } catch (err) {
                 await tokenApi.deleteToken()
@@ -135,18 +149,12 @@ export const refreshToken = createAsyncThunk("auth/refreshToken", async (_, { ge
     try {
         const refreshed = await tokenApi.refreshAccessToken(token.refreshToken)
 
-        if (!refreshed || refreshed.status >= 500) {
-            await tokenApi.deleteToken()
-            return rejectWithValue("Spotify error while refreshing token")
-        }
-
         const finalToken = normalizeToken(refreshed)
 
         try {
             await tokenApi.putToken(finalToken)
             localStorage.setItem("auth_token", JSON.stringify(finalToken))
         } catch (err) {
-            console.error("Error saving token:", err)
             return rejectWithValue("Failed to save token")
         }
 
@@ -196,8 +204,10 @@ const authSlice = createSlice({
             })
             .addCase(initAuth.pending, state => {
                 state.status = "loading"
+                state.isRefreshing = true
             })
             .addCase(initAuth.fulfilled, (state, action: PayloadAction<TokenResponse | null>) => {
+                state.isRefreshing = false
                 const token = action.payload as TokenResponse | null
                 if(token && !isExpired(token)) {
                     const normalized = normalizeToken(token)
@@ -211,6 +221,7 @@ const authSlice = createSlice({
                 }
             })
             .addCase(initAuth.rejected, state => {
+                state.isRefreshing = false
                 state.token = null
                 state.status = "unauthenticated"
                 localStorage.removeItem("auth_token")
