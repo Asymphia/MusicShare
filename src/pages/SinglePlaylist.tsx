@@ -57,20 +57,20 @@ const SinglePlaylist = () => {
     const songs = playlist.songs ?? []
 
     return (
-        <div className="grid grid-cols-3 gap-14">
-            <div className="col-span-1 self-start h-full">
+        <div className="grid sm:grid-cols-3 grid-cols-1 xl:gap-14 lg:gap-10 md:gap-8 sm:gap-6 gap-4">
+            <div className="sm:col-span-1 self-start h-full">
                     <SinglePlaylistHeader title={playlist.name} image={playlist.coverImageUrl ?? placeholder}
                                           songAmount={songs.length} duration={0} author={playlist.ownerName || "Unknown author"}
                                           description={playlist.description ?? "No description yet :("} />
             </div>
 
-            <div className="col-span-2 space-y-3">
+            <div className="sm:col-span-2 space-y-3">
                 {
                     songs.length > 0 ? songs.map(song => (
                         <SongListItem key={song.spotifyId}
                                       image={song.coverImageUrl ?? playlist.coverImageUrl ?? placeholder} song={song.title ?? "Unknown title"} artist={song.displayArtist ?? song.artist ?? "Unknown artist"} album={song.displayAlbum ?? song.album ?? ""} length={"0:00"} added={formatDate(song.createdAt ?? song.releaseDate ?? null)} />
                     )) : (
-                        <p className="font-text text-primary-60 text-xs">There is no songs in this playlist :(</p>
+                        <p className="font-text text-primary-60 xl:text-xs md:text-2xs text-3xs">There is no songs in this playlist :(</p>
                     )
                 }
             </div>

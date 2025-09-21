@@ -109,7 +109,7 @@ const SpotifyCallback: React.FC = () => {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center bg-bg-primary">
                 <Loader />
-                <p className="text-center font-text text-primary text-s mt-3">
+                <p className="text-center font-text text-primary xl:text-s md:text-xs text-2xs mt-3">
                     Completing sign-in with Spotify{".".repeat(dots)}
                 </p>
             </div>
@@ -119,15 +119,15 @@ const SpotifyCallback: React.FC = () => {
     if (error) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center bg-bg-primary">
-                <div className="w-fit max-w-1/3 bg-bg-secondary rounded-2xl p-8">
-                    <img src={ bug } className="w-22 mx-auto mb-8" />
+                <div className="w-fit xl:max-w-1/3 md:max-w-1/2 max-w-full bg-bg-secondary rounded-2xl p-8 mx-2">
+                    <img src={ bug } className="xl:w-22 md:w-18 w-16 mx-auto mb-8" />
                     <h2 className="mb-4 text-center">
                         An error ocured during auth proccess
                     </h2>
-                    <p className="text-primary-60 font-text text-s">
+                    <p className="text-primary-60 font-text xl:text-s md:text-xs text-2xs">
                         { error }
                     </p>
-                    <div className="grid grid-cols-2 gap-6 mt-8">
+                    <div className="grid md:grid-cols-2 grid-cols-1 md:gap-6 gap-4 mt-8">
                         <FeaturedButton text="Try again" className="!block text-center" onClick={() => navigate("/login")} />
                         <FeaturedButton text="Cancel" className="!block text-center" onClick={() => { sessionStorage.removeItem("pkce_code_verifier"); navigate("/", { replace: true }) }} />
                     </div>
