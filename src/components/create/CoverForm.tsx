@@ -93,31 +93,37 @@ const CoverForm = ({ file, changeFile, fileUrl, changeUrl, onClickPrevious, onCl
                     Select and upload cover image of your choice.
                 </p>
             </div>
+            {
+                !fileUrl && (
+                    <label onDragEnter={handleDragEnter} onDragOver={handleDragOver} onDragLeave={handleDragLeave}
+                           onDrop={handleDrop}
+                           className={`cursor-pointer group flex flex-col items-center border border-primary-60 p-6 transition w-full rounded-2xl ${dragActive ? "border-dashed border-primary" : "border-solid hover:border-primary-80"} `}>
 
-            <label onDragEnter={handleDragEnter} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}
-                className={`cursor-pointer group flex flex-col items-center border border-primary-60 p-6 transition w-full rounded-2xl ${ dragActive ? "border-dashed border-primary" : "border-solid hover:border-primary-80" } `}>
+                        <input ref={inputRef} type="file" className="hidden" accept="image/png,image/jpeg"
+                               onChange={changeFile}/>
 
-                <input ref={inputRef} type="file" className="hidden" accept="image/png,image/jpeg" onChange={ changeFile } />
+                        <Icon size={32} name="upload" className="stroke-primary fill-none w-8 h-8 mb-6"/>
 
-                <Icon size={ 32 } name="upload" className="stroke-primary fill-none w-8 h-8 mb-6"/>
+                        <p className="font-text text-xs text-primary mb-2">
+                            Choose a file or drag & drop it here
+                        </p>
 
-                <p className="font-text text-xs text-primary mb-2">
-                    Choose a file or drag & drop it here
-                </p>
+                        <p className="font-text text-xs text-primary-60 mb-6">
+                            JPEG and PNG formats up to 2 MB
+                        </p>
 
-                <p className="font-text text-xs text-primary-60 mb-6">
-                    JPEG and PNG formats up to 2 MB
-                </p>
-
-                <FeaturedButton text= { !file ? "Upload a file" : "Change a file" } onClick={openFileDialog} />
-            </label>
+                        <FeaturedButton text={!file ? "Upload a file" : "Change a file"} onClick={openFileDialog}/>
+                    </label>
+                )
+            }
 
             {
-                file && (
+                file && !fileUrl && (
                     <div className="flex gap-4 items-center">
 
-                        <div className="w-20 h-20 relative p-[1px] bg-[linear-gradient(127deg,rgba(255,255,255,0.5)_1.98%,rgba(255,255,255,0)_38%,rgba(112,121,151,0)_58%,rgba(112,121,151,0.5)_100%)] rounded-2xl">
-                            <img src={ previewUrl || placeholder } alt={ file.name }
+                        <div
+                            className="w-20 h-20 relative p-[1px] bg-[linear-gradient(127deg,rgba(255,255,255,0.5)_1.98%,rgba(255,255,255,0)_38%,rgba(112,121,151,0)_58%,rgba(112,121,151,0.5)_100%)] rounded-2xl">
+                            <img src={previewUrl || placeholder} alt={file.name}
                                  className="rounded-[9px] aspect-square w-full h-full object-cover"/>
                             <Overlay offset={1} radius={9}/>
                         </div>
@@ -138,28 +144,22 @@ const CoverForm = ({ file, changeFile, fileUrl, changeUrl, onClickPrevious, onCl
 
             {
                 !file && (
-                    <>
-                        <p className="font-text text-xs text-primary">
-                            Or...
-                        </p>
+                    <label className="group flex flex-nowrap space-x-3 items-center border-b-solid border-b border-b-primary-60 pb-2 transition hover:border-b-primary-80 w-full">
+                        <Icon size={24} name="search"
+                              className="w-6 h-6 fill-primary-60 transition group-hover:fill-primary-80"/>
 
-                        <label
-                            className="group flex flex-nowrap space-x-3 items-center border-b-solid border-b border-b-primary-60 pb-2 transition hover:border-b-primary-80 w-full">
-                            <Icon size={ 24 } name="search" className="w-6 h-6 fill-primary-60 transition group-hover:fill-primary-80"/>
-
-                            <input type="text" placeholder="Write an URL of a photo..." value={fileUrl}
-                                   onChange={changeUrl}
-                                   className="font-text text-xs text-primary-60 focus:outline-none w-full transition placehoder:transition
+                        <input type="text" placeholder="Write an URL of a photo..." value={fileUrl}
+                               onChange={changeUrl}
+                               className="font-text text-xs text-primary-60 focus:outline-none w-full transition placehoder:transition
                             placeholder:text-primary-60 text-primary-60 group-hover:text-primary-80 group-hover:placeholder:text-primary-80 focus:text-primary focus:placeholder:text-primary"
-                            />
-                        </label>
-                    </>
+                        />
+                    </label>
                 )
             }
 
             <div className="grid grid-cols-2 gap-4">
-                <FeaturedButton text="Previous step" className="justify-center" onClick={ onClickPrevious }/>
-                <FeaturedButton text="Next step" className="justify-center" onClick={ onClickNext }/>
+                <FeaturedButton text="Previous step" className="justify-center" onClick={onClickPrevious}/>
+                <FeaturedButton text="Next step" className="justify-center" onClick={onClickNext}/>
             </div>
         </section>
     )

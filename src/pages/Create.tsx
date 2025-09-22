@@ -10,7 +10,7 @@ const Create = () => {
     const [description, setDescription] = useState<string>("")
     const [file, setFile] = useState<File | null>(null)
     const [fileUrl, setFileUrl] = useState<string>("")
-    const [error, setError] = useState<string | null>(null)
+    const [addedSongs, setAddedSongs] = useState<string[]>([])
 
     const titleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setTitle(e.target.value)
@@ -29,6 +29,14 @@ const Create = () => {
         setFileUrl(e.target.value)
     }
 
+    const handleAddSong = (spotifyId: string) => {
+        if(addedSongs.includes(spotifyId)) {
+            setAddedSongs(prevSongs => prevSongs.filter(id => id !== spotifyId))
+        } else {
+            setAddedSongs(prevSongs => [...prevSongs, spotifyId])
+        }
+    }
+
     return (
         <div className="space-y-14">
             <div>
@@ -39,7 +47,7 @@ const Create = () => {
                 </p>
             </div>
 
-            <form className="flex items-center justify-center flex-col">
+            <form className="flex flex-col">
                 {
                     formState === "title" && <TitleDescForm title={ title } description={ description } onChangeDescription={ descriptionChange } onChangeTitle={ titleChange } onClick={ () => setFormState("photo") } />
                 }
@@ -49,7 +57,7 @@ const Create = () => {
                 }
 
                 {
-                    formState === "songs" && <SongsForm />
+                    formState === "songs" && <SongsForm onClickNext={ () => {} } onClickPrevious={ () => setFormState("photo") } handleAddSong={ handleAddSong } addedSongs={ addedSongs } />
                 }
             </form>
         </div>

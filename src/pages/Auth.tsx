@@ -18,8 +18,8 @@ const Auth = () => {
 
 
     useLayoutEffect(() => {
-        gsap.registerPlugin(SplitText);
-        splitInstance.current = new SplitText(headerRef.current, { type: 'words' });
+        gsap.registerPlugin(SplitText)
+        splitInstance.current = new SplitText(headerRef.current, { type: 'words' })
 
         gsap.set(splitInstance.current.words, { y: -100, opacity: 0 })
         gsap.set(starRef.current, { scale: 0.6, opacity: 0, transformOrigin: '50% 50%' })
