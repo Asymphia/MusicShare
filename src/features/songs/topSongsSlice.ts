@@ -2,33 +2,33 @@ import * as songsApi from "../../api/songsApi"
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "../../app/store.ts"
 
-export type Songs = songsApi.SongDto[]
+export type TopSongs = songsApi.topSongsDto
 
-interface SongsState {
-    data: Songs | null
+interface TopSongsState {
+    data: TopSongs | null
     status: "idle" | "loading" | "succeeded" | "failed"
     error: string | null
 }
 
-const initialState: SongsState = {
+const initialState: TopSongsState = {
     data: null,
     status: "idle",
     error: null
 }
 
-export const fetchSongs = createAsyncThunk<Songs, void, { rejectValue: string }>("songs/fetchAll", async (_, { rejectWithValue }) => {
+export const fetchTopSongs = createAsyncThunk<TopSongs, void, { rejectValue: string }>("songs/fetchTop", async (_, { rejectWithValue }) => {
     try {
-        return await songsApi.getAllSongs()
+        return await songsApi.getTopSongs(3)
     } catch(err: any) {
         return rejectWithValue(err?.message ?? "Failed to fetch top songs")
     }
 })
 
-const songsSlice = createSlice({
-    name: "songs",
+const topSongsSlice = createSlice({
+    name: "topSongs",
     initialState,
     reducers: {
-        clearSongs(state) {
+        clearTopSongs(state) {
             state.data = null
             state.status = "idle"
             state.error = null
@@ -36,24 +36,24 @@ const songsSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(fetchSongs.pending, state => {
+            .addCase(fetchTopSongs.pending, state => {
                 state.status = "loading"
                 state.error = null
             })
-            .addCase(fetchSongs.fulfilled, (state, action: PayloadAction<Songs>) => {
+            .addCase(fetchTopSongs.fulfilled, (state, action: PayloadAction<TopSongs>) => {
                 state.data = action.payload
                 state.status = "succeeded"
             })
-            .addCase(fetchSongs.rejected, (state, action) => {
+            .addCase(fetchTopSongs.rejected, (state, action) => {
                 state.status = "failed"
                 state.error = action.payload ?? action.error?.message ?? "Unknown error"
             })
     }
 })
 
-export const { clearSongs } = songsSlice.actions
-export default songsSlice.reducer
+export const { clearTopSongs } = topSongsSlice.actions
+export default topSongsSlice.reducer
 
-export const selectSongs = (state: RootState) => state.songs.data
-export const selectSongsStatus = (state: RootState) => state.songs.status
-export const selectSongsError = (state: RootState) => state.songs.error
+export const selectTopSongs = (state: RootState) => state.topSongs.data
+export const selectTopSongsStatus = (state: RootState) => state.topSongs.status
+export const selectTopSongsError = (state: RootState) => state.topSongs.error

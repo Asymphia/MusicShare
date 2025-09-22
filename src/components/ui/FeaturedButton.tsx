@@ -67,6 +67,7 @@ const FeaturedButton = ({ text, icon, onClick, className }: FeaturedButtonProps)
 
     return (
         <button
+            type="button"
             ref={btnRef}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}

@@ -5,7 +5,7 @@ import { initAuth, refreshToken } from "./features/auth/authSlice.ts"
 import { fetchPlaylists } from "./features/playlists/playlistsSlice.ts"
 import { fetchUser } from "./features/user/userSlice.ts"
 import { fetchListeningHistory } from "./features/listeningHistory/listeningHistorySlice.ts"
-import { fetchTopSongs } from "./features/songs/songsSlice.ts"
+import { fetchTopSongs } from "./features/songs/topSongsSlice.ts"
 import { fetchTopArtists } from "./features/artists/artistsSlice.ts"
 import { fetchTopGenres } from "./features/genres/genresSlice.ts"
 
@@ -81,7 +81,7 @@ const App = () => {
         if(status === "authenticated") {
             dispatch(fetchPlaylists())
             dispatch(fetchUser())
-            dispatch(fetchListeningHistory(8))
+            dispatch(fetchListeningHistory(4))
             dispatch(fetchTopSongs())
             dispatch(fetchTopArtists())
             dispatch(fetchTopGenres())

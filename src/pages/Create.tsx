@@ -10,6 +10,7 @@ const Create = () => {
     const [description, setDescription] = useState<string>("")
     const [file, setFile] = useState<File | null>(null)
     const [fileUrl, setFileUrl] = useState<string>("")
+    const [error, setError] = useState<string | null>(null)
 
     const titleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setTitle(e.target.value)
@@ -44,7 +45,7 @@ const Create = () => {
                 }
 
                 {
-                    formState === "photo" && <CoverForm file={ file } changeFile={ fileChange } fileUrl={ fileUrl } changeUrl={ urlChange } onClick={ () => setFormState("songs") } />
+                    formState === "photo" && <CoverForm file={ file } changeFile={ fileChange } fileUrl={ fileUrl } changeUrl={ urlChange } onClickPrevious={ () => setFormState("title") } onClickNext={ () => setFormState("songs") } />
                 }
 
                 {

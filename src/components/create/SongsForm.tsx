@@ -1,25 +1,11 @@
 import SectionHeader from "../ui/SectionHeader.tsx"
 import Icon from "../ui/Icon.tsx"
-import { useAppDispatch, useAppSelector } from "../../app/hooks.ts"
-import {
-    fetchListeningHistory,
-    selectListeningHistoryItems,
-    selectListeningHistoryStatus
-} from "../../features/listeningHistory/listeningHistorySlice.ts"
-import { useCallback } from "react"
-import ExtendedEntityBlock from "../ui/ExtendedEntityBlock.tsx";
+import ExtendedEntityBlock from "../ui/ExtendedEntityBlock.tsx"
 import songPlaceholder from "../../assets/placeholders/song-placeholder.png"
-import FeaturedButton from "../ui/FeaturedButton.tsx";
+import FeaturedButton from "../ui/FeaturedButton.tsx"
 
 const SongsForm = () => {
-    const dispatch = useAppDispatch()
 
-    const songs = useAppSelector(selectListeningHistoryItems)
-    const songStatus = useAppSelector(selectListeningHistoryStatus)
-
-    const handleRetrySongs = useCallback(() => {
-        dispatch(fetchListeningHistory(8))
-    }, [dispatch])
 
     return (
         <section className="w-1/3 space-y-14 flex flex-col">
@@ -42,14 +28,17 @@ const SongsForm = () => {
             </label>
 
             <div className="grid grid-cols-2 w-full gap-4">
-                {
-                    songs.map(song => (
-                        <ExtendedEntityBlock key={song.id} isTop={false} image={song.songShort.coverImageUrl || songPlaceholder} type="song" song={song.songShort.title.length > 10 ? song.songShort.title.slice(0, 10) + "..." : song.songShort.title} artist="Unknown" album={song.playlistShort?.name || "Unknown"} />
-                    ))
-                }
+                {/*{*/}
+                {/*    songs.map(song => (*/}
+                {/*        <ExtendedEntityBlock key={song.id} isTop={false} image={song.songShort.coverImageUrl || songPlaceholder} type="song" song={song.songShort.title.length > 10 ? song.songShort.title.slice(0, 10) + "..." : song.songShort.title} artist="Unknown" album={song.playlistShort?.name || "Unknown"} />*/}
+                {/*    ))*/}
+                {/*}*/}
             </div>
 
-            <FeaturedButton text="Create your playlist" className="w-fit self-end" />
+            <div className="grid grid-cols-2 gap-4">
+                <FeaturedButton text="Previous step" className="justify-center" onClick={() => {}}/>
+                <FeaturedButton text="Create playlist" className="justify-center" onClick={() => {}}/>
+            </div>
         </section>
     )
 }
