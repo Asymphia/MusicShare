@@ -13,6 +13,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks.ts"
 import photo from "../../assets/placeholders/placeholder-image.jpg"
 import Error from "../ui/Error.tsx"
 import useWindowWidth from "../../hooks/useWindowWidth.ts"
+import { fetchTopAlbums, selectTopAlbums, selectTopAlbumsStatus } from "../../features/albums/topAlbumsSlice.ts"
 
 const albums = [
     { id: 1, image: photo, title: "Skeleta", artist: "Ghost", duration: 15, songAmount: 10 },
@@ -36,6 +37,9 @@ const TopStats = () => {
     const topGenres = useAppSelector(selectTopGenres)
     const topGenresStatus = useAppSelector(selectTopGenresStatus)
 
+    const topAlbums = useAppSelector(selectTopAlbums)
+    const topAlbumsStatus = useAppSelector(selectTopAlbumsStatus)
+
     const handleRetryTopSongs = useCallback(() => {
         dispatch(fetchTopSongs())
     }, [dispatch])
@@ -46,6 +50,10 @@ const TopStats = () => {
 
     const handleRetryTopGenres = useCallback(() => {
         dispatch(fetchTopGenres())
+    }, [dispatch])
+
+    const handleRetryTopAlbums = useCallback(() => {
+        dispatch(fetchTopAlbums())
     }, [dispatch])
 
     const Loading = () => (
@@ -92,13 +100,23 @@ const TopStats = () => {
 
                     <div className="space-y-3">
                         {
-                            albums.slice(0, 3).map(album => (
-                                <ExtendedEntityBlock id={album.id} key={album.id} isTop={true} image={album.image}
-                                                     type="album"
-                                                     artist={album.artist} album={album.title} duration={album.duration}
-                                                     songAmount={album.songAmount}/>
+                            topAlbumsStatus === "succeeded" && topAlbums?.length === 0 && (
+                                <p className="font-text md:text-xs text-2xs text-primary-60">
+                                    No top albums found. Listen to more songs in order to display your top list.
+                                </p>
+                            )
+                        }
+
+                        {
+                            topAlbumsStatus === "succeeded" && topAlbums?.map((album, id) => (
+                                <ExtendedEntityBlock id={id} key={album.spotifyId} isTop={true} image={album.coverImageUrl}
+                                                     type="album" artist="KORNEL" album={album.name} duration={2} songAmount={14} />
                             ))
                         }
+
+                        { topAlbumsStatus === "loading" && <Loading /> }
+
+                        { topAlbumsStatus === "failed" && <Error text="top albums" handleRetry={ handleRetryTopAlbums } buttonClassName="!py-2" /> }
                     </div>
                 </div>
             </div>

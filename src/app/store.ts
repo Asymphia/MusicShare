@@ -7,6 +7,7 @@ import topSongsReducer from "../features/songs/topSongsSlice.ts"
 import artistsReducer from "../features/artists/artistsSlice.ts"
 import genresReducer from "../features/genres/genresSlice.ts"
 import songsReducer from "../features/songs/songsSlice.ts"
+import topAlbumsReducer from "../features/albums/topAlbumsSlice.ts"
 
 export const store = configureStore({
     reducer: {
@@ -17,7 +18,8 @@ export const store = configureStore({
         topSongs: topSongsReducer,
         songs: songsReducer,
         artists: artistsReducer,
-        genres: genresReducer
+        genres: genresReducer,
+        topAlbums: topAlbumsReducer
     }
 })
 

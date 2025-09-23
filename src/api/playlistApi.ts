@@ -19,7 +19,7 @@ export interface SongDto {
 
 export interface PlaylistDto {
     id: number
-    spotifyId: string
+    spotifyId?: string | null
     name: string
     coverImageUrl?: string | null
     ownerName?: string | null
@@ -76,6 +76,21 @@ export async function getPlaylistById(id: number): Promise<PlaylistDto> {
     if(!res.ok) {
         const text = await res.text().catch(() => "")
         throw new Error(`Failed to fetch playlist ${id}: ${res.status} ${text}`)
+    }
+
+    const data = await res.json()
+    return data as PlaylistDto
+}
+
+export async function postPlaylist(form: FormData) {
+    const res = await fetch(`${API_BASE}/api/Playlist`, {
+        method: "POST",
+        body: form
+    })
+
+    if(!res.ok) {
+        const text = await res.text().catch(() => "")
+        throw new Error(`Failed to post playlist: ${res.status} ${text}`)
     }
 
     const data = await res.json()
