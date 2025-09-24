@@ -5,7 +5,7 @@ export interface SongDto {
     songLengthInSeconds?: number
     releaseDate?: string
     artist?: string
-    album?: string
+    album?: string | null
 }
 
 export interface topSongsDto {
@@ -34,6 +34,23 @@ export async function getTopSongs(take: number): Promise<topSongsDto> {
         songs: raw.result ?? []
     }
     return dto
+}
+
+export async function getRecommendedSongs(): Promise<SongDto[]> {
+    const res = await fetch(`${API_BASE}/api/Recommendation/songs`, {
+        method: "GET",
+        headers: {
+            Accept: "application/json"
+        }
+    })
+
+    if(!res.ok) {
+        const text = await res.text().catch(() => "")
+        throw new Error(`Failed to fetch recommended songs: ${res.status} ${text}`)
+    }
+
+    const data = await res.json()
+    return data as SongDto[]
 }
 
 export async function getAllSongs(): Promise<SongDto[]> {

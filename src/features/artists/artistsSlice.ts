@@ -2,7 +2,7 @@ import * as artistsApi from "../../api/artistsApi"
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "../../app/store.ts"
 
-export type TopArtists = artistsApi.topArtistsDto[]
+export type TopArtists = artistsApi.artistsDto[]
 
 interface TopArtistsState {
     data: TopArtists | null

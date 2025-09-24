@@ -10,18 +10,9 @@ import { fetchTopSongs, selectTopSongs, selectTopSongsStatus } from "../../featu
 import { fetchTopArtists, selectTopArtists, selectTopArtistsStatus } from "../../features/artists/artistsSlice.ts"
 import { fetchTopGenres, selectTopGenres, selectTopGenresStatus } from "../../features/genres/genresSlice.ts"
 import { useAppDispatch, useAppSelector } from "../../app/hooks.ts"
-import photo from "../../assets/placeholders/placeholder-image.jpg"
 import Error from "../ui/Error.tsx"
 import useWindowWidth from "../../hooks/useWindowWidth.ts"
 import { fetchTopAlbums, selectTopAlbums, selectTopAlbumsStatus } from "../../features/albums/topAlbumsSlice.ts"
-
-const albums = [
-    { id: 1, image: photo, title: "Skeleta", artist: "Ghost", duration: 15, songAmount: 10 },
-    { id: 2, image: photo, title: "Take me back toasdasd Eden", artist: "Sleep token", duration: 15, songAmount: 10 },
-    { id: 3, image: photo, title: "Lo-files", artist: "Bring me the horizon", duration: 15, songAmount: 10 },
-    { id: 4, image: photo, title: "Life is killing me", artist: "Type o negative", duration: 15, songAmount: 10 },
-    { id: 5, image: photo, title: "Ju Ju", artist: "Siouxsie and the Banshees", duration: 15, songAmount: 10 },
-]
 
 const TopStats = () => {
     const width = useWindowWidth()

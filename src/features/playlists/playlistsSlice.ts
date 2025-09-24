@@ -1,7 +1,7 @@
 import * as playlistApi from "../../api/playlistApi"
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit"
-import type {PlaylistDto} from "../../api/playlistApi";
-import type {RootState} from "../../app/store.ts";
+import type { PlaylistDto } from "../../api/playlistApi"
+import type { RootState } from "../../app/store.ts"
 
 export type Song = playlistApi.SongDto
 export type Playlist = playlistApi.PlaylistDto
@@ -67,6 +67,24 @@ export const fetchPlaylistById = createAsyncThunk<{ id: number; detail: playlist
         return { id, detail: refreshed }
     } catch (err: any) {
         return thunkAPI.rejectWithValue({ id, message: err?.message ?? String(err) })
+    }
+})
+
+export const postPlaylist = createAsyncThunk<Playlist, { name: string; description?: string | null; coverPhoto?: File | null; ownerName: string }, { rejectValue: string }>("playlists/post", async (payload, { rejectWithValue }) => {
+    try {
+        const fd = new FormData()
+        fd.append("name", payload.name)
+        fd.append("description", payload.description ?? "")
+        fd.append("ownerName", payload.ownerName ?? "")
+
+        if(payload.coverPhoto) {
+            fd.append("coverPhoto", payload.coverPhoto, payload.coverPhoto.name)
+        }
+
+        const result = await playlistApi.postPlaylist(fd)
+        return result
+    } catch (err: any) {
+        return rejectWithValue(err?.message ?? String(err))
     }
 })
 
@@ -148,6 +166,38 @@ const playlistsSlice = createSlice({
                 } else {
                     state.items.push({ id, spotifyId: "", name: "", ownerName: "", songs: undefined, songStatus: "failed", songsError: msg })
                 }
+            })
+            .addCase(postPlaylist.pending, state => {
+                state.status = "loading"
+                state.error = null
+            })
+            .addCase(postPlaylist.fulfilled, (state, action: PayloadAction<Playlist>) => {
+                const detail = action.payload
+
+                const item: PlaylistStateItem = {
+                    id: detail.id,
+                    spotifyId: null,
+                    name: detail.name,
+                    ownerName: detail.ownerName,
+                    description: detail.description ?? null,
+                    coverUrl: (detail as any).coverImageUrl ?? (detail as any).coverUrl ?? null,
+                    songs: [],
+                    songStatus: "succeeded",
+                    songsError: null
+                }
+
+                const idx = state.items.findIndex(p => p.id === item.id)
+                if (idx >= 0) {
+                    state.items[idx] = { ...state.items[idx], ...item }
+                } else {
+                    state.items.push(item)
+                }
+
+                state.status = "succeeded"
+            })
+            .addCase(postPlaylist.rejected, (state, action) => {
+                state.status = "failed"
+                state.error = action.payload ?? action.error?.message ?? "Failed to create playlist"
             })
     }
 })
