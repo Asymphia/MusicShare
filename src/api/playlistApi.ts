@@ -96,3 +96,14 @@ export async function postPlaylist(form: FormData) {
     const data = await res.json()
     return data as PlaylistDto
 }
+
+export async function postSongToPlaylist(songId: string, playlistId: number) {
+    const res = await fetch(`${API_BASE}/api/Playlist/${playlistId}/songs/${songId}`, {
+        method: "POST"
+    })
+
+    if(!res.ok) {
+        const text = await res.text().catch(() => "")
+        throw new Error(`Failed to post song to a playlist: ${res.status} ${text}`)
+    }
+}

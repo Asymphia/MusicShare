@@ -5,7 +5,7 @@ import Loader from "../ui/Loader.tsx"
 import GenresBlock from "../ui/GenresBlock.tsx"
 import EntityBlock from "../ui/EntityBlock.tsx"
 import artistPlaceholder from "../../assets/placeholders/artist-placeholder.png"
-import { useCallback } from "react"
+import {useCallback, useState} from "react"
 import { fetchTopSongs, selectTopSongs, selectTopSongsStatus } from "../../features/songs/topSongsSlice.ts"
 import { fetchTopArtists, selectTopArtists, selectTopArtistsStatus } from "../../features/artists/artistsSlice.ts"
 import { fetchTopGenres, selectTopGenres, selectTopGenresStatus } from "../../features/genres/genresSlice.ts"
@@ -13,8 +13,11 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks.ts"
 import Error from "../ui/Error.tsx"
 import useWindowWidth from "../../hooks/useWindowWidth.ts"
 import { fetchTopAlbums, selectTopAlbums, selectTopAlbumsStatus } from "../../features/albums/topAlbumsSlice.ts"
+import AddToPlaylistPopup from "../ui/AddToPlaylistPopup.tsx";
 
 const TopStats = () => {
+    const [isShown, setIsShown] = useState<boolean | string>(false)
+
     const width = useWindowWidth()
 
     const dispatch = useAppDispatch()
@@ -55,6 +58,10 @@ const TopStats = () => {
 
     const artistsToShow = width >= 1280 ? topArtists : width >= 1024 ? topArtists?.slice(0, 3) : width < 640 ? topArtists?.slice(0, 4) : topArtists
 
+    const openPopup = (spotifyId: string) => {
+        setIsShown(spotifyId)
+    }
+
     return (
         <section className="space-y-7">
             <SectionHeader title="Your TOP of the TOP" as="h3"/>
@@ -74,9 +81,12 @@ const TopStats = () => {
 
                         {
                             topSongsStatus === "succeeded" && topSongs?.songs.map(song => (
-                                <ExtendedEntityBlock key={song.spotifyId} isTop={true}
+                                <div className="relative">
+                                    <ExtendedEntityBlock key={song.spotifyId} isTop={true}
                                                      image={song.coverImageUrl ?? songPlaceholder} type="song"
-                                                     song={song.title} artist={song.artist} album={song.album}/>
+                                                     song={song.title} artist={song.artist} album={song.album || "Unknown"} onClickPlus={() => openPopup(song.spotifyId)} />
+                                    { isShown === song.spotifyId && <AddToPlaylistPopup /> }
+                                </div>
                             ))
                         }
 

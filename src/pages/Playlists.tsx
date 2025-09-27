@@ -17,8 +17,6 @@ const Playlists = () => {
         dispatch(fetchPlaylists())
     }, [dispatch])
 
-    console.log(playlists)
-
     return (
         <div className="md:space-y-14 space-y-8">
             <div>

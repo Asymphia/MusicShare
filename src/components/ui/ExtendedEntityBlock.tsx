@@ -38,36 +38,44 @@ const ExtendedEntityBlock = ({isTop, image, type, song, album, artist, playlist,
             </div>
 
             <div className="min-w-0 flex-1 overflow-hidden">
-                <p className="font-text xl:text-xs text-2xs text-primary md:mb-2 mb-1 min-w-0 flex items-center overflow-hidden">
-                    { isTop && <Icon size={ width >= 1280 ? 19 : width >= 768 ? 14 : 12 } name="throne" className="stroke-primary fill-none xl:w-[19px] xl:h-[19px] md:w-[14px] md:h-[14px] w-[12px] h-[12px] inline-block md:mr-2 mr-1 flex-shrink-0" /> }
-                    <span className="truncate min-w-0">{ displayName }</span>
-                    { song && (
-                        <button type="button" onClick={ onClickPlus } className="cursor-pointer flex-shrink-0 inline-block md:ml-2 ml-1">
-                            <MorphIcon isChecked={ isChecked } size={ width >= 1280 ? 16 : width >= 768 ? 14 : 12 } className="fill-primary-60 hover:fill-primary-80 active:fill-primary" />
-                        </button>
-                    )}
+                <p className="font-text xl:text-xs text-2xs text-primary md:mb-2 mb-1 min-w-0 flex-1 overflow-hidden flex items-center">
+                    {
+                        isTop && <Icon size={width >= 1280 ? 19 : width >= 768 ? 14 : 12} name="throne"
+                                    className="stroke-primary fill-none xl:w-[19px] xl:h-[19px] md:w-[14px] md:h-[14px] w-[12px] h-[12px] inline-block md:mr-2 mr-1 flex-shrink-0"/>
+                    }
+                    <span className="truncate min-w-0 flex-1">{displayName}</span>
+                    {
+                        song && (
+                            <button type="button" onClick={onClickPlus}
+                                    className="cursor-pointer flex-shrink-0 inline-block md:ml-2 ml-1">
+                                <MorphIcon isChecked={isChecked} size={width >= 1280 ? 16 : width >= 768 ? 14 : 12}
+                                           className="fill-primary-60 hover:fill-primary-80 active:fill-primary"/>
+                            </button>
+                        )
+                    }
                 </p>
 
                 <p className="font-text xl:text-xs md:text-2xs text-3xs text-primary-60 md:mb-1 mb-0 truncate">
-                    by { type === "playlist" ? creator : artist }
+                    by {type === "playlist" ? creator : artist}
                 </p>
 
                 <p className="font-text xl:text-xs md:text-2xs text-3xs text-primary-60 flex flex-nowrap items-center gap-3 min-w-0 overflow-hidden">
-                    { type === "song" ? <span className="truncate min-w-0"> from {album} </span> :
+                    {type === "song" ? <span className="truncate min-w-0"> from {album} </span> :
                         <>
                             <span className="flex flex-nowrap items-center gap-2 flex-shrink-0">
                                 <Icon size={12} name="musicNote" className="fill-primary-60 w-[12px] h-[12px]"/>
-                                { songAmount } songs
+                                {songAmount} songs
                             </span>
 
                             <span className="flex-shrink-0">&#x2022;</span>
 
                             <span className="flex flex-nowrap items-center gap-2 flex-shrink-0">
-                                <Icon size={width > 1280 ? 17 : 12} name="clock" className="fill-none stroke-primary-60 stroke-[1.5px] xl:w-[17px] xl:h-[17px] w-[12px] h-[12px]"/>
+                                <Icon size={width > 1280 ? 17 : 12} name="clock"
+                                      className="fill-none stroke-primary-60 stroke-[1.5px] xl:w-[17px] xl:h-[17px] w-[12px] h-[12px]"/>
                                 {
                                     duration && duration > 60
-                                    ? `${Number.isInteger(duration / 60) ? (duration / 60) : (duration / 60).toFixed(1)} h`
-                                    : `${duration} mins`
+                                        ? `${Number.isInteger(duration / 60) ? (duration / 60) : (duration / 60).toFixed(1)} h`
+                                        : `${duration} mins`
                                 }
                             </span>
                         </>
