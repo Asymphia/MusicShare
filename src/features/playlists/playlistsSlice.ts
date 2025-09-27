@@ -52,11 +52,10 @@ export const fetchPlaylistById = createAsyncThunk<{ id: number; detail: playlist
         const spotifyId = details.spotifyId ?? existing?.spotifyId
 
         if (!spotifyId) {
-            return thunkAPI.rejectWithValue({ id, message: "Missing spotifyId for playlist" })
+            return { id, detail: details }
         }
 
         const triggeredDetail = await playlistApi.triggerFetchSongsForSpotifyPlaylist(spotifyId)
-        console.log(triggeredDetail)
 
         const refreshed = await playlistApi.getPlaylistById(triggeredDetail.id)
 

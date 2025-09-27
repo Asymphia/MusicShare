@@ -17,6 +17,8 @@ const Playlists = () => {
         dispatch(fetchPlaylists())
     }, [dispatch])
 
+    console.log(playlists)
+
     return (
         <div className="md:space-y-14 space-y-8">
             <div>
@@ -39,7 +41,7 @@ const Playlists = () => {
                 {
                     playlistsStatus === "succeeded" && playlists.map(playlist => (
                         <ExtendedEntityBlock key={playlist.id} isTop={false}
-                                             image={playlist.coverImageUrl ?? albumCoverPlaceholder} type="playlist"
+                                             image={playlist.coverImageUrl || albumCoverPlaceholder} type="playlist"
                                              playlist={playlist.name} duration={0} creator={playlist.ownerName ?? "Unknown"}
                                              songAmount={playlist.songs ? playlist.songs.length : 0} id={playlist.id} />
                     ))

@@ -22,7 +22,7 @@ const RecentlyPlayedItem = ({title, playlist, genre, cover, length, playlistId}:
             <Overlay offset={1} radius={9} isTransparent={true} className="md:!h-[60px] !h-[50px] !w-[80px] !bg-[linear-gradient(110deg,#ffffff_0%,#ffffff00_60%)]" />
 
             <div className="relative z-30 ml-[90px] mr-6 h-full flex justify-between items-center">
-                <div className="w-fit">
+                <div className="w-fit space-y-1">
                     <p className="text-primary font-text font-medium xl:text-xs md:text-2xs text-3xs">
                         { title }
                     </p>
