@@ -1,7 +1,12 @@
 import SectionHeader from "./SectionHeader.tsx"
 import Icon from "./Icon.tsx"
 import { useAppDispatch, useAppSelector } from "../../app/hooks.ts"
-import { fetchPlaylists, selectPlaylists, selectPlaylistsStatus } from "../../features/playlists/playlistsSlice.ts"
+import {
+    fetchPlaylists,
+    postSongToPlaylist,
+    selectPlaylists,
+    selectPlaylistsStatus
+} from "../../features/playlists/playlistsSlice.ts"
 import ExtendedEntityBlock from "./ExtendedEntityBlock.tsx"
 import placeholder from "../../assets/placeholders/album-cover-placeholder.png"
 import MorphIcon from "./MorphIcon.tsx"
@@ -10,8 +15,17 @@ import useDebounce from "../../hooks/useDebounce.ts"
 import Error from "./Error.tsx"
 import Loader from "./Loader.tsx"
 
-const AddToPlaylistPopup = () => {
+interface AddToPlaylistPopupProps {
+    isOpen: boolean
+    close: () => void
+    songId: string
+}
+
+const AddToPlaylistPopup = ({ isOpen, close, songId }: AddToPlaylistPopupProps) => {
     const dispatch = useAppDispatch()
+
+    const [playlistsId, setPlaylistsId] = useState<number[]>([])
+    const [error, setError] = useState<string | null>(null)
 
     const playlists = useAppSelector(selectPlaylists)
     const playlistsStatus = useAppSelector(selectPlaylistsStatus)
@@ -48,10 +62,36 @@ const AddToPlaylistPopup = () => {
         dispatch(fetchPlaylists())
     }, [dispatch])
 
+    const togglePlaylistId = useCallback((id: number) => {
+        setPlaylistsId(prev => prev.includes(id) ? prev.filter(pid => pid !== id) : [...prev, id])
+    }, [])
+
+    const handleAddToPlaylist = useCallback(async () => {
+        setError(null)
+
+        if(playlistsId.length === 0) {
+            close()
+            return
+        }
+
+        try {
+            await Promise.all(playlistsId.map(playlistId => {
+                dispatch(postSongToPlaylist({ playlistId, songId })).unwrap()
+            }))
+
+            close()
+        } catch (err) {
+            setError("Failed to add song to playlist.")
+        }
+    }, [dispatch, playlistsId, songId, close])
 
     return (
-        <dialog className="bg-bg-primary p-8 rounded-3xl absolute top-[30px] z-20 space-y-6 w-[460px]" open={true}>
-            <SectionHeader title="Add to playlist" as="h4"/>
+        <dialog className="bg-bg-primary p-8 rounded-3xl absolute top-[30px] z-40 space-y-6 w-[460px]" open={isOpen}>
+            <SectionHeader
+                title="Add to playlist"
+                as="h4"
+                right={<button className="font-text text-s cursor-pointer transition text-primary-60 hover:text-primary-80 active:text-primary" onClick={handleAddToPlaylist}>x</button>}
+            />
 
             <label
                 className="group flex flex-nowrap space-x-3 items-center border-b-solid border-b border-b-primary-60 pb-2 transition hover:border-b-primary-80 w-full">
@@ -60,7 +100,7 @@ const AddToPlaylistPopup = () => {
 
                 <input type="text" placeholder="Search for a playlist..." ref={inputRef} value={ searchQuery } onChange={ handleSearchChange }
                        className="font-text text-xs text-primary-60 focus:outline-none w-full transition placehoder:transition
-                            placeholder:text-primary-60 text-primary-60 group-hover:text-primary-80 group-hover:placeholder:text-primary-80 focus:text-primary focus:placeholder:text-primary"
+                            placeholder:text-primary-60 group-hover:text-primary-80 group-hover:placeholder:text-primary-80 focus:text-primary focus:placeholder:text-primary"
                 />
             </label>
 
@@ -74,8 +114,8 @@ const AddToPlaylistPopup = () => {
                                                      creator={playlist.ownerName || "unknown"} id={playlist.id}
                                                      songAmount={playlist.songs?.length || 0} duration={0}/>
                             </div>
-                            <button type="button" className="flex-shrink-0 h-fit mt-2">
-                                <MorphIcon isChecked={false} className="cursor-pointer fill-primary-60 hover:fill-primary-80 active:fill-primary"/>
+                            <button type="button" className="flex-shrink-0 h-fit mt-2" onClick={() => togglePlaylistId(playlist.id)}>
+                                <MorphIcon isChecked={playlistsId.includes(playlist.id)} className="cursor-pointer fill-primary-60 hover:fill-primary-80 active:fill-primary"/>
                             </button>
                         </div>
                     ))
@@ -98,6 +138,12 @@ const AddToPlaylistPopup = () => {
                         <p className="font-text text-xs text-primary-60">
                             No playlist found. :(
                         </p>
+                    )
+                }
+
+                {
+                    error && (
+                        <p className="font-text text-xs text-primary-60">{ error }</p>
                     )
                 }
             </div>

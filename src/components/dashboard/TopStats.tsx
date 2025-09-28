@@ -62,6 +62,10 @@ const TopStats = () => {
         setIsShown(spotifyId)
     }
 
+    const closePopup = () => {
+        setIsShown(false)
+    }
+
     return (
         <section className="space-y-7">
             <SectionHeader title="Your TOP of the TOP" as="h3"/>
@@ -85,7 +89,7 @@ const TopStats = () => {
                                     <ExtendedEntityBlock key={song.spotifyId} isTop={true}
                                                      image={song.coverImageUrl ?? songPlaceholder} type="song"
                                                      song={song.title} artist={song.artist} album={song.album || "Unknown"} onClickPlus={() => openPopup(song.spotifyId)} />
-                                    { isShown === song.spotifyId && <AddToPlaylistPopup /> }
+                                    <AddToPlaylistPopup isOpen={ isShown === song.spotifyId } songId={ song.spotifyId } close={ closePopup } />
                                 </div>
                             ))
                         }

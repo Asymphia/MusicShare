@@ -37,8 +37,8 @@ const ExtendedEntityBlock = ({isTop, image, type, song, album, artist, playlist,
                 <Overlay offset={1} radius={9} />
             </div>
 
-            <div className="min-w-0 flex-1 overflow-hidden">
-                <p className="font-text xl:text-xs text-2xs text-primary md:mb-2 mb-1 min-w-0 flex-1 overflow-hidden flex items-center">
+            <div className="min-w-0 overflow-hidden">
+                <p className="font-text xl:text-xs text-2xs text-primary md:mb-2 mb-1 min-w-0 overflow-hidden flex items-center">
                     {
                         isTop && <Icon size={width >= 1280 ? 19 : width >= 768 ? 14 : 12} name="throne"
                                     className="stroke-primary fill-none xl:w-[19px] xl:h-[19px] md:w-[14px] md:h-[14px] w-[12px] h-[12px] inline-block md:mr-2 mr-1 flex-shrink-0"/>

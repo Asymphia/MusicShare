@@ -2,6 +2,7 @@ import * as playlistApi from "../../api/playlistApi"
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { PlaylistDto } from "../../api/playlistApi"
 import type { RootState } from "../../app/store.ts"
+import { getSongById } from "../../api/songsApi"
 
 export type Song = playlistApi.SongDto
 export type Playlist = playlistApi.PlaylistDto
@@ -84,6 +85,19 @@ export const postPlaylist = createAsyncThunk<Playlist, { name: string; descripti
         return result
     } catch (err: any) {
         return rejectWithValue(err?.message ?? String(err))
+    }
+})
+
+export const postSongToPlaylist = createAsyncThunk<{ playlistId: number, song: Song }, { playlistId: number, songId: string }, { rejectValue: string }>("playlists/postSong", async ({ playlistId, songId }, thunkAPI) => {
+    try {
+        await playlistApi.postSongToPlaylist(songId, playlistId)
+
+        const song = await getSongById(songId) as Song
+        console.log(song)
+
+        return { playlistId, song: song }
+    } catch (err: any) {
+        return thunkAPI.rejectWithValue(err?.message ?? String(err))
     }
 })
 
@@ -197,6 +211,31 @@ const playlistsSlice = createSlice({
             .addCase(postPlaylist.rejected, (state, action) => {
                 state.status = "failed"
                 state.error = action.payload ?? action.error?.message ?? "Failed to create playlist"
+            })
+            .addCase(postSongToPlaylist.pending, state => {
+                state.status = "loading"
+                state.error = null
+            })
+            .addCase(postSongToPlaylist.fulfilled, (state, action) => {
+                const { playlistId, song } = action.payload
+                const idx = state.items.findIndex(p => p.id === playlistId)
+
+                if (idx >= 0) {
+                    state.items[idx].songs = state.items[idx].songs ?? []
+
+                    if (!state.items[idx].songs!.some(s => s.spotifyId === song.spotifyId)) {
+                        state.items[idx].songs!.push(song)
+                    }
+
+                    state.items[idx].songStatus = "succeeded"
+                    state.items[idx].songsError = null
+                }
+
+                state.status = "succeeded"
+            })
+            .addCase(postSongToPlaylist.rejected, (state, action) => {
+                state.status = "failed"
+                state.error = action.payload ?? action.error?.message ?? "Failed to add song to a playlist"
             })
     }
 })
