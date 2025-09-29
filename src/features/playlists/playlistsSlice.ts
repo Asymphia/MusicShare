@@ -1,8 +1,8 @@
+import type {PlaylistDto} from "../../api/playlistApi"
 import * as playlistApi from "../../api/playlistApi"
-import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit"
-import type { PlaylistDto } from "../../api/playlistApi"
-import type { RootState } from "../../app/store.ts"
-import { getSongById } from "../../api/songsApi"
+import {createAsyncThunk, createSlice, type PayloadAction} from "@reduxjs/toolkit"
+import type {RootState} from "../../app/store.ts"
+import {getSongById} from "../../api/songsApi"
 
 export type Song = playlistApi.SongDto
 export type Playlist = playlistApi.PlaylistDto
@@ -29,7 +29,12 @@ const initialState: PlaylistsState = {
 
 export const fetchPlaylists = createAsyncThunk<Playlist[], void, { rejectValue: string }>("playlists/fetchAll", async (_, { rejectWithValue }) => {
     try {
-        return await playlistApi.getAllPlaylists()
+        const spotifyPlaylist = await playlistApi.getAllSpotifyPlaylists()
+        const databasePlaylists = await playlistApi.getAllPlaylists()
+
+        return Array.from(new Map(
+            [...spotifyPlaylist, ...databasePlaylists].map(p => [p.id, p])
+        ).values())
     } catch (err: any) {
         return rejectWithValue(err?.message ?? String(err))
     }

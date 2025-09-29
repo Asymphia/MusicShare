@@ -30,6 +30,23 @@ export interface PlaylistDto {
 const API_BASE = import.meta.env.VITE_API_BASE
 
 export async function getAllPlaylists(): Promise<PlaylistDto[]> {
+    const res = await fetch(`${API_BASE}/api/Playlist`, {
+        method: "GET",
+        headers: {
+            Accept: "application/json"
+        }
+    })
+
+    if(!res.ok) {
+        const text = await res.text().catch(() => "")
+        throw new Error(`Failed to fetch playlists: ${res.status} ${text}`)
+    }
+
+    const data = await res.json()
+    return data as PlaylistDto[]
+}
+
+export async function getAllSpotifyPlaylists(): Promise<PlaylistDto[]> {
     const res = await fetch(`${API_BASE}/api/Spotify/playlist/getAll`, {
         method: "POST",
         headers: {

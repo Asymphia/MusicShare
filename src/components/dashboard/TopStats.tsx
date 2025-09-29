@@ -62,6 +62,8 @@ const TopStats = () => {
     const openPopup = (spotifyId: string) => setOpenSongId(spotifyId)
     const closePopup = () => setOpenSongId(false)
 
+    const modalRoot = typeof document !== "undefined" ? document.getElementById("modal") : null
+
     return (
         <section className="space-y-7">
             <SectionHeader title="Your TOP of the TOP" as="h3"/>
@@ -87,7 +89,7 @@ const TopStats = () => {
                             ))
                         }
 
-                        <AddToPlaylistPopup ref={popupRef} isOpen={!!openSongId} close={closePopup} songId={String(openSongId || "")} portalContainer={document.getElementById("modal")} />
+                        <AddToPlaylistPopup ref={popupRef} isOpen={!!openSongId} close={closePopup} songId={String(openSongId || "")} portalContainer={modalRoot} />
 
                         { topSongsStatus === "loading" && <Loading /> }
 

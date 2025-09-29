@@ -172,7 +172,7 @@ const AddToPlaylistPopup = forwardRef<AddToPlaylistPopupHandle, AddToPlaylistPop
     if(!render || !containerRef.current) return null
 
     return createPortal(
-        <div ref={overlayRef} onMouseDown={handleOverlayMouseDown} className="fixed inset-0 z-50 flex items-start justify-center p-9" aria-hidden={!isOpen} style={{ background: "rgba(6,6,8,0.4)" }}>
+        <div ref={overlayRef} onMouseDown={handleOverlayMouseDown} className="fixed inset-0 z-50 flex items-start justify-center p-9" aria-hidden={!isOpen} style={{ background: "rgba(6,6,8,0.3)" }}>
             <div ref={panelRef} role="dialog" aria-modal="true" className="bg-bg-primary p-8 rounded-3xl w-full max-w-[460px] shadow-2xl space-y-8" onMouseDown={e => e.stopPropagation()}>
                 <SectionHeader title="Add to playlist" as="h4" />
 
