@@ -1,16 +1,20 @@
 import SectionHeader from "../components/ui/SectionHeader.tsx"
 import TitleDescForm from "../components/create/TitleDescForm.tsx"
-import { type ChangeEvent, useState } from "react"
+import {type ChangeEvent, useCallback, useState} from "react"
 import CoverForm from "../components/create/CoverForm.tsx"
 import SongsForm from "../components/create/SongsForm.tsx"
+import {useAppDispatch, useAppSelector} from "../app/hooks"
+import {fetchPlaylists, postPlaylist} from "../features/playlists/playlistsSlice"
+import {selectUser} from "../features/user/userSlice"
 
 const Create = () => {
     const [formState, setFormState] = useState<string>("title")
     const [title, setTitle] = useState<string>("")
     const [description, setDescription] = useState<string>("")
     const [file, setFile] = useState<File | null>(null)
-    const [fileUrl, setFileUrl] = useState<string>("")
     const [addedSongs, setAddedSongs] = useState<string[]>([])
+    const dispatch = useAppDispatch()
+    const user = useAppSelector(selectUser)
 
     const titleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setTitle(e.target.value)
@@ -25,10 +29,6 @@ const Create = () => {
         setFile(selected)
     }
 
-    const urlChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setFileUrl(e.target.value)
-    }
-
     const handleAddSong = (spotifyId: string) => {
         if(addedSongs.includes(spotifyId)) {
             setAddedSongs(prevSongs => prevSongs.filter(id => id !== spotifyId))
@@ -36,6 +36,11 @@ const Create = () => {
             setAddedSongs(prevSongs => [...prevSongs, spotifyId])
         }
     }
+
+    const addPlaylist = useCallback(async () => {
+        dispatch(postPlaylist({ name: title, ownerName: user?.name || "Unknown", description, coverPhoto: file }))
+        dispatch(fetchPlaylists())
+    }, [])
 
     return (
         <div className="space-y-14">
@@ -53,11 +58,11 @@ const Create = () => {
                 }
 
                 {
-                    formState === "photo" && <CoverForm file={ file } changeFile={ fileChange } fileUrl={ fileUrl } changeUrl={ urlChange } onClickPrevious={ () => setFormState("title") } onClickNext={ () => setFormState("songs") } />
+                    formState === "photo" && <CoverForm file={ file } changeFile={ fileChange } onClickPrevious={ () => setFormState("title") } onClickNext={ () => setFormState("songs") } />
                 }
 
                 {
-                    formState === "songs" && <SongsForm onClickNext={ () => {} } onClickPrevious={ () => setFormState("photo") } handleAddSong={ handleAddSong } addedSongs={ addedSongs } />
+                    formState === "songs" && <SongsForm onClickNext={ addPlaylist } onClickPrevious={ () => setFormState("photo") } handleAddSong={ handleAddSong } addedSongs={ addedSongs } />
                 }
             </form>
         </div>

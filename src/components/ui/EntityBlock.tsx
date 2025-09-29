@@ -1,5 +1,5 @@
 import Overlay from "./Overlay.tsx"
-import {type JSX, useEffect, useState} from "react"
+import {type JSX} from "react"
 import useWindowWidth from "../../hooks/useWindowWidth.ts";
 
 interface EntityBlockProps {

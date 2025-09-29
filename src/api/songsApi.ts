@@ -1,3 +1,10 @@
+export interface AlbumShortDto {
+    spotifyId?: string | null
+    name: string
+    coverImageUrl?: string | null
+    artist?: string | null
+}
+
 export interface SongDto {
     spotifyId: string
     title: string
@@ -5,7 +12,7 @@ export interface SongDto {
     songLengthInSeconds?: number
     releaseDate?: string
     artist?: string
-    album?: string | null
+    album?: AlbumShortDto
 }
 
 export interface topSongsDto {

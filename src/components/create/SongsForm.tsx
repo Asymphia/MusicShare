@@ -16,7 +16,7 @@ interface SongItemProps {
 }
 
 const SongItem = memo(({ song, onClickPlus, isChecked }: SongItemProps) => (
-    <ExtendedEntityBlock key={song.spotifyId} isTop={false} image={song.coverImageUrl || ""} type="song" song={song.title} artist={song.artist} album={song.album} onClickPlus={onClickPlus} isChecked={isChecked} />
+    <ExtendedEntityBlock key={song.spotifyId} isTop={false} image={song.coverImageUrl || ""} type="song" song={song.title} artist={song.artist} album={song.album || "Unknown"} onClickPlus={onClickPlus} isChecked={isChecked} />
 ))
 
 interface SongsFormProps {
@@ -51,7 +51,7 @@ const SongsForm = ({ addedSongs, handleAddSong, onClickPrevious, onClickNext }: 
         return songs.filter(song => {
             if (song.title?.toLowerCase().includes(query)) return true
             if (song.artist?.toLowerCase().includes(query)) return true
-            if (song.album?.toLowerCase().includes(query)) return true
+            if (song.album?.name.toLowerCase().includes(query)) return true
             return false
         })
 
@@ -84,7 +84,7 @@ const SongsForm = ({ addedSongs, handleAddSong, onClickPrevious, onClickNext }: 
                 <Icon size={ 24 } name="search" className="w-6 h-6 fill-primary-60 transition group-hover:fill-primary-80"/>
 
                 <input ref={inputRef} type="text" placeholder="Search for a song, album or artist..." value={ searchQuery } onChange={ handleSearchChange }
-                       className="font-text text-xs text-primary-60 focus:outline-none w-full transition placehoder:transition
+                       className="font-text text-xs  focus:outline-none w-full transition placehoder:transition
                             placeholder:text-primary-60 text-primary-60 group-hover:text-primary-80 group-hover:placeholder:text-primary-80 focus:text-primary focus:placeholder:text-primary"
                 />
             </label>

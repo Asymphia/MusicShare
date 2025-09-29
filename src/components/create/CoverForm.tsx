@@ -8,8 +8,6 @@ import Overlay from "../ui/Overlay.tsx"
 interface CoverFormProps {
     file: File | null
     changeFile: (e: ChangeEvent<HTMLInputElement>) => void
-    fileUrl: string
-    changeUrl: (e: ChangeEvent<HTMLInputElement>) => void
     onClickPrevious: () => void
     onClickNext: () => void
 }
@@ -21,7 +19,7 @@ const formatFileSize = (size: number): string => {
     return `${(size / (1024 * 1024 * 1024)).toFixed(1)} GB`
 }
 
-const CoverForm = ({ file, changeFile, fileUrl, changeUrl, onClickPrevious, onClickNext }: CoverFormProps) => {
+const CoverForm = ({ file, changeFile, onClickPrevious, onClickNext }: CoverFormProps) => {
     const inputRef = useRef<HTMLInputElement | null>(null)
     const [dragActive, setDragActive] = useState(false)
     const [previewUrl, setPreviewUrl] = useState<string | null>(() =>
@@ -82,10 +80,23 @@ const CoverForm = ({ file, changeFile, fileUrl, changeUrl, onClickPrevious, onCl
     const openFileDialog = (e?: MouseEvent) => {
         e?.preventDefault()
         inputRef.current?.click()
-    };
+    }
+
+    const [error, setError] = useState<string | null>(null)
+
+    const handleClick = (type: "previous" | "next") => {
+        setError(null)
+
+        if(!file) {
+            setError("Please select a file.")
+        } else {
+            if(type === "previous") onClickPrevious()
+            else onClickNext()
+        }
+    }
 
     return (
-        <section className="w-1/3 space-y-14 flex flex-col">
+        <section className="w-1/3 space-y-8 flex flex-col">
             <div className="mb-6">
                 <SectionHeader title="Upload a cover" as="h4" className="!mb-2"/>
 
@@ -93,32 +104,28 @@ const CoverForm = ({ file, changeFile, fileUrl, changeUrl, onClickPrevious, onCl
                     Select and upload cover image of your choice.
                 </p>
             </div>
-            {
-                !fileUrl && (
-                    <label onDragEnter={handleDragEnter} onDragOver={handleDragOver} onDragLeave={handleDragLeave}
-                           onDrop={handleDrop}
-                           className={`cursor-pointer group flex flex-col items-center border border-primary-60 p-6 transition w-full rounded-2xl ${dragActive ? "border-dashed border-primary" : "border-solid hover:border-primary-80"} `}>
 
-                        <input ref={inputRef} type="file" className="hidden" accept="image/png,image/jpeg"
-                               onChange={changeFile}/>
+            <label onDragEnter={handleDragEnter} onDragOver={handleDragOver} onDragLeave={handleDragLeave}
+                   onDrop={handleDrop}
+                   className={`cursor-pointer group flex flex-col items-center border border-primary-60 p-6 transition w-full rounded-2xl ${dragActive ? "border-dashed border-primary" : "border-solid hover:border-primary-80"} `}>
 
-                        <Icon size={32} name="upload" className="stroke-primary fill-none w-8 h-8 mb-6"/>
+                <input ref={inputRef} type="file" className="hidden" accept="image/png,image/jpeg" onChange={changeFile}/>
 
-                        <p className="font-text text-xs text-primary mb-2">
-                            Choose a file or drag & drop it here
-                        </p>
+                <Icon size={32} name="upload" className="stroke-primary fill-none w-8 h-8 mb-6"/>
 
-                        <p className="font-text text-xs text-primary-60 mb-6">
-                            JPEG and PNG formats up to 2 MB
-                        </p>
+                <p className="font-text text-xs text-primary mb-2">
+                    Choose a file or drag & drop it here
+                </p>
 
-                        <FeaturedButton text={!file ? "Upload a file" : "Change a file"} onClick={openFileDialog}/>
-                    </label>
-                )
-            }
+                <p className="font-text text-xs text-primary-60 mb-6">
+                    JPEG and PNG formats up to 2 MB
+                </p>
+
+                <FeaturedButton text={!file ? "Upload a file" : "Change a file"} onClick={openFileDialog}/>
+            </label>
 
             {
-                file && !fileUrl && (
+                file && (
                     <div className="flex gap-4 items-center">
 
                         <div
@@ -143,23 +150,14 @@ const CoverForm = ({ file, changeFile, fileUrl, changeUrl, onClickPrevious, onCl
             }
 
             {
-                !file && (
-                    <label className="group flex flex-nowrap space-x-3 items-center border-b-solid border-b border-b-primary-60 pb-2 transition hover:border-b-primary-80 w-full">
-                        <Icon size={24} name="search"
-                              className="w-6 h-6 fill-primary-60 transition group-hover:fill-primary-80"/>
-
-                        <input type="text" placeholder="Write an URL of a photo..." value={fileUrl}
-                               onChange={changeUrl}
-                               className="font-text text-xs text-primary-60 focus:outline-none w-full transition placehoder:transition
-                            placeholder:text-primary-60 text-primary-60 group-hover:text-primary-80 group-hover:placeholder:text-primary-80 focus:text-primary focus:placeholder:text-primary"
-                        />
-                    </label>
+                error && (
+                    <p className="font-text text-xs text-primary-60">{ error }</p>
                 )
             }
 
             <div className="grid grid-cols-2 gap-4">
-                <FeaturedButton text="Previous step" className="justify-center" onClick={onClickPrevious}/>
-                <FeaturedButton text="Next step" className="justify-center" onClick={onClickNext}/>
+                <FeaturedButton text="Previous step" className="justify-center" onClick={() => handleClick("previous")}/>
+                <FeaturedButton text="Next step" className="justify-center" onClick={() => handleClick("next")}/>
             </div>
         </section>
     )

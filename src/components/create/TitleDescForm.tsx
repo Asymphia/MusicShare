@@ -1,7 +1,7 @@
 import SectionHeader from "../ui/SectionHeader.tsx"
 import Icon from "../ui/Icon.tsx"
 import FeaturedButton from "../ui/FeaturedButton.tsx"
-import type { ChangeEvent } from "react"
+import { type ChangeEvent, useState } from "react"
 
 interface TitleDescFormProps {
     title: string
@@ -12,6 +12,18 @@ interface TitleDescFormProps {
 }
 
 const TitleDescForm = ({ title, onChangeTitle, description, onChangeDescription, onClick }: TitleDescFormProps) => {
+    const [error, setError] = useState<string | null>(null)
+
+    const handleClick = () => {
+        setError(null)
+
+        if(!title) {
+            setError("Please enter a title")
+        } else {
+            onClick()
+        }
+    }
+
     return (
         <div className="w-1/3 space-y-14 flex flex-col">
             <section>
@@ -29,9 +41,15 @@ const TitleDescForm = ({ title, onChangeTitle, description, onChangeDescription,
 
                     <input type="text" placeholder="Write title of your playlist..." value={ title } onChange={ onChangeTitle }
                            className="font-text text-xs text-primary-60 focus:outline-none w-full transition placehoder:transition
-                            placeholder:text-primary-60 text-primary-60 group-hover:text-primary-80 group-hover:placeholder:text-primary-80 focus:text-primary focus:placeholder:text-primary"
+                            placeholder:text-primary-60 group-hover:text-primary-80 group-hover:placeholder:text-primary-80 focus:text-primary focus:placeholder:text-primary"
                     />
                 </label>
+
+                {
+                    error && (
+                        <p className="font-text text-xs text-primary-60 mt-4">{ error }</p>
+                    )
+                }
             </section>
 
             <section>
@@ -49,7 +67,7 @@ const TitleDescForm = ({ title, onChangeTitle, description, onChangeDescription,
 
                     <textarea placeholder="Write description of your playlist..." maxLength={ 250 } value={ description } onChange={ onChangeDescription }
                            className="font-text text-xs text-primary-60 focus:outline-none w-full transition placehoder:transition h-[139px] resize-none
-                            placeholder:text-primary-60 text-primary-60 group-hover:text-primary-80 group-hover:placeholder:text-primary-80 focus:text-primary focus:placeholder:text-primary"
+                            placeholder:text-primary-60  group-hover:text-primary-80 group-hover:placeholder:text-primary-80 focus:text-primary focus:placeholder:text-primary"
                     />
 
                     <p className="absolute bottom-4 right-4 font-text text-primary-60 text-xs">
@@ -58,7 +76,7 @@ const TitleDescForm = ({ title, onChangeTitle, description, onChangeDescription,
                 </label>
             </section>
 
-            <FeaturedButton text="Next step" className="w-fit self-end" onClick={ onClick } />
+            <FeaturedButton text="Next step" className="w-fit self-end" onClick={ handleClick } />
         </div>
     )
 }

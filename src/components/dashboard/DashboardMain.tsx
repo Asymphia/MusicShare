@@ -84,7 +84,7 @@ const DashboardMain = () => {
                     {
                         recommendedSongsStatus === "succeeded" && recommendedSongs?.slice(0, width < 640 ? 4 : 5).map(song => (
                             <EntityBlock key={song.spotifyId} image={song.coverImageUrl || songPlaceholder} type="song" song={song.title}
-                                         album={song.album || "Unknown"} artist={song.artist}/>
+                                         album={song.album?.name || "Unknown"} artist={song.artist}/>
                         ))
                     }
 
