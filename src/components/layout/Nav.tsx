@@ -6,6 +6,7 @@ const Nav = () => {
     const navItems = [
         { name: "Main", link: "/" },
         { name: "Playlists", link: "/playlists" },
+        { name: "Albums", link: "/albums" },
         { name: "Create new", link: "/create-new" },
     ]
 

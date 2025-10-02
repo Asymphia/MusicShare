@@ -15,7 +15,7 @@ interface ExtendedEntityBlockProps {
     songAmount?: number
     duration?: number
     creator?: string
-    id?: number
+    id?: number | string
     onClickPlus?: () => void
     isChecked?: boolean
 }

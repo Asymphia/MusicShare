@@ -11,6 +11,7 @@ import { fetchTopGenres } from "./features/genres/genresSlice.ts"
 import { fetchTopAlbums } from "./features/albums/topAlbumsSlice.ts"
 import { fetchRecommendedSongs } from "./features/songs/recommendedSongsSlice.ts"
 import { fetchRecommendedArtists } from "./features/artists/recommendedArtistsSlice.ts"
+import { fetchAlbums } from "./features/albums/albumsSlice"
 
 /* Layouts */
 import MainLayout from "./layouts/MainLayout.jsx"
@@ -25,6 +26,7 @@ import SpotifyCallback from "./pages/SpotifyCallback.tsx"
 import SinglePlaylist from "./pages/SinglePlaylist.tsx"
 import SearchResults from "./pages/SearchResults.tsx"
 import NotFound from "./pages/NotFound.tsx"
+import Albums from "./pages/Albums"
 
 const App = () => {
     const dispatch = useAppDispatch()
@@ -91,6 +93,7 @@ const App = () => {
             dispatch(fetchTopAlbums())
             dispatch(fetchRecommendedSongs())
             dispatch(fetchRecommendedArtists())
+            dispatch(fetchAlbums())
         }
     }, [status, dispatch])
 
@@ -106,6 +109,7 @@ const App = () => {
                 <Route path="/" element={<MainLayout />} >
                     <Route index element={<Dashboard />} />
                     <Route path="playlists" element={<Playlists />} />
+                    <Route path="albums" element={<Albums />} />
                     <Route path="create-new" element={<Create />} />
 
                     <Route path="playlists">

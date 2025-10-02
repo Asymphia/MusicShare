@@ -6,6 +6,7 @@ const MobileNav = () => {
     const navItems: { name: string; link: string; icon: IconName }[] = [
         { name: "Main", link: "/", icon: "dashboard" },
         { name: "Playlists", link: "/playlists", icon: "playlist" },
+        { name: "Albums", link: "/albums", icon: "album" },
         { name: "Create new", link: "/create-new", icon: "create" },
     ]
 
