@@ -36,7 +36,7 @@ const SongsForm = ({ addedSongs, handleAddSong, onClickPrevious, onClickNext }: 
     const songs = useAppSelector(selectSongs)
     const songsStatus = useAppSelector(selectSongsStatus)
 
-    const [searchQuery, setSearchQuery] = useState("")
+    const [searchQuery, setSearchQuery] = useState<string>("")
     const debouncedSearchQuery = useDebounce(searchQuery, 150)
 
     const inputRef = useRef<HTMLInputElement>(null)

@@ -3,9 +3,11 @@ import ExtendedEntityBlock from "../components/ui/ExtendedEntityBlock.tsx"
 import albumCoverPlaceholder from "../assets/placeholders/album-cover-placeholder.png"
 import { useAppDispatch, useAppSelector } from "../app/hooks.ts"
 import { fetchPlaylists, selectPlaylists, selectPlaylistsStatus } from "../features/playlists/playlistsSlice.ts"
-import { useCallback } from "react"
+import { type ChangeEvent, useCallback, useMemo, useRef, useState } from "react"
 import Loader from "../components/ui/Loader.tsx"
 import Error from "../components/ui/Error.tsx"
+import Icon from "../components/ui/Icon"
+import useDebounce from "../hooks/useDebounce"
 
 const Playlists = () => {
     const dispatch = useAppDispatch()
@@ -17,6 +19,33 @@ const Playlists = () => {
         dispatch(fetchPlaylists())
     }, [dispatch])
 
+    const [searchQuery, setSearchQuery] = useState<string>("")
+    const debouncedSearchQuery = useDebounce(searchQuery, 150)
+
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    const filteredPlaylists = useMemo(() => {
+        if(!playlists || !Array.isArray(playlists)) return []
+
+        if(!debouncedSearchQuery.trim()) return playlists
+
+        const query = debouncedSearchQuery.toLowerCase()
+
+        return playlists.filter(playlist => {
+            if(playlist.name.toLowerCase().includes(query)) return true
+            if(playlist.ownerName?.toLowerCase().includes(query)) return true
+            return false
+        })
+    }, [playlists, debouncedSearchQuery])
+
+    const handleSearchChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value)
+    }, [])
+
+    const displayedPlaylists = useMemo(() => {
+        return filteredPlaylists.slice(0, 50)
+    }, [filteredPlaylists])
+
     return (
         <div className="md:space-y-14 space-y-8">
             <div>
@@ -27,7 +56,25 @@ const Playlists = () => {
                 </p>
             </div>
 
+            <label
+                className="w-1/3 group flex flex-nowrap space-x-3 items-center border-b-solid border-b border-b-primary-60 pb-2 transition hover:border-b-primary-80">
+                <Icon size={ 24 } name="search" className="w-6 h-6 fill-primary-60 transition group-hover:fill-primary-80"/>
+
+                <input ref={ inputRef } type="text" placeholder="Search for a playlist..." value={ searchQuery } onChange={ handleSearchChange }
+                       className="font-text text-xs  focus:outline-none w-full transition placehoder:transition
+                            placeholder:text-primary-60 text-primary-60 group-hover:text-primary-80 group-hover:placeholder:text-primary-80 focus:text-primary focus:placeholder:text-primary"
+                />
+            </label>
+
             <div className="grid 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
+                {
+                    playlistsStatus === "succeeded" && filteredPlaylists.length > 50 && (
+                        <p className="font-text text-xs text-primary-60 col-span-5 mb-8">
+                            Showing first 50 results of { filteredPlaylists.length }. Refine your search for more specific results.
+                        </p>
+                    )
+                }
+
                 {
                     playlistsStatus === "loading" && (
                         <div className="col-span-5 flex items-center justify-center">
@@ -37,12 +84,20 @@ const Playlists = () => {
                 }
 
                 {
-                    playlistsStatus === "succeeded" && playlists.map(playlist => (
+                    playlistsStatus === "succeeded" && displayedPlaylists.map(playlist => (
                         <ExtendedEntityBlock key={playlist.id} isTop={false}
                                              image={playlist.coverImageUrl || albumCoverPlaceholder} type="playlist"
                                              playlist={playlist.name} duration={0} creator={playlist.ownerName ?? "Unknown"}
                                              songAmount={playlist.songs ? playlist.songs.length : 0} id={playlist.id} />
                     ))
+                }
+
+                {
+                    playlistsStatus === "succeeded" && filteredPlaylists?.length === 0 && searchQuery.trim() && (
+                        <div className="font-text text-xs text-primary-60 col-span-5">
+                            No playlists found for "{ searchQuery }"
+                        </div>
+                    )
                 }
 
                 { playlistsStatus === "failed" && <Error text="playlists" handleRetry={ handleRetryPlaylists } mainClassName="!col-span-5" /> }
