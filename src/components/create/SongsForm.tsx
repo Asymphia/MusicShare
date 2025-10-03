@@ -4,10 +4,10 @@ import FeaturedButton from "../ui/FeaturedButton.tsx"
 import { fetchSongs, selectSongs, selectSongsStatus } from "../../features/songs/songsSlice.ts"
 import { useAppDispatch, useAppSelector } from "../../app/hooks.ts"
 import ExtendedEntityBlock from "../ui/ExtendedEntityBlock.tsx"
-import { type ChangeEvent, memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { memo, useCallback, useEffect, useRef } from "react"
 import Error from "../ui/Error.tsx"
 import Loader from "../ui/Loader.tsx"
-import useDebounce from "../../hooks/useDebounce.ts"
+import useDynamicSearch from "../../hooks/useDynamicSearch"
 
 interface SongItemProps {
     song: any
@@ -16,7 +16,7 @@ interface SongItemProps {
 }
 
 const SongItem = memo(({ song, onClickPlus, isChecked }: SongItemProps) => (
-    <ExtendedEntityBlock key={song.spotifyId} isTop={false} image={song.coverImageUrl || ""} type="song" song={song.title} artist={song.artist} album={song.album || "Unknown"} onClickPlus={onClickPlus} isChecked={isChecked} />
+    <ExtendedEntityBlock key={song.spotifyId} isTop={false} image={song.coverImageUrl || ""} type="song" song={song.title} artist={song.artist} album={song.album?.name || "Unknown"} onClickPlus={onClickPlus} isChecked={isChecked} />
 ))
 
 interface SongsFormProps {
@@ -36,38 +36,17 @@ const SongsForm = ({ addedSongs, handleAddSong, onClickPrevious, onClickNext }: 
     const songs = useAppSelector(selectSongs)
     const songsStatus = useAppSelector(selectSongsStatus)
 
-    const [searchQuery, setSearchQuery] = useState<string>("")
-    const debouncedSearchQuery = useDebounce(searchQuery, 150)
+    const { searchQuery, handleSearchChange, filteredData: filteredSongs, displayedData: displayedSongs } = useDynamicSearch(
+        songs,
+        useCallback((s, q) => s.title.toLowerCase().includes(q) || s.album?.name.toLowerCase().includes(q) || s.artist?.toLowerCase().includes(q) as boolean, []),
+        { debounceMs: 150, displayLimit: 50 }
+    )
 
     const inputRef = useRef<HTMLInputElement>(null)
-
-    const filteredSongs = useMemo(() => {
-        if(!songs || !Array.isArray(songs)) return []
-
-        if(!debouncedSearchQuery.trim()) return songs
-
-        const query = debouncedSearchQuery.toLowerCase()
-
-        return songs.filter(song => {
-            if (song.title?.toLowerCase().includes(query)) return true
-            if (song.artist?.toLowerCase().includes(query)) return true
-            if (song.album?.name.toLowerCase().includes(query)) return true
-            return false
-        })
-
-    }, [songs, debouncedSearchQuery])
-
-    const handleSearchChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value)
-    }, [])
 
     const handleRetry = useCallback(() => {
         dispatch(fetchSongs())
     }, [dispatch])
-
-    const displayedSongs = useMemo(() => {
-        return filteredSongs.slice(0, 50)
-    }, [filteredSongs])
 
     return (
         <section className="w-full space-y-12 flex flex-col">

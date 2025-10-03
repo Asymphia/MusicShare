@@ -1,13 +1,13 @@
 import SectionHeader from "../components/ui/SectionHeader"
 import { useAppDispatch, useAppSelector } from "../app/hooks"
 import { fetchAlbums, selectAlbums, selectAlbumsStatus } from "../features/albums/albumsSlice"
-import { type ChangeEvent, useCallback, useMemo, useRef, useState } from "react"
+import { useCallback, useRef } from "react"
 import Loader from "../components/ui/Loader"
 import ExtendedEntityBlock from "../components/ui/ExtendedEntityBlock"
 import placeholder from "../assets/placeholders/album-cover-placeholder.png"
 import Error from "../components/ui/Error"
 import Icon from "../components/ui/Icon"
-import useDebounce from "../hooks/useDebounce"
+import useDynamicSearch from "../hooks/useDynamicSearch"
 
 const Albums = () => {
     const dispatch = useAppDispatch()
@@ -19,32 +19,13 @@ const Albums = () => {
         dispatch(fetchAlbums())
     }, [dispatch])
 
-    const [searchQuery, setSearchQuery] = useState<string>("")
-    const debouncedSearchQuery = useDebounce(searchQuery, 150)
+    const { searchQuery, handleSearchChange, filteredData: filteredAlbums, displayedData: displayedAlbums } = useDynamicSearch(
+        albums,
+        useCallback((a, q) => a.name?.toLowerCase().includes(q) || a.artist?.name.toLowerCase().includes(q) as boolean, []),
+        { debounceMs: 150, displayLimit: 50 }
+    )
 
     const inputRef = useRef<HTMLInputElement>(null)
-
-    const filteredAlbums = useMemo(() => {
-        if(!albums || !Array.isArray(albums)) return []
-
-        if(!debouncedSearchQuery.trim()) return albums
-
-        const query = debouncedSearchQuery.toLowerCase()
-
-        return albums.filter(album => {
-            if(album.name.toLowerCase().includes(query)) return true
-            if(album.artist?.name.toLowerCase().includes(query)) return true
-            return false
-        })
-    }, [albums, debouncedSearchQuery])
-
-    const handleSearchChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value)
-    }, [])
-
-    const displayedAlbums = useMemo(() => {
-        return filteredAlbums.slice(0, 50)
-    }, [filteredAlbums])
 
     return (
         <div className="md:space-y-14 space-y-8">
@@ -60,7 +41,7 @@ const Albums = () => {
                 className="w-1/3 group flex flex-nowrap space-x-3 items-center border-b-solid border-b border-b-primary-60 pb-2 transition hover:border-b-primary-80">
                 <Icon size={ 24 } name="search" className="w-6 h-6 fill-primary-60 transition group-hover:fill-primary-80"/>
 
-                <input ref={inputRef} type="text" placeholder="Search for a song, album or artist..." value={ searchQuery } onChange={ handleSearchChange }
+                <input ref={inputRef} type="text" placeholder="Search for an album..." value={ searchQuery } onChange={ handleSearchChange }
                        className="font-text text-xs  focus:outline-none w-full transition placehoder:transition
                             placeholder:text-primary-60 text-primary-60 group-hover:text-primary-80 group-hover:placeholder:text-primary-80 focus:text-primary focus:placeholder:text-primary"
                 />
@@ -69,7 +50,7 @@ const Albums = () => {
             <div className="grid 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
                 {
                     albumsStatus === "succeeded" && filteredAlbums.length > 50 && (
-                        <p className="font-text text-xs text-primary-60 col-span-5 mb-8">
+                        <p className="font-text text-xs text-primary-60 2xl:col-span-5 xl:col-span-4 lg:col-span-3 sm:col-span-2 mb-8">
                             Showing first 50 results of { filteredAlbums.length }. Refine your search for more specific results.
                         </p>
                     )
@@ -77,7 +58,7 @@ const Albums = () => {
 
                 {
                     albumsStatus === "loading" && (
-                        <div className="col-span-5 flex items-center justify-center">
+                        <div className="2xl:col-span-5 xl:col-span-4 lg:col-span-3 sm:col-span-2 flex items-center justify-center">
                             <Loader size={96} stroke={5} />
                         </div>
                     )
@@ -93,13 +74,13 @@ const Albums = () => {
 
                 {
                     albumsStatus === "succeeded" && filteredAlbums.length === 0 && searchQuery.trim() && (
-                        <p className="font-text text-xs text-primary-60 col-span-5">
+                        <p className="font-text text-xs text-primary-60 2xl:col-span-5 xl:col-span-4 lg:col-span-3 sm:col-span-2">
                             No albums found for "{ searchQuery }".
                         </p>
                     )
                 }
 
-                { albumsStatus === "failed" && <Error text="albums" handleRetry={ handleRetryAlbums } mainClassName="!col-span-5" /> }
+                { albumsStatus === "failed" && <Error text="albums" handleRetry={ handleRetryAlbums } mainClassName="2xl:col-span-5 xl:col-span-4 lg:col-span-3 sm:col-span-2" /> }
             </div>
         </div>
     )

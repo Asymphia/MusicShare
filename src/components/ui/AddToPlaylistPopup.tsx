@@ -5,13 +5,13 @@ import { fetchPlaylists, postSongToPlaylist, selectPlaylists, selectPlaylistsSta
 import ExtendedEntityBlock from "./ExtendedEntityBlock.tsx"
 import placeholder from "../../assets/placeholders/album-cover-placeholder.png"
 import MorphIcon from "./MorphIcon.tsx"
-import { type ChangeEvent, forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState, type MouseEvent } from "react"
-import useDebounce from "../../hooks/useDebounce.ts"
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState, type MouseEvent } from "react"
 import Error from "./Error.tsx"
 import Loader from "./Loader.tsx"
 import gsap from "gsap"
 import { createPortal } from "react-dom"
 import FeaturedButton from "./FeaturedButton"
+import useDynamicSearch from "../../hooks/useDynamicSearch"
 
 interface AddToPlaylistPopupProps {
     isOpen: boolean
@@ -33,14 +33,17 @@ const AddToPlaylistPopup = forwardRef<AddToPlaylistPopupHandle, AddToPlaylistPop
     const [render, setRender] = useState<boolean>(isOpen)
     const [playlistsId, setPlaylistsId] = useState<number[]>([])
     const [error, setError] = useState<string | null>(null)
-    const [searchQuery, setSearchQuery] = useState("")
-
-    const debouncedSearchQuery = useDebounce(searchQuery, 150)
 
     const overlayRef = useRef<HTMLDivElement | null>(null)
     const panelRef = useRef<HTMLDivElement | null>(null)
     const inputRef = useRef<HTMLInputElement | null>(null)
     const containerRef = useRef<HTMLElement | null>(null)
+
+    const { searchQuery, handleSearchChange, filteredData: filteredPlaylists, displayedData: displayedPlaylists } = useDynamicSearch(
+        playlists,
+        useCallback((p, q) => p.name?.toLowerCase().includes(q) || p.ownerName?.toLowerCase().includes(q) as boolean, []),
+        { debounceMs: 150, displayLimit: 4 }
+    )
 
     useEffect(() => {
         if(portalContainer) {
@@ -112,25 +115,6 @@ const AddToPlaylistPopup = forwardRef<AddToPlaylistPopupHandle, AddToPlaylistPop
         }
     }, [render, close])
 
-    const filteredPlaylists = useMemo(() => {
-        if(!playlists || !Array.isArray(playlists)) return []
-
-        if(!debouncedSearchQuery.trim()) return playlists
-
-        const query = debouncedSearchQuery.toLowerCase()
-
-        return playlists.filter(playlist => {
-            if (playlist.name?.toLowerCase().includes(query)) return true
-            if (playlist.ownerName?.toLowerCase().includes(query)) return true
-            return false
-        })
-
-    }, [playlists, debouncedSearchQuery])
-
-    const displayedPlaylists = useMemo(() => {
-        return filteredPlaylists.slice(0, 4)
-    }, [filteredPlaylists])
-
     const togglePlaylistId = useCallback((id: number) => {
         setPlaylistsId(prev => prev.includes(id) ? prev.filter(pid => pid !== id) : [...prev, id])
     }, [])
@@ -154,10 +138,6 @@ const AddToPlaylistPopup = forwardRef<AddToPlaylistPopupHandle, AddToPlaylistPop
             setError("Failed to add song to playlist.")
         }
     }, [dispatch, playlistsId, songId, close])
-
-    const handleSearchChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value)
-    }, [])
 
     const handleRetryPlaylists = useCallback(() => {
         dispatch(fetchPlaylists())
@@ -189,6 +169,13 @@ const AddToPlaylistPopup = forwardRef<AddToPlaylistPopupHandle, AddToPlaylistPop
                 </label>
 
                 <div className="space-y-3 w-full">
+                    {
+                        playlistsStatus === "succeeded" && filteredPlaylists.length > 50 && (
+                            <p className="font-text text-xs text-primary-60 mb-8">
+                                Showing first 4 results of { filteredPlaylists.length }. Refine your search for more specific results.
+                            </p>
+                        )
+                    }
 
                     {
                         playlistsStatus === "succeeded" && displayedPlaylists.map(playlist => (
@@ -219,7 +206,7 @@ const AddToPlaylistPopup = forwardRef<AddToPlaylistPopupHandle, AddToPlaylistPop
                     }
 
                     {
-                        playlistsStatus === "succeeded" && displayedPlaylists.length === 0 && (
+                        playlistsStatus === "succeeded" && filteredPlaylists.length === 0 && (
                             <p className="font-text text-xs text-primary-60">
                                 No playlist found. :(
                             </p>
