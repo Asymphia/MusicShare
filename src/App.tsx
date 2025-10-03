@@ -27,6 +27,7 @@ import SinglePlaylist from "./pages/SinglePlaylist.tsx"
 import SearchResults from "./pages/SearchResults.tsx"
 import NotFound from "./pages/NotFound.tsx"
 import Albums from "./pages/Albums"
+import SingleAlbum from "./pages/SingleAlbum"
 
 const App = () => {
     const dispatch = useAppDispatch()
@@ -108,13 +109,16 @@ const App = () => {
             <Route element={<ProtectedRoute redirectTo="/login" /> } >
                 <Route path="/" element={<MainLayout />} >
                     <Route index element={<Dashboard />} />
-                    <Route path="playlists" element={<Playlists />} />
-                    <Route path="albums" element={<Albums />} />
                     <Route path="create-new" element={<Create />} />
 
                     <Route path="playlists">
                         <Route index element={<Playlists />} />
                         <Route path=":slug" element={<SinglePlaylist />} />
+                    </Route>
+
+                    <Route path="albums">
+                        <Route index element={<Albums />} />
+                        <Route path=":slug" element={<SingleAlbum />} />
                     </Route>
 
                     <Route path="/search/:query" element={<SearchResults />} />

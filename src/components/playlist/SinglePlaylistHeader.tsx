@@ -6,13 +6,13 @@ import useWindowWidth from "../../hooks/useWindowWidth.ts"
 interface SinglePlaylistHeaderProps {
     image: string
     title: string
-    description: string
+    description?: string
     author: string
     songAmount: number
     duration: number
 }
 
-const SinglePlaylistHeader = ({ image, title, description, author, songAmount, duration }: SinglePlaylistHeaderProps) => {
+const SinglePlaylistHeader = ({ image, title, description = "", author, songAmount, duration }: SinglePlaylistHeaderProps) => {
     const width = useWindowWidth()
 
     return (
@@ -26,9 +26,13 @@ const SinglePlaylistHeader = ({ image, title, description, author, songAmount, d
 
             <SectionHeader title={ title } as="h1" className="mt-4"/>
 
-            <p className="font-text xl:text-xs md:text-2xs text-3xs text-primary truncate">
-                { description !== "" ? description : "No description yet" }
-            </p>
+            {
+                description && (
+                    <p className="font-text xl:text-xs md:text-2xs text-3xs text-primary truncate">
+                        { description }
+                    </p>
+                )
+            }
 
             <p className="font-text xl:text-xs md:text-2xs text-3xs text-primary-60 mt-4">
                 by { author }

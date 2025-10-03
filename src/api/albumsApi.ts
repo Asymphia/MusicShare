@@ -10,11 +10,31 @@ export interface aristShortDto {
     imageUrl?: string | null
 }
 
+export interface SongDto {
+    spotifyId: string
+    title: string
+    artist: string
+    artistSpotifyId: string
+    albumId: string
+    isDraft: boolean
+    coverImageUrl: string | null
+    songLengthInSeconds: number | null
+    localSongPath: string | null
+    releaseDate: string | null
+    createdAt: string | null
+    updatedAt: string | null
+    hasLocalFile: boolean
+    isComplete: boolean
+    displayArtist: string
+    displayAlbum: string
+}
+
 export interface albumsDto {
     spotifyId: string
     name: string
     coverImageUrl?: string | null
     artist?: aristShortDto | null
+    songs?: SongDto[]
 }
 
 const API_BASE = import.meta.env.VITE_API_BASE
@@ -49,4 +69,21 @@ export async function getAllAlbums():Promise<albumsDto[]> {
     }
 
     return await res.json() as albumsDto[]
+}
+
+export async function getAlbumById(albumId: string): Promise<albumsDto> {
+    const res = await fetch(`${API_BASE}/api/Album/${albumId}`, {
+        method: "GET",
+        headers: {
+            Accept: "application/json"
+        }
+    })
+
+    if(!res.ok) {
+        const text = await res.text().catch(() => "")
+        throw new Error(`Failed to fetch all albums: ${res.status} ${text}`)
+    }
+
+    const data = await res.json()
+    return data as albumsDto
 }
