@@ -33,6 +33,20 @@ const SinglePlaylist = () => {
         dispatch(fetchPlaylistById(id))
     }
 
+    if (songsStatus === "failed") return <Error text="playlist" handleRetry={ handleRetryPlaylist } buttonClassName="!py-2" />
+
+    const songs = playlist?.songs ?? []
+
+    const [songId, setSongId] = useState<string | null>(null)
+    const popupRef = useRef<PopupHandle | null>(null)
+
+    const openPopup = (spotifyId: string) => setSongId(spotifyId)
+    const closePopup = () => setSongId(null)
+
+    const modalRoot = typeof document !== "undefined" ? document.getElementById("modal") : null
+
+    const selectedSong = songId ? songs.find(s => s.spotifyId === songId) : undefined
+
     if (!playlist && songsStatus !== "loading" && songsStatus !== "idle") {
         return <Navigate to="/404" replace />
     }
@@ -44,20 +58,6 @@ const SinglePlaylist = () => {
             </div>
         )
     }
-
-    if (songsStatus === "failed") return <Error text="playlist" handleRetry={ handleRetryPlaylist } buttonClassName="!py-2" />
-
-    const songs = playlist.songs ?? []
-
-    const [songId, setSongId] = useState<string | null>(null)
-    const popupRef = useRef<PopupHandle | null>(null)
-
-    const openPopup = (spotifyId: string) => setSongId(spotifyId)
-    const closePopup = () => setSongId(null)
-
-    const modalRoot = typeof document !== "undefined" ? document.getElementById("modal") : null
-
-    const selectedSong = songId ? songs.find(s => s.spotifyId === songId) : undefined
 
     return (
         <div className="grid sm:grid-cols-3 grid-cols-1 xl:gap-14 lg:gap-10 md:gap-8 sm:gap-6 gap-4">

@@ -31,19 +31,9 @@ const SingleAlbum = () => {
         dispatch(fetchAlbumById(id))
     }, [dispatch])
 
-    if(!album && songsStatus !== "loading" && songsStatus !== "idle") return <Navigate to="/404" replace />
-
-    if (!album || songsStatus === "loading") {
-        return (
-            <div className="h-[70vh] flex items-center justify-center">
-                <Loader size={96} stroke={5} />
-            </div>
-        )
-    }
-
     if (songsStatus === "failed") return <Error text="album" handleRetry={ handleRetryAlbum } buttonClassName="!py-2" />
 
-    const songs = album.songs ?? []
+    const songs = album?.songs ?? []
 
     const [songId, setSongId] = useState<string | null>(null)
     const popupRef = useRef<PopupHandle | null>(null)
@@ -54,6 +44,16 @@ const SingleAlbum = () => {
     const modalRoot = typeof document !== "undefined" ? document.getElementById("modal") : null
 
     const selectedSong = songId ? songs.find(s => s.spotifyId === songId) : undefined
+
+    if(!album && songsStatus !== "loading" && songsStatus !== "idle") return <Navigate to="/404" replace />
+
+    if (!album || songsStatus === "loading") {
+        return (
+            <div className="h-[70vh] flex items-center justify-center">
+                <Loader size={96} stroke={5} />
+            </div>
+        )
+    }
 
     return (
         <div className="grid sm:grid-cols-3 grid-cols-1 xl:gap-14 lg:gap-10 md:gap-8 sm:gap-6 gap-4">
