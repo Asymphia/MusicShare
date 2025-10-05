@@ -46,7 +46,7 @@ const RecentlyPlayed = () => {
 
                 {
                     historyStatus === "succeeded" && historyItems.map(item => (
-                        <RecentlyPlayedItem key={item.id} title={item.songShort?.title ?? "Unknown"}
+                        <RecentlyPlayedItem key={item.id} title={item.songShort?.title ?? "Unknown"} songId={item.songShort.spotifyId} hasFile={!!item.songShort.songLengthInSeconds}
                                             playlistId={item.playlistShort?.id ?? null}
                                             playlist={item.playlistShort?.name ?? "—"}
                                             genre={item.genreShortModelDTO?.map(g => g.name).join(", ") || "unknown"}

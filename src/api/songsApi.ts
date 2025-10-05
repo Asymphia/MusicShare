@@ -13,6 +13,8 @@ export interface SongDto {
     releaseDate?: string
     artist?: string
     album?: AlbumShortDto
+    localSongPath?: string | null
+    hasLocalSong?: boolean
 }
 
 export interface topSongsDto {
@@ -92,4 +94,55 @@ export async function getSongById(songId: string): Promise<SongDto> {
 
     const data = await res.json()
     return data.result as SongDto
+}
+
+export async function postSongFile(songId: string, file: File): Promise<void> {
+    const fd = new FormData()
+    fd.append("songToAdd", file, file.name)
+
+    const res = await fetch(`${API_BASE}/api/Song/Files/${songId}`, {
+        method: "POST",
+        body: fd,
+        headers: {
+            Accept: "application/json"
+        }
+    })
+
+    if(!res.ok) {
+        const text = await res.text().catch(() => "")
+        throw new Error(`Failed to post file: ${res.status} ${text}`)
+    }
+}
+
+export async function deleteSongFile(songId: string): Promise<void> {
+    const res = await fetch(`${API_BASE}/api/Song/Files/${songId}`, {
+        method: "DELETE",
+        headers: {
+            Accept: "application/json"
+        }
+    })
+
+    if(!res.ok) {
+        const text = await res.text().catch(() => "")
+        throw new Error(`Failed to delete song file: ${res.status} ${text}`)
+    }
+}
+
+export async function putSong(songId: string, songBody: Partial<SongDto>): Promise<SongDto> {
+    const res = await fetch(`${API_BASE}/api/Song?spotifyId=${songId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+        },
+        body: JSON.stringify(songBody)
+    })
+
+    if(!res.ok) {
+        const text = await res.text().catch(() => "")
+        throw new Error(`Failed to put song: ${res.status} ${text}`)
+    }
+
+    const data = await res.json()
+    return (data?.result ?? data) as SongDto
 }

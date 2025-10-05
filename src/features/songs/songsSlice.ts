@@ -1,6 +1,7 @@
 import * as songsApi from "../../api/songsApi"
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "../../app/store.ts"
+import { getAudioDuration } from "../../lib/audio"
 
 export type Songs = songsApi.SongDto[]
 
@@ -24,6 +25,37 @@ export const fetchSongs = createAsyncThunk<Songs, void, { rejectValue: string }>
     }
 })
 
+export const uploadSongFile = createAsyncThunk<songsApi.SongDto, { songId: string; file: File }, { rejectValue: string }>("songs/uploadFile", async ({ songId, file }, { rejectWithValue }) => {
+    try {
+        const duration = await getAudioDuration(file)
+        const durationSeconds = Math.round(duration)
+
+        await songsApi.postSongFile(songId, file)
+
+        const fresh = await songsApi.getSongById(songId)
+
+        const body: Partial<songsApi.SongDto> = {
+            ...fresh,
+            songLengthInSeconds: durationSeconds
+        }
+
+        await songsApi.putSong(songId, body)
+
+        return await songsApi.getSongById(songId)
+    } catch(err: any) {
+        return rejectWithValue(err?.message ?? "Failed to upload file")
+    }
+})
+
+export const deleteSongFile = createAsyncThunk<songsApi.SongDto, { songId: string }, { rejectValue: string }>("songs/deleteFile", async ({ songId }, { rejectWithValue }) => {
+    try {
+        await songsApi.deleteSongFile(songId)
+        return songsApi.getSongById(songId)
+    } catch (err: any) {
+        return rejectWithValue(err?.message ?? "Failed to delete song file")
+    }
+})
+
 const songsSlice = createSlice({
     name: "songs",
     initialState,
@@ -32,6 +64,10 @@ const songsSlice = createSlice({
             state.data = null
             state.status = "idle"
             state.error = null
+        },
+        updateSongInState(state, action: PayloadAction<songsApi.SongDto>) {
+            if(!state.data) return
+            state.data = state.data.map(s => (s.spotifyId === action.payload.spotifyId ? action.payload : s))
         }
     },
     extraReducers: (builder) => {
@@ -45,6 +81,38 @@ const songsSlice = createSlice({
                 state.status = "succeeded"
             })
             .addCase(fetchSongs.rejected, (state, action) => {
+                state.status = "failed"
+                state.error = action.payload ?? action.error?.message ?? "Unknown error"
+            })
+            .addCase(uploadSongFile.pending, state => {
+                state.status = "loading"
+                state.error = null
+            })
+            .addCase(uploadSongFile.fulfilled, (state, action: PayloadAction<songsApi.SongDto>) => {
+                if(!state.data) {
+                    state.data = [action.payload]
+                } else {
+                    state.data = state.data.map((s) => (s.spotifyId === action.payload.spotifyId ? action.payload : s))
+                }
+                state.status = "succeeded"
+            })
+            .addCase(uploadSongFile.rejected, (state, action) => {
+                state.status = "failed"
+                state.error = action.payload ?? action.error?.message ?? "Upload failed"
+            })
+            .addCase(deleteSongFile.pending, state => {
+                state.status = "loading"
+                state.error = "null"
+            })
+            .addCase(deleteSongFile.fulfilled, (state, action: PayloadAction<songsApi.SongDto>) => {
+                if (!state.data) {
+                    state.data = [action.payload]
+                } else {
+                    state.data = state.data.map((s) => (s.spotifyId === action.payload.spotifyId ? action.payload : s))
+                }
+                state.status = "succeeded"
+            })
+            .addCase(deleteSongFile.rejected, (state, action) => {
                 state.status = "failed"
                 state.error = action.payload ?? action.error?.message ?? "Unknown error"
             })

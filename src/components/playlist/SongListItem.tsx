@@ -9,9 +9,10 @@ interface SongListItemProps {
     album: string
     length: string
     added: string
+    onClick: () => void
 }
 
-const SongListItem = ({image, song, artist, album, length, added}: SongListItemProps) => {
+const SongListItem = ({image, song, artist, album, length, added, onClick}: SongListItemProps) => {
     const width = useWindowWidth()
 
     return (
@@ -44,8 +45,11 @@ const SongListItem = ({image, song, artist, album, length, added}: SongListItemP
                     { length }
                 </p>
 
-                <Icon size={ width >= 1280 ? 16 : width >= 768 ? 12 : 8 } name="play" className="fill-primary-60 hover:fill-primary xl:w-4 xl:h-4 md:w-3 md:h-3 w-2 h-2"/>
-                <Icon size={ width >= 1280 ? 16 : width >= 768 ? 12 : 8 } name="threeDots" className="fill-primary-60 hover:fill-primary xl:w-4 xl:h-4 md:w-3 md:h-3 w-2 h-2"/>
+                <Icon size={ width >= 1280 ? 16 : width >= 768 ? 12 : 8 } name="play" className="fill-primary-60 hover:fill-primary-80 active:fill-primary xl:w-4 xl:h-4 md:w-3 md:h-3 w-2 h-2"/>
+
+                <button type="button" className="cursor-pointer" onClick={onClick}>
+                    <Icon size={ width >= 1280 ? 16 : width >= 768 ? 12 : 8 } name="threeDots" className="fill-primary-60 hover:fill-primary-80 active:fill-primary xl:w-4 xl:h-4 md:w-3 md:h-3 w-2 h-2"/>
+                </button>
             </div>
         </div>
     )
