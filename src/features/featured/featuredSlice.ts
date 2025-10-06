@@ -20,10 +20,14 @@ export const fetchFeaturedData = createAsyncThunk<FeaturedData, void, { rejectVa
     try {
         const data = [] as FeaturedData
 
-        while(data.length <= 5) {
+        while(data.length < 5) {
             const item = await featuredApi.getFeatured() as featuredApi.featuredDto
 
-            if(!data.includes(item)) data.push(item)
+            const isDuplicate = data.some(
+                song => song.title === item.title
+            )
+
+            if(!isDuplicate) data.push(item)
         }
 
         return data
