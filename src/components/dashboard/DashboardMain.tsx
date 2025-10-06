@@ -20,14 +20,12 @@ import {
     selectRecommendedArtistsStatus
 } from "../../features/artists/recommendedArtistsSlice.ts"
 import artistPlaceholder from "../../assets/placeholders/artist-placeholder.png"
-
-const albums = [
-    { id: 1, image: photo, title: "Skeleta", artist: "Ghost", duration: 15, songAmount: 10 },
-    { id: 2, image: photo, title: "Take me back toasdasd Eden", artist: "Sleep token", duration: 15, songAmount: 10 },
-    { id: 3, image: photo, title: "Lo-files", artist: "Bring me the horizon", duration: 15, songAmount: 10 },
-    { id: 4, image: photo, title: "Life is killing me", artist: "Type o negative", duration: 15, songAmount: 10 },
-    { id: 5, image: photo, title: "Ju Ju", artist: "Siouxsie and the Banshees", duration: 15, songAmount: 10 },
-]
+import {
+    fetchRecommendedAlbums,
+    selectRecommendedAlbums,
+    selectRecommendedAlbumsStatus
+} from "../../features/albums/recommendedAlbumsSlice"
+import albumPlaceholder from "../../assets/placeholders/album-cover-placeholder.png"
 
 const DashboardMain = () => {
     const width = useWindowWidth()
@@ -40,12 +38,19 @@ const DashboardMain = () => {
     const recommendedArtists = useAppSelector(selectRecommendedArtists)
     const recommendedArtistsStatus = useAppSelector(selectRecommendedArtistsStatus)
 
+    const recommendedAlbums = useAppSelector(selectRecommendedAlbums)
+    const recommendedAlbumsStatus = useAppSelector(selectRecommendedAlbumsStatus)
+
     const handleRetryRecommendedSongs = useCallback(() => {
         dispatch(fetchRecommendedSongs())
     }, [dispatch])
 
     const handleRetryRecommendedArtists = useCallback(() => {
         dispatch(fetchRecommendedArtists())
+    }, [dispatch])
+
+    const handleRetryRecommendedAlbums = useCallback(() => {
+        dispatch(fetchRecommendedAlbums())
     }, [dispatch])
 
     return (
@@ -61,11 +66,27 @@ const DashboardMain = () => {
                 <SectionHeader title="You might also like..." as="h2" />
                 <div className="w-full grid sm:grid-cols-5 grid-cols-4 gap-3">
                     {
-                        albums.slice(0, width < 640 ? 4 : 5).map(album => (
-                            <EntityBlock key={album.id} image={album.image} type="album" album={album.title}
-                                         artist={album.artist}/>
+                        recommendedAlbumsStatus === "succeeded" && recommendedAlbums?.length === 0 && (
+                            <p className="font-text md:text-xs text-2xs text-primary-60 sm:col-span-5 cols-span-4">
+                                No recommended albums found. Listen to more songs in order to display your recommended list.
+                            </p>
+                        )
+                    }
+
+                    {
+                        recommendedAlbumsStatus === "succeeded" && recommendedAlbums?.slice(0, width < 640 ? 4 : 5).map(album => (
+                            <EntityBlock key={album.spotifyId} image={album.coverImageUrl || albumPlaceholder} type="album" album={album.name}
+                                         artist={album.artist?.name || "Unknown"} />
                         ))
                     }
+
+                    { recommendedAlbumsStatus === "loading" && (
+                        <div className="sm:col-span-5 cols-span-4">
+                            <Loader size={48} stroke={4} />
+                        </div>
+                    )}
+
+                    { recommendedAlbumsStatus === "failed" && <Error text="recommended albums" handleRetry={ handleRetryRecommendedAlbums } buttonClassName="!py-2" mainClassName="sm:col-span-5 cols-span-4" /> }
                 </div>
             </section>
 

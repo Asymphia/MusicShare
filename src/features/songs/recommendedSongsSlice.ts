@@ -20,7 +20,7 @@ export const fetchRecommendedSongs = createAsyncThunk<RecommendedSongs, void, { 
     try {
         return await songsApi.getRecommendedSongs()
     } catch(err: any) {
-        return rejectWithValue(err?.message ?? "Failed to fetch top songs")
+        return rejectWithValue(err?.message ?? "Failed to fetch featured songs")
     }
 })
 

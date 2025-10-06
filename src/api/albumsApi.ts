@@ -87,3 +87,20 @@ export async function getAlbumById(albumId: string): Promise<albumsDto> {
     const data = await res.json()
     return data as albumsDto
 }
+
+export async function getFeaturedAlbums(number: number): Promise<albumsDto[]> {
+    const res = await fetch(`${API_BASE}/api/Recommendation/getRandomAlbums?top=${number}`, {
+        method: "GET",
+        headers: {
+            Accept: "application/json"
+        }
+    })
+
+    if(!res.ok) {
+        const text = await res.text().catch(() => "")
+        throw new Error(`Failed to fetch featured albums: ${res.status} ${text}`)
+    }
+
+    const data = await res.json()
+    return data as albumsDto[]
+}

@@ -12,6 +12,7 @@ import { fetchTopAlbums } from "./features/albums/topAlbumsSlice.ts"
 import { fetchRecommendedSongs } from "./features/songs/recommendedSongsSlice.ts"
 import { fetchRecommendedArtists } from "./features/artists/recommendedArtistsSlice.ts"
 import { fetchAlbums } from "./features/albums/albumsSlice"
+import { fetchRecommendedAlbums } from "./features/albums/recommendedAlbumsSlice"
 
 /* Layouts */
 import MainLayout from "./layouts/MainLayout.jsx"
@@ -95,6 +96,7 @@ const App = () => {
             dispatch(fetchRecommendedSongs())
             dispatch(fetchRecommendedArtists())
             dispatch(fetchAlbums())
+            dispatch(fetchRecommendedAlbums())
         }
     }, [status, dispatch])
 
