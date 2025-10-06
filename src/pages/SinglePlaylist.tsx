@@ -2,7 +2,7 @@ import SinglePlaylistHeader from "../components/playlist/SinglePlaylistHeader.ts
 import { Navigate, useParams } from "react-router-dom"
 import { useAppDispatch, useAppSelector } from "../app/hooks.ts"
 import { fetchPlaylistById, selectPlaylistById, selectPlaylistSongsStatus } from "../features/playlists/playlistsSlice.ts"
-import {useEffect, useRef, useState} from "react"
+import { useEffect, useRef, useState } from "react"
 import Loader from "../components/ui/Loader.tsx"
 import SongListItem from "../components/playlist/SongListItem.tsx"
 import placeholder from "../assets/placeholders/album-cover-placeholder.png"
@@ -16,18 +16,21 @@ const SinglePlaylist = () => {
     const id = Number(slug)
     const dispatch = useAppDispatch()
 
-    if (isNaN(id)) {
-        return <Navigate to="/404" replace />
-    }
-
     const playlist = useAppSelector(state => selectPlaylistById(state, id))
     const songsStatus = useAppSelector(state => selectPlaylistSongsStatus(state, id))
+
+    const [songId, setSongId] = useState<string | null>(null)
+    const popupRef = useRef<PopupHandle | null>(null)
 
     useEffect(() => {
         if (songsStatus === "idle" || songsStatus === "failed") {
             dispatch(fetchPlaylistById(id))
         }
     }, [dispatch, id, songsStatus])
+
+    if (isNaN(id)) {
+        return <Navigate to="/404" replace />
+    }
 
     const handleRetryPlaylist = () => {
         dispatch(fetchPlaylistById(id))
@@ -36,9 +39,6 @@ const SinglePlaylist = () => {
     if (songsStatus === "failed") return <Error text="playlist" handleRetry={ handleRetryPlaylist } buttonClassName="!py-2" />
 
     const songs = playlist?.songs ?? []
-
-    const [songId, setSongId] = useState<string | null>(null)
-    const popupRef = useRef<PopupHandle | null>(null)
 
     const openPopup = (spotifyId: string) => setSongId(spotifyId)
     const closePopup = () => setSongId(null)

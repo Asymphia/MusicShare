@@ -18,6 +18,10 @@ interface FeaturedProps {
 const Featured = ({ imageUrl, song, artist, album, localSongPath = null, songLengthInSeconds = null, releaseDate = null }: FeaturedProps) => {
     const width = useWindowWidth()
 
+    const handleClick = () => {
+        if(!localSongPath) return
+    }
+
     return (
         <div className="relative xl:h-[429px] md:h-[360px] sm:h-[300px] h-[240px] xl:p-[3px] p-[2px] bg-[linear-gradient(127deg,rgba(255,255,255,0.5)_1.98%,rgba(255,255,255,0)_38%,rgba(112,121,151,0)_58%,rgba(112,121,151,0.5)_100%)] md:rounded-4xl rounded-3xl">
             <img src={ imageUrl } alt={`Featured song: "${ song }" cover by ${ artist }`} className="xl:h-[423px] xl:w-[423px] md:h-[360px] md:w-[360px] sm:h-[300px] sm:w-[300px] h-[240px] w-[240px] absolute xl:top-[3px] xl:right-[3px] top-[2xp] right-[2px] object-cover mask-gradient md:rounded-[37px] rounded-[18px]"/>
@@ -52,7 +56,7 @@ const Featured = ({ imageUrl, song, artist, album, localSongPath = null, songLen
                     </div>
                 </div>
 
-                <FeaturedButton text="Play now" icon="play" />
+                <FeaturedButton text="Play now" icon="play" onClick={handleClick} />
             </div>
         </div>
     )

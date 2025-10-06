@@ -8,18 +8,21 @@ import Loader from "../components/ui/Loader"
 import Error from "../components/ui/Error"
 import SongListItem from "../components/playlist/SongListItem"
 import { formatDate } from "../lib/date"
-import SongFilePopup from "../components/ui/SongFilePopup";
-import type {PopupHandle} from "../components/ui/Popup";
+import SongFilePopup from "../components/ui/SongFilePopup"
+import type { PopupHandle } from "../components/ui/Popup"
 
 const SingleAlbum = () => {
     const { slug } = useParams<{ slug: string }>()
     const id = String(slug)
     const dispatch = useAppDispatch()
 
-    if(!id) return <Navigate to="/404" replace />
-
     const album = useAppSelector(state => selectAlbumById(state, id))
     const songsStatus = useAppSelector(state => selectAlbumsSongsStatus(state, id))
+
+    const [songId, setSongId] = useState<string | null>(null)
+    const popupRef = useRef<PopupHandle | null>(null)
+
+    if(!id) return <Navigate to="/404" replace />
 
     useEffect(() => {
         if(songsStatus === "idle" || songsStatus === "failed") {
@@ -34,9 +37,6 @@ const SingleAlbum = () => {
     if (songsStatus === "failed") return <Error text="album" handleRetry={ handleRetryAlbum } buttonClassName="!py-2" />
 
     const songs = album?.songs ?? []
-
-    const [songId, setSongId] = useState<string | null>(null)
-    const popupRef = useRef<PopupHandle | null>(null)
 
     const openPopup = (spotifyId: string) => setSongId(spotifyId)
     const closePopup = () => setSongId(null)

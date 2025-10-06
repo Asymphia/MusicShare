@@ -110,9 +110,9 @@ const TopStats = () => {
                         }
 
                         {
-                            topAlbumsStatus === "succeeded" && topAlbums?.map((album, id) => (
-                                <ExtendedEntityBlock id={id} key={album.spotifyId} isTop={true} image={album.coverImageUrl}
-                                                     type="album" artist="KORNEL" album={album.name} duration={2} songAmount={14} />
+                            topAlbumsStatus === "succeeded" && topAlbums?.map(album => (
+                                <ExtendedEntityBlock id={album.spotifyId} key={album.spotifyId} isTop={true} image={album.coverImageUrl}
+                                                     type="album" artist={album.artist.name} album={album.name} duration={0} songAmount={0} />
                             ))
                         }
 

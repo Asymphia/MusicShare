@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useRef, useState} from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import gsap from "gsap"
 import SectionHeader from "../ui/SectionHeader"
 import FeaturedSliderButtons from "./FeaturedSliderButtons"
@@ -6,8 +6,8 @@ import Featured from "./Featured"
 import { useAppDispatch, useAppSelector } from "../../app/hooks"
 import { fetchFeaturedData, selectFeatured, selectFeaturedStatus } from "../../features/featured/featuredSlice"
 import placeholder from "../../assets/placeholders/song-placeholder.png"
-import Error from "../ui/Error";
-import Loader from "../ui/Loader";
+import Error from "../ui/Error"
+import Loader from "../ui/Loader"
 
 const FeaturedSection = () => {
     // FETCH LOGIC
@@ -36,11 +36,13 @@ const FeaturedSection = () => {
     }
 
     const handlePrevious = () => {
+        if (!featuredData || featuredData.length === 0) return
         const next = currentSlide === 0 ? featuredData?.length - 1 : currentSlide - 1
         slideTo(next, "prev")
     }
 
     const handleNext = () => {
+        if (!featuredData || featuredData.length === 0) return
         const next = currentSlide === featuredData?.length - 1 ? 0 : currentSlide + 1
         slideTo(next, "next")
     }
@@ -84,29 +86,27 @@ const FeaturedSection = () => {
         }
     }, [currentSlide, prevSlide])
 
-    const renderSlide = (index: number) => (
-        <div
-            key={index}
-            ref={el => { slideRefs.current[index] = el ?? null }}
-            className={`col-start-1 row-start-1 min-w-0 w-full h-full ${index === currentSlide ? "pointer-events-auto" : "pointer-events-none"} shrink-0`}
-        >
-            <Featured
-                artist={featuredData[index].artist}
-                album={featuredData[index].albumName}
-                song={featuredData[index].title}
-                imageUrl={featuredData[index].coverImageUrl || placeholder}
-                localSongPath={featuredData[index].localSongPath}
-                releaseDate={featuredData[index].releaseDate}
-                songLengthInSeconds={featuredData[index].songLengthInSeconds}
-            />
-        </div>
-    )
+    const renderSlide = (index: number) => {
+        if (!featuredData || index < 0 || index >= featuredData.length) return null
+
+        const item = featuredData[index]
+
+        return (
+            <div key={index} ref={el => { slideRefs.current[index] = el ?? null }}
+                className={`col-start-1 row-start-1 min-w-0 w-full h-full ${index === currentSlide ? "pointer-events-auto" : "pointer-events-none"} shrink-0`}
+            >
+                <Featured artist={item.artist} album={item.albumName} song={item.title} imageUrl={item.coverImageUrl || placeholder}
+                    localSongPath={item.localSongPath} releaseDate={item.releaseDate} songLengthInSeconds={item.songLengthInSeconds}
+                />
+            </div>
+        )
+    }
 
     return (
         <section>
             <SectionHeader title="Featured" as="h1" right={<FeaturedSliderButtons onClickNext={handleNext} onClickPrev={handlePrevious} />} />
 
-            <div className="grid overflow-hidden w-full h-full min-h-[320px]">
+            <div className="grid overflow-hidden w-full xl:h-[429px] md:h-[360px] sm:h-[300px] h-[240px]">
                 { featuredDataStatus === "succeeded" && prevSlide !== null && renderSlide(prevSlide) }
                 { featuredDataStatus === "succeeded" && renderSlide(currentSlide) }
 

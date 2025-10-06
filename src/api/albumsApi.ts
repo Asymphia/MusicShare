@@ -1,13 +1,14 @@
-export interface topAlbumsDto {
-    spotifyId: string
-    name: string
-    coverImageUrl: string
-}
-
 export interface aristShortDto {
     spotifyId: string
     name: string
     imageUrl?: string | null
+}
+
+export interface topAlbumsDto {
+    spotifyId: string
+    name: string
+    coverImageUrl: string
+    artist: aristShortDto
 }
 
 export interface SongDto {

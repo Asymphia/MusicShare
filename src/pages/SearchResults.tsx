@@ -23,6 +23,13 @@ export interface SearchPlaylist {
     ownerName?: string
 }
 
+interface SearchAlbum {
+    spotifyId: string
+    name: string
+    coverImageUrl: string | null
+    artist: string | null
+}
+
 export interface SearchSong {
     spotifyId: string
     title: string
@@ -30,7 +37,7 @@ export interface SearchSong {
     songLengthInSeconds: number | null
     releaseDate: string | null
     artist: string
-    album: string
+    album: SearchAlbum
 }
 
 export interface SearchResponse {
@@ -108,7 +115,7 @@ const SearchResults = () => {
                                 results?.songs.map(song => (
                                     <EntityBlock key={song.spotifyId}
                                                  image={song.coverImageUrl ? song.coverImageUrl : songPlaceholder}
-                                                 type="song" song={song.title} artist={ song.artist } album={ song.album } headerAs="h5"/>
+                                                 type="song" song={song.title} artist={ song.artist } album={ song.album.name } headerAs="h5"/>
                                 ))
                             }
                         </div>
