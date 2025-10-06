@@ -1,7 +1,4 @@
 import SectionHeader from "../ui/SectionHeader.tsx"
-import FeaturedSliderButtons from "./FeaturedSliderButtons.tsx"
-import Featured from "./Featured.tsx"
-import photo from "../../assets/placeholders/placeholder-image.jpg"
 import EntityBlock from "../ui/EntityBlock.tsx"
 import useWindowWidth from "../../hooks/useWindowWidth.ts"
 import { useAppDispatch, useAppSelector } from "../../app/hooks.ts"
@@ -26,6 +23,7 @@ import {
     selectRecommendedAlbumsStatus
 } from "../../features/albums/recommendedAlbumsSlice"
 import albumPlaceholder from "../../assets/placeholders/album-cover-placeholder.png"
+import FeaturedSection from "./FeaturedSection"
 
 const DashboardMain = () => {
     const width = useWindowWidth()
@@ -56,10 +54,7 @@ const DashboardMain = () => {
     return (
         <div className="space-y-14 xl:col-span-1 lg:col-span-2">
             {/* Featured */}
-            <section>
-                <SectionHeader title="Featured" as="h1" right={<FeaturedSliderButtons/>}/>
-                <Featured/>
-            </section>
+            <FeaturedSection />
 
             {/* Albums Recommendations */}
             <section>

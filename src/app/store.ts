@@ -12,6 +12,7 @@ import recommendedSongsReducer from "../features/songs/recommendedSongsSlice.ts"
 import recommendedArtistsReducer from "../features/artists/recommendedArtistsSlice.ts"
 import albumsReducer from "../features/albums/albumsSlice.ts"
 import recommendedAlbumsReducer from "../features/albums/recommendedAlbumsSlice.ts"
+import featuredReducer from "../features/featured/featuredSlice"
 
 export const store = configureStore({
     reducer: {
@@ -27,7 +28,8 @@ export const store = configureStore({
         recommendedSongs: recommendedSongsReducer,
         recommendedArtists: recommendedArtistsReducer,
         albums: albumsReducer,
-        recommendedAlbums: recommendedAlbumsReducer
+        recommendedAlbums: recommendedAlbumsReducer,
+        featured: featuredReducer
     }
 })
 
