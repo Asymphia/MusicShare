@@ -47,7 +47,7 @@ const Playlists = () => {
                 />
             </label>
 
-            <div className="grid 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
+            <div className="grid 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 space-x-3 space-y-1">
                 {
                     playlistsStatus === "succeeded" && filteredPlaylists.length > 50 && (
                         <p className="font-text text-xs text-primary-60 2xl:col-span-5 xl:col-span-4 lg:col-span-3 sm:col-span-2 mb-8">

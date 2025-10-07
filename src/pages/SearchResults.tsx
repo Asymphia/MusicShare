@@ -110,7 +110,7 @@ const SearchResults = () => {
                     <section>
                         <SectionHeader title="Songs" as="h2"/>
 
-                        <div className="grid 2xl:grid-cols-10 xl:grid-cols-9 lg:grid-cols-8 md:grid-cols-6 sm:grid-cols-4 grid-cols-2 gap-4">
+                        <div className="grid 2xl:grid-cols-10 xl:grid-cols-9 lg:grid-cols-8 md:grid-cols-6 sm:grid-cols-4 grid-cols-2 gap-1">
                             {
                                 results?.songs.map(song => (
                                     <EntityBlock key={song.spotifyId}
@@ -128,7 +128,7 @@ const SearchResults = () => {
                     <section>
                         <SectionHeader title="Artists" as="h2"/>
 
-                        <div className="grid 2xl:grid-cols-10 xl:grid-cols-9 lg:grid-cols-8 md:grid-cols-6 sm:grid-cols-4 grid-cols-2 gap-4">
+                        <div className="grid 2xl:grid-cols-10 xl:grid-cols-9 lg:grid-cols-8 md:grid-cols-6 sm:grid-cols-4 grid-cols-2 gap-1">
                             {
                                 results?.artist.map(artist => (
                                     <EntityBlock key={artist.spotifyId} type="artist"
@@ -146,7 +146,7 @@ const SearchResults = () => {
                     <section>
                         <SectionHeader title="Playlists" as="h2"/>
 
-                        <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
+                        <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-1">
                             {
                                 results?.playlists.map(playlist => (
                                     <ExtendedEntityBlock

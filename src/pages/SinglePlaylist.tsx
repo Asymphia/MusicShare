@@ -67,7 +67,7 @@ const SinglePlaylist = () => {
                                           description={playlist.description ?? "No description yet :("} />
             </div>
 
-            <div className="sm:col-span-2 space-y-3">
+            <div className="sm:col-span-2 space-y-2">
                 {
                     songs.length > 0 ? songs.map(song => (
                         <SongListItem key={song.spotifyId} onClick={() => openPopup(song.spotifyId)}

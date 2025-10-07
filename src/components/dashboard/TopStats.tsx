@@ -72,7 +72,7 @@ const TopStats = () => {
                 <div>
                     <SectionHeader title="Songs" as="h4" className="!mb-2"/>
 
-                    <div className="space-y-3">
+                    <div>
                         {
                             topSongsStatus === "succeeded" && topSongs?.songs.length === 0 && (
                                 <p className="font-text md:text-xs text-2xs text-primary-60">
@@ -100,7 +100,7 @@ const TopStats = () => {
                 <div>
                     <SectionHeader title="Albums" as="h4" className="!mb-2"/>
 
-                    <div className="space-y-3">
+                    <div>
                         {
                             topAlbumsStatus === "succeeded" && topAlbums?.length === 0 && (
                                 <p className="font-text md:text-xs text-2xs text-primary-60">
@@ -150,7 +150,7 @@ const TopStats = () => {
             <div>
                 <SectionHeader title="Artists" as="h4" className="!mb-2"/>
 
-                <div className="grid xl:grid-cols-7 lg:grid-cols-3 sm:grid-cols-7 grid-cols-4 gap-3">
+                <div className="grid xl:grid-cols-7 lg:grid-cols-3 sm:grid-cols-7 grid-cols-4">
                     {
                         topArtistsStatus === "succeeded" && topArtists?.length === 0 && (
                             <p className="font-text text-xs text-primary-60 col-span-7">

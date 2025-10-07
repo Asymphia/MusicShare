@@ -25,7 +25,7 @@ const PlaylistsSection = () => {
         <section>
             <SectionHeader title="Come back to us" as="h3" right={<SeeAllButton link="/playlists"/>}/>
 
-            <div className="grid xl:grid-cols-2 lg:grid-cols-1 sm:grid-cols-2 grid-cols-1 gap-3">
+            <div className="grid xl:grid-cols-2 lg:grid-cols-1 sm:grid-cols-2 grid-cols-1 space-x-3">
                 {
                     playlistsStatus === "loading" && (
                         <div className="col-span-2 flex items-center justify-center">

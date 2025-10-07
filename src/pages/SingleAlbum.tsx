@@ -62,7 +62,7 @@ const SingleAlbum = () => {
                                       songAmount={album.songs?.length || 0} duration={0} author={album.artist?.name || "Unknown"} />
             </div>
 
-            <div className="sm:col-span-2 space-y-3">
+            <div className="sm:col-span-2 space-y-2">
                 {
                     songs.length > 0 ? songs.map(song => (
                         <SongListItem key={song.spotifyId} onClick={() => openPopup(song.spotifyId)}

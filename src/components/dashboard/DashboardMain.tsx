@@ -59,7 +59,7 @@ const DashboardMain = () => {
             {/* Albums Recommendations */}
             <section>
                 <SectionHeader title="You might also like..." as="h2" />
-                <div className="w-full grid sm:grid-cols-5 grid-cols-4 gap-3">
+                <div className="w-full grid sm:grid-cols-5 grid-cols-4">
                     {
                         recommendedAlbumsStatus === "succeeded" && recommendedAlbums?.length === 0 && (
                             <p className="font-text md:text-xs text-2xs text-primary-60 sm:col-span-5 cols-span-4">
@@ -71,7 +71,7 @@ const DashboardMain = () => {
                     {
                         recommendedAlbumsStatus === "succeeded" && recommendedAlbums?.slice(0, width < 640 ? 4 : 5).map(album => (
                             <EntityBlock key={album.spotifyId} image={album.coverImageUrl || albumPlaceholder} type="album" album={album.name}
-                                         artist={album.artist?.name || "Unknown"} />
+                                         artist={album.artist?.name || "Unknown"} link={`/albums/${album.spotifyId}`} />
                         ))
                     }
 
@@ -88,7 +88,7 @@ const DashboardMain = () => {
             {/* Songs Recommendations */}
             <section>
                 <SectionHeader title="Song selected for you..." as="h2" />
-                <div className="w-full grid sm:grid-cols-5 grid-cols-4 gap-3">
+                <div className="w-full grid sm:grid-cols-5 grid-cols-4">
                     {
                         recommendedSongsStatus === "succeeded" && recommendedSongs?.length === 0 && (
                             <p className="font-text md:text-xs text-2xs text-primary-60 sm:col-span-5 cols-span-4">
@@ -117,7 +117,7 @@ const DashboardMain = () => {
             {/* Artists Recommendations */}
             <section>
                 <SectionHeader title="Artists similar to your favs..." as="h2" />
-                <div className="w-full grid sm:grid-cols-5 grid-cols-4 gap-3">
+                <div className="w-full grid sm:grid-cols-5 grid-cols-4">
                     {
                         recommendedArtistsStatus === "succeeded" && recommendedArtists?.length === 0 && (
                             <p className="font-text md:text-xs text-2xs text-primary-60 sm:col-span-5 cols-span-4">

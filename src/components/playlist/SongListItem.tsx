@@ -16,7 +16,7 @@ const SongListItem = ({image, song, artist, album, length, added, onClick}: Song
     const width = useWindowWidth()
 
     return (
-        <div className="grid lg:grid-cols-3 grid-cols-2 items-center gap-6">
+        <div className="grid lg:grid-cols-3 grid-cols-2 items-center gap-6 rounded-2xl pr-4 pl-1 py-1 bg-bg-secondary transition hover:bg-bg-primary-50 active:bg-bg-primary">
             <div className="flex items-center gap-3">
                 <div
                     className="xl:w-16 xl:h-16 md:w-14 md:h-14 w-12 h-12 aspect-square relative p-[1px] bg-[linear-gradient(127deg,rgba(255,255,255,0.5)_1.98%,rgba(255,255,255,0)_38%,rgba(112,121,151,0)_58%,rgba(112,121,151,0.5)_100%)] rounded-2xl">

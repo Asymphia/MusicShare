@@ -88,7 +88,7 @@ const AddToPlaylistPopup = forwardRef<AddToPlaylistPopupHandle, AddToPlaylistPop
                 />
             </label>
 
-            <div className="space-y-3 w-full">
+            <div className="space-y-1 w-full">
                 {
                     playlistsStatus === "succeeded" && filteredPlaylists.length > 50 && (
                         <p className="font-text text-xs text-primary-60 mb-8">
@@ -102,7 +102,7 @@ const AddToPlaylistPopup = forwardRef<AddToPlaylistPopupHandle, AddToPlaylistPop
                         <div key={playlist.id} className="flex flex-nowrap justify-between w-full overflow-hidden gap-4">
                             <div className="min-w-0 flex-1 overflow-hidden">
                                 <ExtendedEntityBlock isTop={false} image={playlist.coverImageUrl || placeholder}
-                                                     type="playlist" playlist={playlist.name}
+                                                     type="playlist" playlist={playlist.name} disableLink={true}
                                                      creator={playlist.ownerName || "unknown"} id={playlist.id}
                                                      songAmount={playlist.songs?.length || 0} duration={0}/>
                             </div>
