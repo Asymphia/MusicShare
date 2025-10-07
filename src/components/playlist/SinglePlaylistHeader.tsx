@@ -2,6 +2,7 @@ import Overlay from "../ui/Overlay.tsx"
 import SectionHeader from "../ui/SectionHeader.tsx"
 import Icon from "../ui/Icon.tsx"
 import useWindowWidth from "../../hooks/useWindowWidth.ts"
+import ShareButton from "../ui/ShareButton";
 
 interface SinglePlaylistHeaderProps {
     image: string
@@ -57,8 +58,7 @@ const SinglePlaylistHeader = ({ image, title, description = "", author, songAmou
             </p>
 
             <div className="flex gap-3 mt-4">
-                <Icon name="share" size={ width >= 1280 ? 19 : width >= 768 ? 17 : 15 }
-                      className="xl:w-[19px] xl:h-[19px] md:w-[17px] md:h-[17px] w-[15px] h-[15px] fill-primary-60 hover:fill-primary-80 active:fill-primary"/>
+                <ShareButton text={`🎵 Mood booster: ${ title } by ${ author }!`} />
                 <Icon name="download" size={ width >= 1280 ? 19 : width >= 768 ? 17 : 15 }
                       className="xl:w-[19px] xl:h-[19px] md:w-[17px] md:h-[17px] w-[15px] h-[15px] fill-primary-60 hover:fill-primary-80 active:fill-primary"/>
             </div>

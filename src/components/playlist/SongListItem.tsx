@@ -24,7 +24,7 @@ const SongListItem = ({image, song, artist, album, length, added, onClick}: Song
                     <Overlay offset={1} radius={9}/>
                 </div>
 
-                <div className="w-full">
+                <div className="w-full space-y-1">
                     <p className="font-text xl:text-xs md:text-2xs text-3xs font-medium text-primary truncate">
                         { song }
                     </p>
