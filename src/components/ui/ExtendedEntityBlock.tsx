@@ -31,7 +31,7 @@ const ExtendedEntityBlock = ({isTop, image, type, song, album, artist, playlist,
     const containerProps = isLink ? { to: type === "playlist" ? `/playlists/${id}` : `/albums/${id}` } : {}
 
     return (
-        <Container {...containerProps}  className={`flex flex-nowrap md:space-x-4 space-x-2 items-center  p-2 rounded-3xl ${ Container === Link && "transition bg-bg-secondary hover:bg-bg-primary-50 active:bg-bg-primary" }`}>
+        <Container {...containerProps}  className={`flex flex-nowrap md:space-x-4 space-x-2 items-center p-2 rounded-2xl ${ Container === Link && "transition bg-bg-secondary hover:bg-bg-primary-50 active:bg-bg-primary" }`}>
             <div className="flex-shrink-0 md:w-20 md:h-20 w-16 h-16 aspect-square relative p-[1px] bg-[linear-gradient(127deg,rgba(255,255,255,0.5)_1.98%,rgba(255,255,255,0)_38%,rgba(112,121,151,0)_58%,rgba(112,121,151,0.5)_100%)] rounded-2xl">
                 <img src={ image } alt={ displayName } className="rounded-[9px] aspect-square w-full h-full object-cover" loading="lazy" />
                 <Overlay offset={1} radius={9} />

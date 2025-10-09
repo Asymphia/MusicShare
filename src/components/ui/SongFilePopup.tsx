@@ -5,6 +5,7 @@ import FeaturedButton from "./FeaturedButton"
 import { useAppDispatch } from "../../app/hooks"
 import { deleteSongFile, uploadSongFile } from "../../features/songs/songsSlice"
 import Icon from "./Icon"
+import {fetchListeningHistory} from "../../features/listeningHistory/listeningHistorySlice"
 
 interface AddToPlaylistPopupProps {
     isOpen: boolean
@@ -89,6 +90,7 @@ const SongFilePopup = forwardRef<AddToPlaylistPopupHandle, AddToPlaylistPopupPro
         try {
             setUploading(true)
             await dispatch(uploadSongFile({ songId, file })).unwrap()
+            await dispatch(fetchListeningHistory(4))
 
             close()
         } catch (err: any) {
@@ -114,6 +116,8 @@ const SongFilePopup = forwardRef<AddToPlaylistPopupHandle, AddToPlaylistPopupPro
         try {
             setDeleting(true)
             await dispatch(deleteSongFile({ songId })).unwrap()
+            await dispatch(fetchListeningHistory(4))
+
             close()
         } catch (err: any) {
             setError(err?.message ?? "Delete failed")

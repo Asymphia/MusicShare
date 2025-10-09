@@ -23,7 +23,7 @@ const EntityBlock = ({ image, type, album, artist, song, headerAs = "h4", link =
     const containerProps = link ? { to: link } : {}
 
     return (
-        <Container { ...containerProps } className={`bg-bg-secondary p-2 rounded-3xl ${link && "transition hover:bg-bg-primary-50 active:bg-bg-primary"}`}>
+        <Container { ...containerProps } className={`bg-bg-secondary p-2 md:rounded-3xl rounded-2xl ${link && "transition hover:bg-bg-primary-50 active:bg-bg-primary"}`}>
             <div className={`aspect-square relative p-[2px] ${headerAs === "h4" ? "md:mb-3 mb-2" : "md:mb-2 mb-1"} ${ type === "artist" ? "rounded-full" : "md:rounded-3xl rounded-2xl" } gradient-border`}>
                 <img src={image} alt={song ? song : album} className={`w-full aspect-square ${ type === "artist" ? "rounded-full" : "md:rounded-[18px] rounded-[8px]" }`} />
 

@@ -22,6 +22,7 @@ export interface topSongsDto {
     songs: SongDto[]
 }
 
+// @ts-ignore
 const API_BASE = import.meta.env.VITE_API_BASE
 
 export async function getTopSongs(take: number): Promise<topSongsDto> {
@@ -129,11 +130,11 @@ export async function deleteSongFile(songId: string): Promise<void> {
 }
 
 export async function putSong(songId: string, songBody: Partial<SongDto>): Promise<SongDto> {
-    const res = await fetch(`${API_BASE}/api/Song?spotifyId=${songId}`, {
+    const res = await fetch(`${API_BASE}/api/Song?spotifyId=${encodeURIComponent(songId)}`, {
         method: "PUT",
         headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json"
+            Accept: "application/json",
+            "Content-Type": "application/json"
         },
         body: JSON.stringify(songBody)
     })
@@ -141,6 +142,11 @@ export async function putSong(songId: string, songBody: Partial<SongDto>): Promi
     if(!res.ok) {
         const text = await res.text().catch(() => "")
         throw new Error(`Failed to put song: ${res.status} ${text}`)
+    }
+
+    const contentType = res.headers.get("content-type") || ""
+    if (!contentType.includes("application/json")) {
+        return { ...(songBody as SongDto), spotifyId: songId } as SongDto
     }
 
     const data = await res.json()

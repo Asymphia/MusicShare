@@ -48,7 +48,7 @@ export const fetchPlaylistById = createAsyncThunk<{ id: number; detail: playlist
             return thunkAPI.rejectWithValue({ id, message: "Playlist not found" })
         }
 
-        const hasSongs = (details.songs?.length ?? 0) > 0
+        const hasSongs = details.isFetched
         if (hasSongs) {
             return { id, detail: details }
         }
@@ -62,6 +62,8 @@ export const fetchPlaylistById = createAsyncThunk<{ id: number; detail: playlist
         }
 
         const triggeredDetail = await playlistApi.triggerFetchSongsForSpotifyPlaylist(spotifyId)
+
+        await playlistApi.putIsFetched(true, id)
 
         const refreshed = await playlistApi.getPlaylistById(triggeredDetail.id)
 

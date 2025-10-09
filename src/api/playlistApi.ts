@@ -25,6 +25,7 @@ export interface PlaylistDto {
     ownerName?: string | null
     description?: string | null
     songs?: SongDto[]
+    isFetched?: boolean | null
 }
 
 const API_BASE = import.meta.env.VITE_API_BASE
@@ -122,5 +123,19 @@ export async function postSongToPlaylist(songId: string, playlistId: number) {
     if(!res.ok) {
         const text = await res.text().catch(() => "")
         throw new Error(`Failed to post song to a playlist: ${res.status} ${text}`)
+    }
+}
+
+export async function putIsFetched(isFetched: boolean, playlistId: number) {
+    const res = await fetch(`${API_BASE}/api/Playlist/playlist/${playlistId}?isFetched=${isFetched}`, {
+        method: "PUT",
+        headers: {
+            Accept: "application/json"
+        }
+    })
+
+    if(!res.ok) {
+        const text = await res.text().catch(() => "")
+        throw new Error(`Failed to put playlist: ${res.status} ${text}`)
     }
 }
