@@ -1,7 +1,6 @@
 import SectionHeader from "../ui/SectionHeader.tsx"
 import Loader from "../ui/Loader.tsx"
 import RecentlyPlayedItem from "./RecentlyPlayedItem.tsx"
-import photo from "../../assets/placeholders/placeholder-image.jpg"
 import { useCallback } from "react"
 import {
     fetchListeningHistory,
@@ -46,12 +45,7 @@ const RecentlyPlayed = () => {
 
                 {
                     historyStatus === "succeeded" && historyItems.map(item => (
-                        <RecentlyPlayedItem key={item.id} title={item.songShort?.title ?? "Unknown"} songId={item.songShort.spotifyId} hasFile={!!item.songShort.songLengthInSeconds}
-                                            playlistId={item.playlistShort?.id ?? null}
-                                            playlist={item.playlistShort?.name ?? "—"}
-                                            genre={item.genreShortModelDTO?.map(g => g.name).join(", ") || "unknown"}
-                                            cover={item.songShort?.coverImageUrl ?? photo}
-                                            length={item.songShort?.songLengthInSeconds ? `${Math.floor((item.songShort.songLengthInSeconds ?? 0) / 60)}:${String((item.songShort.songLengthInSeconds ?? 0) % 60).padStart(2, "0")}` : ""}/>
+                        <RecentlyPlayedItem key={item.id} listeningItem={item} />
                     ))
                 }
             </div>

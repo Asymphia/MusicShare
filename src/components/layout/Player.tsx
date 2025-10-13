@@ -3,32 +3,55 @@ import CurrentlyPlayingSong from "./CurrentlyPlayingSong.tsx"
 import Icon from "../ui/Icon.tsx"
 import noise from "../../assets/icons/noise.svg"
 import useWindowWidth from "../../hooks/useWindowWidth.ts"
+import { formatTime } from "../../lib/time"
+import { usePlayer } from "../../hooks/usePlayer"
+import { useMemo, type MouseEvent } from "react"
 
 const Player = () => {
     const width = useWindowWidth()
+    const { currentSong, isPlaying, currentTime, duration, toggle, next, previous, seek } = usePlayer()
+
+    const progress = useMemo(() => {
+        return duration > 0 ? (currentTime / duration) * 100 : 0
+    }, [currentTime, duration])
+
+    const handleSeek = (e: MouseEvent<HTMLDivElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect()
+        const x = e.clientX - rect.left
+        const percentage = x / rect.width
+        const newTime = percentage * duration
+        seek(newTime)
+    }
 
     return (
         <div className="xl:px-4 md:px-8 px-4">
             <div className="w-full py-2 xl:flex xl:flex-nowrap xl:justify-between items-center grid sm:grid-cols-3 grid-cols-2">
-                <CurrentlyPlayingSong/>
+                <CurrentlyPlayingSong />
 
                 <div className="flex flex-col items-center space-y-1 justify-self-center">
                     <div className="flex flex-nowrap xl:space-x-10 space-x-6 items-center">
-                        <Icon size={ width >= 1280 ? 20 : width >= 768 ? 16 : 12 } name="previous" className="xl:h-5 xl:w-5 md:w-4 md:h-4 w-3 h-3 fill-primary-60 hover:fill-primary cursor-pointer"/>
+                        <button onClick={previous} disabled={!currentSong}>
+                            <Icon size={ width >= 1280 ? 20 : width >= 768 ? 16 : 12 } name="previous" className="xl:h-5 xl:w-5 md:w-4 md:h-4 w-3 h-3 fill-primary-60 hover:fill-primary cursor-pointer"/>
+                        </button>
 
-                        <div className="relative xl:w-10 xl:h-10 md:w-8 md:h-8 w-6 h-6 flex items-center justify-center group cursor-pointer">
-                            <img src={ noise } alt=""
-                                 className="absolute inset-0 h-full w-full object-cover opacity-30 pointer-events-none"/>
-                            <Icon size={ width >= 1280 ? 20 : width >= 768 ? 16 : 12 } name="pause" className="xl:h-5 xl:w-5 md:h-4 md:w-4 h-3 w-3 fill-primary-60 group-hover:fill-primary"/>
-                        </div>
+                        <button onClick={toggle} disabled={!currentSong} className="relative xl:w-10 xl:h-10 md:w-8 md:h-8 w-6 h-6 flex items-center justify-center group cursor-pointer">
+                            <img src={ noise } alt="" className="absolute inset-0 h-full w-full object-cover opacity-30 pointer-events-none"/>
+                            <Icon size={ width >= 1280 ? 20 : width >= 768 ? 16 : 12 } name={isPlaying ? "pause" : "play"} className="xl:h-5 xl:w-5 md:h-4 md:w-4 h-3 w-3 fill-primary-60 group-hover:fill-primary"/>
+                        </button>
 
-                        <Icon size={ width >= 1280 ? 20 : width >= 768 ? 16 : 12 } name="next" className="xl:h-5 xl:w-5 md:w-4 md:h-4 w-3 h-3 fill-primary-60 hover:fill-primary cursor-pointer"/>
+                        <button onClick={next} disabled={!currentSong}>
+                            <Icon size={ width >= 1280 ? 20 : width >= 768 ? 16 : 12 } name="next" className="xl:h-5 xl:w-5 md:w-4 md:h-4 w-3 h-3 fill-primary-60 hover:fill-primary cursor-pointer"/>
+                        </button>
                     </div>
 
                     <div className="font-text text-primary-60 text-xs items-center space-x-3 xl:flex hidden">
-                        <p> 0:00 </p>
-                        <hr className="border-0 h-1 bg-primary-60 rounded-full w-[700px] "/>
-                        <p> 3:09 </p>
+                        <p> { formatTime(currentTime) } </p>
+
+                        <div onClick={handleSeek} className="border-0 h-1 bg-primary-60 rounded-full w-[700px] relative">
+                            <div className="border-0 h-1 bg-red-800 rounded-full absolute inset-0" style={{ width: `${progress}%` }} />
+                        </div>
+
+                        <p> { formatTime(duration) } </p>
                     </div>
                 </div>
 

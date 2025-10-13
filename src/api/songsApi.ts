@@ -22,7 +22,6 @@ export interface topSongsDto {
     songs: SongDto[]
 }
 
-// @ts-ignore
 const API_BASE = import.meta.env.VITE_API_BASE
 
 export async function getTopSongs(take: number): Promise<topSongsDto> {
@@ -97,11 +96,11 @@ export async function getSongById(songId: string): Promise<SongDto> {
     return data.result as SongDto
 }
 
-export async function postSongFile(songId: string, file: File): Promise<void> {
+export async function postSongFile(songId: string, file: File, duration: number): Promise<void> {
     const fd = new FormData()
     fd.append("songToAdd", file, file.name)
 
-    const res = await fetch(`${API_BASE}/api/Song/Files/${songId}`, {
+    const res = await fetch(`${API_BASE}/api/Song/Files/${songId}?duration=${duration}`, {
         method: "POST",
         body: fd,
         headers: {

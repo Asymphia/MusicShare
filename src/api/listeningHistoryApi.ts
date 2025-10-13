@@ -43,3 +43,17 @@ export async function getListeningHistory(take: number): Promise<ListeningHistor
 
     return await res.json() as Promise<ListeningHistoryItemDto[]>
 }
+
+export async function postListeningHistory(spotifySongId: string, playlistId?: number): Promise<void> {
+    const res = await fetch(`${API_BASE}/api/ListeningHistory?spotifySongId=${spotifySongId}&playlistId=${playlistId}`, {
+        method: "POST",
+        headers: {
+            Accept: "application/json"
+        }
+    })
+
+    if(!res.ok) {
+        const text = await res.text().catch(() => "")
+        throw new Error(`Failed to post listening history: ${res.status} ${res.statusText} - ${text}`)
+    }
+}

@@ -43,7 +43,7 @@ const ExtendedEntityBlock = ({isTop, image, type, song, album, artist, playlist,
                         isTop && <Icon size={width >= 1280 ? 19 : width >= 768 ? 14 : 12} name="throne"
                                     className="stroke-primary fill-none xl:w-[19px] xl:h-[19px] md:w-[14px] md:h-[14px] w-[12px] h-[12px] inline-block md:mr-2 mr-1 flex-shrink-0"/>
                     }
-                    <span className="truncate min-w-0 flex-1">{displayName}</span>
+                    <span className="truncate min-w-0">{displayName}</span>
                     {
                         song && (
                             <button type="button" onClick={onClickPlus}

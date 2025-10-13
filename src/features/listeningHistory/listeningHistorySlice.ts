@@ -1,6 +1,7 @@
 import * as api from "../../api/listeningHistoryApi.ts"
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "../../app/store.ts"
+import { postAndRefetchHistory } from "./playerSlice"
 
 export type ListeningHistoryItem = api.ListeningHistoryItemDto
 
@@ -48,6 +49,10 @@ const listeningHistorySlice = createSlice({
                 state.status = "failed"
                 state.error = action.payload ?? action.error?.message ?? "Unknown error"
                 state.items = []
+            })
+            .addCase(postAndRefetchHistory.fulfilled, (state, action: PayloadAction<ListeningHistoryItem[]>) => {
+                state.items = action.payload
+                state.status = "succeeded"
             })
     }
 })

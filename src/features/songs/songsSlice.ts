@@ -2,7 +2,6 @@ import * as songsApi from "../../api/songsApi"
 import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/toolkit"
 import type { RootState } from "../../app/store.ts"
 import { getAudioDuration } from "../../lib/audio"
-import {mapServerToPutDto, normalizeFetchedSong} from "../../lib/mappers";
 
 export type Songs = songsApi.SongDto[]
 
@@ -32,16 +31,7 @@ export const uploadSongFile = createAsyncThunk<songsApi.SongDto, { songId: strin
 
         const durationSeconds = Math.round(duration)
 
-       await songsApi.postSongFile(songId, file)
-
-        const rawFresh = await songsApi.getSongById(songId)
-        console.log(rawFresh, "Raw Fresh")
-        const fresh = normalizeFetchedSong(rawFresh)
-        console.log(fresh, " Fresh")
-        const putBody = mapServerToPutDto(fresh, { songLengthInSeconds: durationSeconds })
-        console.log(putBody, "put body")
-
-        await songsApi.putSong(songId, putBody)
+       await songsApi.postSongFile(songId, file, durationSeconds)
 
         return await songsApi.getSongById(songId)
     } catch(err: any) {
@@ -55,6 +45,14 @@ export const deleteSongFile = createAsyncThunk<songsApi.SongDto, { songId: strin
         return songsApi.getSongById(songId)
     } catch (err: any) {
         return rejectWithValue(err?.message ?? "Failed to delete song file")
+    }
+})
+
+export const fetchSongById = createAsyncThunk<songsApi.SongDto, { songId: string }, { rejectValue: string }>("songs/fetchById", async ({ songId }, { rejectWithValue }) => {
+    try {
+        return await songsApi.getSongById(songId)
+    } catch(err: any) {
+        return rejectWithValue(err?.message ?? "Failed to fetch song")
     }
 })
 
@@ -104,7 +102,7 @@ const songsSlice = createSlice({
             })
             .addCase(deleteSongFile.pending, state => {
                 state.status = "loading"
-                state.error = "null"
+                state.error = null
             })
             .addCase(deleteSongFile.fulfilled, (state, action: PayloadAction<songsApi.SongDto>) => {
                 if (!state.data) {
@@ -117,6 +115,17 @@ const songsSlice = createSlice({
             .addCase(deleteSongFile.rejected, (state, action) => {
                 state.status = "failed"
                 state.error = action.payload ?? action.error?.message ?? "Unknown error"
+            })
+            .addCase(fetchSongById.pending, state => {
+                state.status = "loading"
+                state.error = null
+            })
+            .addCase(fetchSongById.rejected, (state, action) => {
+                state.status = "failed"
+                state.error = action.payload ?? action.error?.message ?? "Unknown error"
+            })
+            .addCase(fetchSongById.fulfilled, state => {
+                state.status = "succeeded"
             })
     }
 })

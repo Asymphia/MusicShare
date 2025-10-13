@@ -48,8 +48,7 @@ export const fetchPlaylistById = createAsyncThunk<{ id: number; detail: playlist
             return thunkAPI.rejectWithValue({ id, message: "Playlist not found" })
         }
 
-        const hasSongs = details.isFetched
-        if (hasSongs) {
+        if (details.isFetched) {
             return { id, detail: details }
         }
 

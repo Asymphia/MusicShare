@@ -13,6 +13,7 @@ import recommendedArtistsReducer from "../features/artists/recommendedArtistsSli
 import albumsReducer from "../features/albums/albumsSlice.ts"
 import recommendedAlbumsReducer from "../features/albums/recommendedAlbumsSlice.ts"
 import featuredReducer from "../features/featured/featuredSlice"
+import playerReducer from "../features/listeningHistory/playerSlice"
 
 export const store = configureStore({
     reducer: {
@@ -29,7 +30,8 @@ export const store = configureStore({
         recommendedArtists: recommendedArtistsReducer,
         albums: albumsReducer,
         recommendedAlbums: recommendedAlbumsReducer,
-        featured: featuredReducer
+        featured: featuredReducer,
+        player: playerReducer
     }
 })
 
