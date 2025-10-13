@@ -47,8 +47,8 @@ const Player = () => {
                     <div className="font-text text-primary-60 text-xs items-center space-x-3 xl:flex hidden">
                         <p> { formatTime(currentTime) } </p>
 
-                        <div onClick={handleSeek} className="border-0 h-1 bg-primary-60 rounded-full w-[700px] relative">
-                            <div className="border-0 h-1 bg-red-800 rounded-full absolute inset-0" style={{ width: `${progress}%` }} />
+                        <div onClick={handleSeek} className="border-0 h-1 bg-primary-60 rounded-full w-[700px] relative cursor-pointer">
+                            <div className="border-0 h-1 bg-accent rounded-full absolute inset-0" style={{ width: `${progress}%` }} />
                         </div>
 
                         <p> { formatTime(duration) } </p>

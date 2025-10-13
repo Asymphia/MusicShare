@@ -20,6 +20,22 @@ import type { SongDto } from "../api/songsApi"
 
 const API_BASE = import.meta.env.VITE_API_BASE
 
+let sharedAudio: HTMLAudioElement | null = null
+let listenersAttached = false
+
+const currentSongRefModule: { current: ListeningHistoryItemDto | null } = { current: null }
+const allSongsRefModule: { current: SongDto[] | null } = { current: null }
+const isPlayingRefModule: { current: boolean } = { current: false }
+
+const getSharedAudio = () => {
+    if (typeof window === "undefined") return null
+    if (!sharedAudio) {
+        sharedAudio = new Audio()
+        sharedAudio.preload = "metadata"
+    }
+    return sharedAudio
+}
+
 export const usePlayer = () => {
     const dispatch = useAppDispatch()
     const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -31,12 +47,38 @@ export const usePlayer = () => {
     const allSongs = useAppSelector(selectSongs)
 
     useEffect(() => {
-        if(!audioRef.current) {
-            audioRef.current = new Audio()
-            audioRef.current.preload = "metadata"
-        }
+        audioRef.current = getSharedAudio()
+    }, [])
 
+    useEffect(() => { currentSongRefModule.current = currentSong }, [currentSong])
+    useEffect(() => { allSongsRefModule.current = allSongs }, [allSongs])
+    useEffect(() => { isPlayingRefModule.current = isPlaying }, [isPlaying])
+
+    const playInProgressRef = useRef(false)
+
+    const tryPlay = useCallback(async () => {
         const audio = audioRef.current
+        if (!audio) return
+        if (playInProgressRef.current) return
+        if (!isPlayingRefModule.current) return
+
+        playInProgressRef.current = true
+        try {
+            await audio.play()
+        } catch (err: any) {
+            if (err && (err.name === "AbortError" || err.code === "ABORT_ERR")) {
+            } else {
+                console.error("Playing song failed: ", err)
+                dispatch(setIsPlaying(false))
+            }
+        } finally {
+            playInProgressRef.current = false
+        }
+    }, [dispatch])
+
+    useEffect(() => {
+        const audio = getSharedAudio()
+        if (!audio || listenersAttached) return
 
         const handleTimeUpdate = () => {
             dispatch(setCurrentTime(audio.currentTime))
@@ -49,10 +91,10 @@ export const usePlayer = () => {
         const handleEnded = async () => {
             dispatch(setIsPlaying(false))
 
-            if(currentSong) {
+            if(currentSongRefModule.current) {
                 await dispatch(postAndRefetchHistory({
-                    spotifySongId: currentSong.songShort.spotifyId,
-                    playlistId: currentSong.playlistShort?.id
+                    spotifySongId: currentSongRefModule.current.songShort.spotifyId,
+                    playlistId: currentSongRefModule.current.playlistShort?.id
                 }))
 
                 dispatch(fetchListeningHistory(4))
@@ -64,28 +106,29 @@ export const usePlayer = () => {
         audio.addEventListener("loadedmetadata", handleLoadedMetadata)
         audio.addEventListener("ended", handleEnded)
 
+        listenersAttached = true
+
         return () => {
             audio.removeEventListener("timeupdate", handleTimeUpdate)
             audio.removeEventListener("loadedmetadata", handleLoadedMetadata)
             audio.removeEventListener("ended", handleEnded)
         }
-    }, [dispatch, currentSong])
+    }, [dispatch])
 
     useEffect(() => {
-        if(!audioRef.current) return
+        const audio = audioRef.current
+        if (!audio) return
 
         if(isPlaying) {
-            audioRef.current.play().catch(err => {
-                console.error("Playing song failed: ", err)
-                dispatch(setIsPlaying(false))
-            })
+           void tryPlay()
         } else {
-            audioRef.current.pause()
+            try { audio.pause() } catch {}
         }
     }, [isPlaying, dispatch])
 
     useEffect(() => {
-        if(!audioRef.current || !currentSong) return
+        const audio = audioRef.current
+        if (!audio || !currentSong) return
         let cancelled = false
 
         const loadAndPlay = async () => {
@@ -100,9 +143,6 @@ export const usePlayer = () => {
                 }
 
                 const url = `${API_BASE}/files/${encodeURIComponent(fileName)}`
-                console.log(url)
-
-                const audio = audioRef.current!
                 audio.pause()
                 audio.src = url
                 audio.load()
@@ -111,11 +151,8 @@ export const usePlayer = () => {
 
                 if (cancelled) return
 
-                if (isPlaying) {
-                    audio.play().catch(err => {
-                        console.error("Playing song failed after load: ", err)
-                        dispatch(setIsPlaying(false))
-                    })
+                if (isPlayingRefModule.current) {
+                    void tryPlay()
                 }
             } catch (err) {
                 console.error("Failed to fetch song by id:", err)
@@ -164,8 +201,9 @@ export const usePlayer = () => {
     }, [dispatch])
 
     const seek = useCallback((time: number) => {
-        if (!audioRef.current) return
-        audioRef.current.currentTime = time
+        const audio = audioRef.current
+        if (!audio) return
+        audio.currentTime = time
         dispatch(seekTo(time))
     }, [dispatch])
 
