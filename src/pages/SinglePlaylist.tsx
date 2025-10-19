@@ -9,7 +9,7 @@ import placeholder from "../assets/placeholders/album-cover-placeholder.png"
 import Error from "../components/ui/Error.tsx"
 import SongFilePopup from "../components/ui/SongFilePopup"
 import type { PopupHandle } from "../components/ui/Popup"
-import { formatDate } from "../lib/date"
+import { type SongDto } from "../api/songsApi"
 
 const SinglePlaylist = () => {
     const { slug } = useParams<{ slug: string }>()
@@ -71,7 +71,7 @@ const SinglePlaylist = () => {
                 {
                     songs.length > 0 ? songs.map(song => (
                         <SongListItem key={song.spotifyId} onClick={() => openPopup(song.spotifyId)}
-                                      image={song.coverImageUrl ?? playlist.coverImageUrl ?? placeholder} song={song.title ?? "Unknown title"} artist={song.displayArtist ?? song.artist ?? "Unknown artist"} album={song.displayAlbum ?? song.album ?? ""} length={"0:00"} added={formatDate(song.createdAt ?? song.releaseDate ?? null)} />
+                                      songItem={song as SongDto} isAlbum={false} album={song.displayAlbum} length={song.songLengthInSeconds} playlist={playlist} />
                     )) : (
                         <p className="font-text text-primary-60 xl:text-xs md:text-2xs text-3xs">There is no songs in this playlist :(</p>
                     )

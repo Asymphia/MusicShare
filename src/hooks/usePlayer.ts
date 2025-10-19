@@ -15,7 +15,7 @@ import {
 } from "../features/listeningHistory/playerSlice"
 import { fetchListeningHistory } from "../features/listeningHistory/listeningHistorySlice"
 import {fetchSongById, selectSongs} from "../features/songs/songsSlice"
-import type { ListeningHistoryItemDto } from "../api/listeningHistoryApi"
+import type {ListeningHistoryItemDto, PlaylistShortDto} from "../api/listeningHistoryApi"
 import type { SongDto } from "../api/songsApi"
 
 const API_BASE = import.meta.env.VITE_API_BASE
@@ -107,12 +107,6 @@ export const usePlayer = () => {
         audio.addEventListener("ended", handleEnded)
 
         listenersAttached = true
-
-        return () => {
-            audio.removeEventListener("timeupdate", handleTimeUpdate)
-            audio.removeEventListener("loadedmetadata", handleLoadedMetadata)
-            audio.removeEventListener("ended", handleEnded)
-        }
     }, [dispatch])
 
     useEffect(() => {
@@ -143,11 +137,21 @@ export const usePlayer = () => {
                 }
 
                 const url = `${API_BASE}/files/${encodeURIComponent(fileName)}`
-                audio.pause()
-                audio.src = url
-                audio.load()
 
-                dispatch(setCurrentTime(0))
+                const same = (() => {
+                    try {
+                        return audio.src === url || audio.src.endsWith(encodeURI(fileName)) || audio.src.endsWith(fileName)
+                    } catch {
+                        return false
+                    }
+                })()
+
+                if (!same) {
+                    audio.pause()
+                    audio.src = url
+                    audio.load()
+                    dispatch(setCurrentTime(0))
+                }
 
                 if (cancelled) return
 
@@ -167,7 +171,7 @@ export const usePlayer = () => {
         }
     }, [currentSong, dispatch, isPlaying])
 
-    const convertSongToHistoryItem = useCallback((song: SongDto): ListeningHistoryItemDto => {
+    const convertSongToHistoryItem = useCallback((song: SongDto, playlist?: PlaylistShortDto): ListeningHistoryItemDto => {
         return {
             id: `temp-${Date.now()}-${Math.random()}`,
             dateTime: new Date().toISOString(),
@@ -178,7 +182,7 @@ export const usePlayer = () => {
                 songLengthInSeconds: song.songLengthInSeconds,
                 releaseDate: song.releaseDate
             },
-            playlistShort: null,
+            playlistShort: playlist ? playlist : null,
             genreShortModelDTO: []
         }
     }, [])
@@ -249,6 +253,7 @@ export const usePlayer = () => {
         seek,
         next,
         previous,
-        playRandomSong
+        playRandomSong,
+        convertSongToHistoryItem
     }
 }

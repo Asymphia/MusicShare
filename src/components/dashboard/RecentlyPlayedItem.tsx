@@ -61,12 +61,17 @@ const RecentlyPlayedItem = ({ listeningItem }: RecentlyPlayedProps) => {
 
                 <div className="w-fit flex items-center md:space-x-6 xpace-x-3">
                     <p className="text-primary-60 font-text text-xs" >
-                        { formatTime(listeningItem.songShort.songLengthInSeconds || 0) }
+                        { listeningItem.songShort.songLengthInSeconds && formatTime(listeningItem.songShort.songLengthInSeconds) }
                     </p>
 
-                    <button type="button" className="cursor-pointer" onClick={handlePlay}>
-                        <Icon size={ width >= 768 ? 16 : 12 } name={isCurrentSong && isPlaying ? "pause" : "play"} className="fill-primary-60 hover:fill-primary-80 active:fill-primary md:w-4 md:h-4 w-3 h-3" />
-                    </button>
+
+                    {
+                        listeningItem.songShort.songLengthInSeconds && (
+                            <button type="button" className="cursor-pointer" onClick={handlePlay}>
+                                <Icon size={ width >= 768 ? 16 : 12 } name={isCurrentSong && isPlaying ? "pause" : "play"} className="fill-primary-60 hover:fill-primary-80 active:fill-primary md:w-4 md:h-4 w-3 h-3" />
+                            </button>
+                        )
+                    }
 
                     <button type="button" className="cursor-pointer" onClick={() => openPopup(listeningItem.songShort.spotifyId)}>
                         <Icon size={ width >= 768 ? 16 : 12 } name="threeDots" className="fill-primary-60 hover:fill-primary-80 active:fill-primary md:w-4 md:h-4 w-3 h-3" />
@@ -74,7 +79,7 @@ const RecentlyPlayedItem = ({ listeningItem }: RecentlyPlayedProps) => {
                 </div>
             </div>
 
-            { currentSong && <SongFilePopup ref={popupRef} isOpen={!!openSongId} close={closePopup} songId={String(openSongId || "")} portalContainer={modalRoot} songName={currentSong.songShort.title} hasFile={!!currentSong.songShort.spotifyId} /> }
+            { currentSong && <SongFilePopup ref={popupRef} isOpen={!!openSongId} close={closePopup} songId={String(openSongId || "")} portalContainer={modalRoot} songName={currentSong.songShort.title} hasFile={!!currentSong.songShort.songLengthInSeconds} /> }
         </div>
     )
 }
