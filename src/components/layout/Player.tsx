@@ -59,7 +59,10 @@ const Player = () => {
                 <AsideButtons/>
             </div>
 
-            <hr className="border-0 h-1 bg-primary-60 rounded-full w-full xl:hidden block"/>
+            <div onClick={handleSeek} className="border-0 h-1 transition bg-primary-60 hover:bg-primary-80 active:bg-primary rounded-full relative cursor-pointer group xl:hidden block w-full">
+                <div className="border-0 h-1 bg-accent rounded-full absolute inset-0" style={{ width: `${progress}%` }} />
+                <div className="w-3 h-3 rounded-full transition opacity-0 group-hover:opacity-100 bg-accent absolute top-1/2 -translate-y-1/2" style={{ left: `calc(${progress}% - 6px)` }} />
+            </div>
         </div>
 )
 }
