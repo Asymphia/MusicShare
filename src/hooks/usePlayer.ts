@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from "react"
+import {useRef, useEffect, useCallback, useState} from "react"
 import { useAppDispatch, useAppSelector } from "../app/hooks"
 import {
     setCurrentSong,
@@ -14,8 +14,8 @@ import {
     postAndRefetchHistory
 } from "../features/listeningHistory/playerSlice"
 import { fetchListeningHistory } from "../features/listeningHistory/listeningHistorySlice"
-import {fetchSongById, selectSongs} from "../features/songs/songsSlice"
-import type {ListeningHistoryItemDto, PlaylistShortDto} from "../api/listeningHistoryApi"
+import { fetchSongById, selectSongs } from "../features/songs/songsSlice"
+import type { ListeningHistoryItemDto, PlaylistShortDto } from "../api/listeningHistoryApi"
 import type { SongDto } from "../api/songsApi"
 
 const API_BASE = import.meta.env.VITE_API_BASE
@@ -36,6 +36,8 @@ const getSharedAudio = () => {
     return sharedAudio
 }
 
+const VOLUME_STORAGE_KEY = "player.volume"
+
 export const usePlayer = () => {
     const dispatch = useAppDispatch()
     const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -46,8 +48,23 @@ export const usePlayer = () => {
     const duration = useAppSelector(selectDuration)
     const allSongs = useAppSelector(selectSongs)
 
+    const [volume, setVolumeState] = useState<number>(() => {
+        try {
+            const raw = localStorage.getItem(VOLUME_STORAGE_KEY)
+            const v = raw !== null ? parseFloat(raw) : NaN
+            if (!isNaN(v) && v >= 0 && v <= 1) return v
+        } catch {}
+        return 1
+    })
+    const [isMuted, setIsMuted] = useState<boolean>(() => volume === 0)
+    const previousVolumeRef = useRef<number>(volume || 1)
+
     useEffect(() => {
         audioRef.current = getSharedAudio()
+
+        if (audioRef.current) {
+            audioRef.current.volume = volume
+        }
     }, [])
 
     useEffect(() => { currentSongRefModule.current = currentSong }, [currentSong])
@@ -98,7 +115,6 @@ export const usePlayer = () => {
                 }))
 
                 dispatch(fetchListeningHistory(4))
-                playRandomSong()
             }
         }
 
@@ -108,6 +124,18 @@ export const usePlayer = () => {
 
         listenersAttached = true
     }, [dispatch])
+
+    useEffect(() => {
+        const audio = audioRef.current || getSharedAudio()
+        if (audio) {
+            const v = Math.max(0, Math.min(1, Number(volume)))
+            audio.volume = v
+            try {
+                localStorage.setItem(VOLUME_STORAGE_KEY, String(v))
+            } catch {}
+        }
+        setIsMuted(volume === 0)
+    }, [volume])
 
     useEffect(() => {
         const audio = audioRef.current
@@ -171,6 +199,22 @@ export const usePlayer = () => {
         }
     }, [currentSong, dispatch, isPlaying])
 
+    const setVolume = useCallback((v: number) => {
+        const clamped = Math.max(0, Math.min(1, Number(v)))
+        previousVolumeRef.current = clamped === 0 ? previousVolumeRef.current : clamped
+        setVolumeState(clamped)
+    }, [])
+
+    const toggleMute = useCallback(() => {
+        if (isMuted) {
+            const prev = previousVolumeRef.current ?? 1
+            setVolumeState(prev)
+        } else {
+            previousVolumeRef.current = volume || previousVolumeRef.current || 1
+            setVolumeState(0)
+        }
+    }, [isMuted, volume])
+
     const convertSongToHistoryItem = useCallback((song: SongDto, playlist?: PlaylistShortDto): ListeningHistoryItemDto => {
         return {
             id: `temp-${Date.now()}-${Math.random()}`,
@@ -211,36 +255,6 @@ export const usePlayer = () => {
         dispatch(seekTo(time))
     }, [dispatch])
 
-    const playRandomSong = useCallback(() => {
-        const availableSongs = allSongs.filter(
-            song => song.hasLocalSong && song.localSongPath && song.songLengthInSeconds
-        )
-
-        if (availableSongs.length === 0) {
-            dispatch(setIsPlaying(false))
-            return
-        }
-
-        const randomIndex = Math.floor(Math.random() * availableSongs.length)
-        const randomSong = availableSongs[randomIndex]
-        const historyItem = convertSongToHistoryItem(randomSong)
-
-        playSong(historyItem)
-    }, [allSongs, dispatch, convertSongToHistoryItem, playSong])
-
-    const next = useCallback(() => {
-        playRandomSong()
-    }, [playRandomSong])
-
-    /* TODO: TUTAJ PREVIOUS BRAĆ Z LISTENING HISTORY */
-    const previous = useCallback(() => {
-        if (currentTime > 3) {
-            seek(0)
-        } else {
-            playRandomSong()
-        }
-    }, [currentTime, seek, playRandomSong])
-
     return {
         currentSong,
         isPlaying,
@@ -251,9 +265,10 @@ export const usePlayer = () => {
         pause,
         toggle,
         seek,
-        next,
-        previous,
-        playRandomSong,
-        convertSongToHistoryItem
+        convertSongToHistoryItem,
+        volume,
+        setVolume,
+        isMuted,
+        toggleMute
     }
 }

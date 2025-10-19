@@ -9,7 +9,7 @@ import { useMemo, type MouseEvent } from "react"
 
 const Player = () => {
     const width = useWindowWidth()
-    const { currentSong, isPlaying, currentTime, duration, toggle, next, previous, seek } = usePlayer()
+    const { currentSong, isPlaying, currentTime, duration, toggle, seek } = usePlayer()
 
     const progress = useMemo(() => {
         return duration > 0 ? (currentTime / duration) * 100 : 0
@@ -30,7 +30,7 @@ const Player = () => {
 
                 <div className="flex flex-col items-center space-y-1 justify-self-center">
                     <div className="flex flex-nowrap xl:space-x-10 space-x-6 items-center">
-                        <button onClick={previous} disabled={!currentSong}>
+                        <button onClick={() => seek(0)} disabled={!currentSong}>
                             <Icon size={ width >= 1280 ? 20 : width >= 768 ? 16 : 12 } name="previous" className="xl:h-5 xl:w-5 md:w-4 md:h-4 w-3 h-3 fill-primary-60 hover:fill-primary-80 active:fill-primary cursor-pointer"/>
                         </button>
 
@@ -39,7 +39,7 @@ const Player = () => {
                             <Icon size={ width >= 1280 ? 20 : width >= 768 ? 16 : 12 } name={isPlaying ? "pause" : "play"} className="xl:h-5 xl:w-5 md:h-4 md:w-4 h-3 w-3 fill-primary-60 group-hover:fill-primary-80 group-active:fill-primary"/>
                         </button>
 
-                        <button onClick={next} disabled={!currentSong}>
+                        <button onClick={() => seek(duration)} disabled={!currentSong}>
                             <Icon size={ width >= 1280 ? 20 : width >= 768 ? 16 : 12 } name="next" className="xl:h-5 xl:w-5 md:w-4 md:h-4 w-3 h-3 fill-primary-60 hover:fill-primary-80 active:fill-primary cursor-pointer"/>
                         </button>
                     </div>
