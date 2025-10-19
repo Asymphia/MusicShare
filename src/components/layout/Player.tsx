@@ -25,7 +25,7 @@ const Player = () => {
 
     return (
         <div className="xl:px-4 md:px-8 px-4">
-            <div className="w-full py-2 xl:flex xl:flex-nowrap xl:justify-between items-center grid sm:grid-cols-3 grid-cols-2">
+            <div className="w-full py-2 grid sm:grid-cols-3 xl:justify-between items-center grid-cols-2">
                 <CurrentlyPlayingSong />
 
                 <div className="flex flex-col items-center space-y-1 justify-self-center">
