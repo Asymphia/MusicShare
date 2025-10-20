@@ -79,7 +79,7 @@ const SongsForm = ({ addedSongs, handleAddSong, onClickPrevious, onClickNext }: 
 
                 {
                     songsStatus === "succeeded" && displayedSongs.map(song => (
-                        <SongItem key={song.spotifyId} song={song} isChecked={ addedSongs.includes(song.spotifyId) } onClickPlus={ () => handleAddSong(song.spotifyId) } />
+                        <SongItem key={`SongsForm${song.spotifyId}`} song={song} isChecked={ addedSongs.includes(song.spotifyId) } onClickPlus={ () => handleAddSong(song.spotifyId) } />
                     ))
                 }
 

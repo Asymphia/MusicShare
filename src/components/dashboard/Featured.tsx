@@ -4,23 +4,30 @@ import FeaturedButton from "../ui/FeaturedButton.tsx"
 import useWindowWidth from "../../hooks/useWindowWidth.ts"
 import { formatTime } from "../../lib/time"
 import { formatDate } from "../../lib/date"
+import {useRef, useState} from "react";
+import type { PopupHandle } from "../ui/Popup"
+import AddToPlaylistPopup from "../ui/AddToPlaylistPopup"
 
 interface FeaturedProps {
     imageUrl: string
     song: string
     artist: string
     album: string
-    localSongPath?: string | null
     songLengthInSeconds?: number | null
     releaseDate?: string | null
+    songId: string
 }
 
-const Featured = ({ imageUrl, song, artist, album, localSongPath = null, songLengthInSeconds = null, releaseDate = null }: FeaturedProps) => {
+const Featured = ({ imageUrl, song, artist, album, songLengthInSeconds = null, releaseDate = null, songId }: FeaturedProps) => {
     const width = useWindowWidth()
 
-    const handleClick = () => {
-        if(!localSongPath) return
-    }
+    const [isOpen, setIsOpen] = useState<boolean>(false)
+    const popupRef = useRef<PopupHandle | null>(null)
+
+    const openPopup = () => setIsOpen(true)
+    const closePopup = () => setIsOpen(false)
+
+    const modalRoot = typeof document !== "undefined" ? document.getElementById("modal-playlist") : null
 
     return (
         <div className="relative xl:h-[429px] md:h-[360px] sm:h-[300px] h-[240px] xl:p-[3px] p-[2px] bg-[linear-gradient(127deg,rgba(255,255,255,0.5)_1.98%,rgba(255,255,255,0)_38%,rgba(112,121,151,0)_58%,rgba(112,121,151,0.5)_100%)] md:rounded-4xl rounded-3xl">
@@ -56,8 +63,10 @@ const Featured = ({ imageUrl, song, artist, album, localSongPath = null, songLen
                     </div>
                 </div>
 
-                <FeaturedButton text="Play now" icon="play" onClick={handleClick} />
+                <FeaturedButton text="Add to playlist" icon="plus" onClick={openPopup} />
             </div>
+
+            <AddToPlaylistPopup ref={popupRef} isOpen={isOpen} close={closePopup} songId={String(songId || "")} portalContainer={modalRoot} />
         </div>
     )
 }

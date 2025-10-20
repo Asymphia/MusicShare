@@ -70,7 +70,7 @@ const DashboardMain = () => {
 
                     {
                         recommendedAlbumsStatus === "succeeded" && recommendedAlbums?.slice(0, width < 640 ? 4 : 5).map(album => (
-                            <EntityBlock key={album.spotifyId} image={album.coverImageUrl || albumPlaceholder} type="album" album={album.name}
+                            <EntityBlock key={`RecommendedAlbums${album.spotifyId}`} image={album.coverImageUrl || albumPlaceholder} type="album" album={album.name}
                                          artist={album.artist?.name || "Unknown"} link={`/albums/${album.spotifyId}`} />
                         ))
                     }
@@ -99,7 +99,7 @@ const DashboardMain = () => {
 
                     {
                         recommendedSongsStatus === "succeeded" && recommendedSongs?.slice(0, width < 640 ? 4 : 5).map(song => (
-                            <EntityBlock key={song.spotifyId} image={song.coverImageUrl || songPlaceholder} type="song" song={song.title}
+                            <EntityBlock key={`RecommendedSongs${song.spotifyId}`} image={song.coverImageUrl || songPlaceholder} type="song" song={song.title}
                                          album={song.album?.name || "Unknown"} artist={song.artist}/>
                         ))
                     }
@@ -128,7 +128,7 @@ const DashboardMain = () => {
 
                     {
                         recommendedArtistsStatus === "succeeded" && recommendedArtists?.slice(0, width < 640 ? 4 : 5).map(artist => (
-                            <EntityBlock key={artist.spotifyId} image={artist.imageUrl || artistPlaceholder} type="artist" artist={artist.name} />
+                            <EntityBlock key={`RecommendedArtists${artist.spotifyId}`} image={artist.imageUrl || artistPlaceholder} type="artist" artist={artist.name} />
                         ))
                     }
 

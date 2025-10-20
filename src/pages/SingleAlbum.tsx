@@ -41,7 +41,7 @@ const SingleAlbum = () => {
     const openPopup = (spotifyId: string) => setSongId(spotifyId)
     const closePopup = () => setSongId(null)
 
-    const modalRoot = typeof document !== "undefined" ? document.getElementById("modal") : null
+    const modalRoot = typeof document !== "undefined" ? document.getElementById("modal-file") : null
 
     const selectedSong = songId ? songs.find(s => s.spotifyId === songId) : undefined
 
@@ -65,7 +65,7 @@ const SingleAlbum = () => {
             <div className="sm:col-span-2 space-y-2">
                 {
                     songs.length > 0 ? songs.map(song => (
-                        <SongListItem key={song.spotifyId} onClick={() => openPopup(song.spotifyId)}
+                        <SongListItem key={`SingleAlbumSongs${song.spotifyId}`} onClick={() => openPopup(song.spotifyId)}
                                       songItem={song as SongDto} isAlbum={true} album={song.displayAlbum} length={song.songLengthInSeconds || undefined} />
                     )) : (
                         <p className="font-text text-primary-60 xl:text-xs md:text-2xs text-3xs">There is no songs in this playlist :(</p>

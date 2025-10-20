@@ -18,7 +18,7 @@ const Nav = () => {
                 <nav className="flex flex-col space-y-4 mt-39">
                     {
                         navItems.map(item => (
-                            <NavItem text={item.name} link={item.link} key={item.link} />
+                            <NavItem text={item.name} link={item.link} key={`NavItem${item.link}`} />
                         ))
                     }
                 </nav>

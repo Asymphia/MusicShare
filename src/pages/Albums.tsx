@@ -68,6 +68,7 @@ const Albums = () => {
                     albumsStatus === "succeeded" && displayedAlbums?.map(album => (
                         <ExtendedEntityBlock isTop={false} image={album.coverImageUrl || placeholder} type="album" album={album.name}
                             artist={album.artist?.name || "Unknown"} songAmount={album.songs?.length || 0} duration={0} id={album.spotifyId}
+                            key={`Albums${album.spotifyId}`}
                         />
                     ))
                 }

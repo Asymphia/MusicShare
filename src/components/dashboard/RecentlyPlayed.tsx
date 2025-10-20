@@ -45,7 +45,7 @@ const RecentlyPlayed = () => {
 
                 {
                     historyStatus === "succeeded" && historyItems.map(item => (
-                        <RecentlyPlayedItem key={item.id} listeningItem={item} />
+                        <RecentlyPlayedItem key={`RecentlyPlayed${item.id}`} listeningItem={item} />
                     ))
                 }
             </div>

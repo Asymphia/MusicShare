@@ -96,7 +96,7 @@ const FeaturedSection = () => {
                 className={`col-start-1 row-start-1 min-w-0 w-full h-full ${index === currentSlide ? "pointer-events-auto" : "pointer-events-none"} shrink-0`}
             >
                 <Featured artist={item.artist} album={item.albumName} song={item.title} imageUrl={item.coverImageUrl || placeholder}
-                    localSongPath={item.localSongPath} releaseDate={item.releaseDate} songLengthInSeconds={item.songLengthInSeconds}
+                    releaseDate={item.releaseDate} songLengthInSeconds={item.songLengthInSeconds} songId={item.spotifyId}
                 />
             </div>
         )

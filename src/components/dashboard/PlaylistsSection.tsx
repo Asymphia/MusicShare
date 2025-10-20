@@ -36,7 +36,7 @@ const PlaylistsSection = () => {
 
                 {
                     playlistsStatus === "succeeded" && playlists.slice(0, width >= 1280 ? 6 : width >= 1024 ? 2 : 6).map(playlist => (
-                        <ExtendedEntityBlock id={playlist.id} key={playlist.id} isTop={false}
+                        <ExtendedEntityBlock id={playlist.id} key={`DashboardPlaylists${playlist.id}`} isTop={false}
                                              image={playlist.coverImageUrl ?? albumCoverPlaceholder} type="playlist"
                                              playlist={playlist.name} duration={0} creator={playlist.ownerName ?? "Unknown"}
                                              songAmount={playlist.songs ? playlist.songs.length : 0}/>

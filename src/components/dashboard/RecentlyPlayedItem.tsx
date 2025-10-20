@@ -24,7 +24,7 @@ const RecentlyPlayedItem = ({ listeningItem }: RecentlyPlayedProps) => {
     const openPopup = (spotifyId: string) => setOpenSongId(spotifyId)
     const closePopup = () => setOpenSongId(false)
 
-    const modalRoot = typeof document !== "undefined" ? document.getElementById("modal") : null
+    const modalRoot = typeof document !== "undefined" ? document.getElementById("modal-file") : null
 
     const isCurrentSong = useMemo(() => {
         return currentSong?.songShort.spotifyId === listeningItem.songShort.spotifyId

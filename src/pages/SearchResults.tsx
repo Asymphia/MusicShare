@@ -113,7 +113,7 @@ const SearchResults = () => {
                         <div className="grid 2xl:grid-cols-10 xl:grid-cols-9 lg:grid-cols-8 md:grid-cols-6 sm:grid-cols-4 grid-cols-2 gap-1">
                             {
                                 results?.songs.map(song => (
-                                    <EntityBlock key={song.spotifyId}
+                                    <EntityBlock key={`SearchResultSong${song.spotifyId}`}
                                                  image={song.coverImageUrl ? song.coverImageUrl : songPlaceholder}
                                                  type="song" song={song.title} artist={ song.artist } album={ song.album.name } headerAs="h5"/>
                                 ))
@@ -131,7 +131,7 @@ const SearchResults = () => {
                         <div className="grid 2xl:grid-cols-10 xl:grid-cols-9 lg:grid-cols-8 md:grid-cols-6 sm:grid-cols-4 grid-cols-2 gap-1">
                             {
                                 results?.artist.map(artist => (
-                                    <EntityBlock key={artist.spotifyId} type="artist"
+                                    <EntityBlock key={`SearchResultArtist${artist.spotifyId}`} type="artist"
                                                  image={artist.imageUrl ? artist.imageUrl : artistPlaceholder}
                                                  artist={artist.name} headerAs="h5"/>
                                 ))
@@ -151,7 +151,7 @@ const SearchResults = () => {
                                 results?.playlists.map(playlist => (
                                     <ExtendedEntityBlock
                                         image={playlist.coverImageUrl ? playlist.coverImageUrl : playlistPlaceholder}
-                                        key={playlist.id} id={playlist.id} isTop={false} type="playlist"
+                                        key={`SearchResultPlaylist${playlist.id}`} id={playlist.id} isTop={false} type="playlist"
                                         playlist={playlist.name}
                                         songAmount={0} duration={0} creator={playlist.ownerName}/>
                                 ))

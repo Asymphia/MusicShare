@@ -13,7 +13,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks.ts"
 import Error from "../ui/Error.tsx"
 import useWindowWidth from "../../hooks/useWindowWidth.ts"
 import { fetchTopAlbums, selectTopAlbums, selectTopAlbumsStatus } from "../../features/albums/topAlbumsSlice.ts"
-import AddToPlaylistPopup, {type AddToPlaylistPopupHandle} from "../ui/AddToPlaylistPopup.tsx"
+import AddToPlaylistPopup, { type AddToPlaylistPopupHandle } from "../ui/AddToPlaylistPopup.tsx"
 
 const TopStats = () => {
     const width = useWindowWidth()
@@ -62,7 +62,7 @@ const TopStats = () => {
     const openPopup = (spotifyId: string) => setOpenSongId(spotifyId)
     const closePopup = () => setOpenSongId(false)
 
-    const modalRoot = typeof document !== "undefined" ? document.getElementById("modal") : null
+    const modalRoot = typeof document !== "undefined" ? document.getElementById("modal-playlist") : null
 
     return (
         <section className="space-y-7">
@@ -83,7 +83,7 @@ const TopStats = () => {
 
                         {
                             topSongsStatus === "succeeded" && topSongs?.songs.map(song => (
-                                <ExtendedEntityBlock isTop={true} key={song.spotifyId}
+                                <ExtendedEntityBlock isTop={true} key={`TopSongs${song.spotifyId}`}
                                                      image={song.coverImageUrl ?? songPlaceholder} type="song"
                                                      song={song.title} artist={song.artist} album={song.album?.name || "Unknown"} onClickPlus={() => openPopup(song.spotifyId)} />
                             ))
@@ -111,7 +111,7 @@ const TopStats = () => {
 
                         {
                             topAlbumsStatus === "succeeded" && topAlbums?.map(album => (
-                                <ExtendedEntityBlock id={album.spotifyId} key={album.spotifyId} isTop={true} image={album.coverImageUrl}
+                                <ExtendedEntityBlock id={album.spotifyId} key={`TopAlbums${album.spotifyId}`} isTop={true} image={album.coverImageUrl}
                                                      type="album" artist={album.artist.name} album={album.name} duration={0} songAmount={0} />
                             ))
                         }
@@ -137,7 +137,7 @@ const TopStats = () => {
 
                     {
                         topGenresStatus === "succeeded" && topGenres?.map((genre, index) => (
-                            <GenresBlock key={genre.id} isTop={index < 3} name={genre.name}/>
+                            <GenresBlock key={`TopGenres${genre.id}`} isTop={index < 3} name={genre.name}/>
                         ))
                     }
 
@@ -161,7 +161,7 @@ const TopStats = () => {
 
                     {
                         topArtistsStatus === "succeeded" && artistsToShow?.map(artist => (
-                            <EntityBlock key={artist.spotifyId} artist={artist.name}
+                            <EntityBlock key={`TopArtists${artist.spotifyId}`} artist={artist.name}
                                          image={artist.imageUrl ?? artistPlaceholder} type="artist" headerAs="h5"/>
                         ))
                     }

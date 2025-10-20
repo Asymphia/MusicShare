@@ -99,7 +99,7 @@ const AddToPlaylistPopup = forwardRef<AddToPlaylistPopupHandle, AddToPlaylistPop
 
                 {
                     playlistsStatus === "succeeded" && displayedPlaylists.map(playlist => (
-                        <div key={playlist.id} className="flex flex-nowrap justify-between w-full overflow-hidden gap-4">
+                        <div key={`AddToPlaylistPopup${playlist.id}`} className="flex flex-nowrap justify-between w-full overflow-hidden gap-4">
                             <div className="min-w-0 flex-1 overflow-hidden">
                                 <ExtendedEntityBlock isTop={false} image={playlist.coverImageUrl || placeholder}
                                                      type="playlist" playlist={playlist.name} disableLink={true}
