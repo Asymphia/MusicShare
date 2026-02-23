@@ -1,69 +1,62 @@
-# React + TypeScript + Vite
+# MusicShare
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**MusicShare** is a web app built with **React** and **TypeScript** that connects to Spotify to fetch and display your music stats, recommendations, albums, playlists, and songs – all locally on your machine.
 
-Currently, two official plugins are available:
+> **Note:** The backend is built in **.NET** by [kpustelak](https://github.com/kpustelak) and need to be hosted separately: [sharemusic backend](https://github.com/kpustelak/sharemusic). You need to run the backend locally to use the frontend.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
 
-## Expanding the ESLint configuration
+* React
+* TypeScript
+* GSAP
+* Redux
+* TailwindCSS
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Features
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Connect with Spotify to fetch:
+* Your stats
+* Recommendations based on your stats
+* Your albums
+* Your playlists
+* Your songs
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+## Pages
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+* **Auth** – connect to Spotify (no account needed, only Spotify login)
+* **Main Dashboard**
+  * Featured section slider
+  * Albums, songs, and artist recommendations
+  * Top songs, albums, genres, artists
+  * Recently played (beta)
+* **Playlists** and **albums**
+  * View all your playlists and albums
+  * Dynamic search with debounce
+* **Single playlist** and **single album**
+  * Cover, author, duration, share button, download button (WIP)
+  * Songs list
+* **Create New** – create a new album (WIP)
+* **Search Results**
+
+## Work in Progess
+
+- [ ] Adding playlists and songs to playlists
+- [ ] Responsiveness in some areas
+- [ ] Deleting songs from a playlist
+- [ ] Listening history and currently playing song at the bottom
+
+## Getting started
+
+1. Clone this repo:
+```Bash
+git clone https://github.com/Asymphia/MusicShare.git
 ```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. Install dependencies:
+```Bash
+npm install
 ```
+3. Run the app:
+```Bash
+npm run dev
+```
+4. Make sure the backend is running locally.
